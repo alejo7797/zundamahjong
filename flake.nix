@@ -22,6 +22,7 @@
 
         devShells.default = pkgs.mkShell {
           packages = [ pkgs.nodejs_22 pkgs.python313 ];
+          DEBUG_SERVER_PORT = 5070;
         };
 
       };
