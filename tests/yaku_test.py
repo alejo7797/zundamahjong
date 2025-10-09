@@ -1,10 +1,11 @@
-from typing import Optional
+from typing import Any, Optional
 
 from unittest import TestCase
 
 from src.mahjong.tile import TileId
-from src.mahjong.call import Call, CallType
-from src.mahjong.yaku import Win
+from src.mahjong.meld import Meld, MeldType
+from src.mahjong.call import Call, CallType, ClosedKanCall, OpenCall
+from src.mahjong.win import Win
 from src.mahjong.yaku import YakuCalculator
 
 
@@ -12,18 +13,18 @@ def get_yaku_mults(
     *,
     win_player: int = 0,
     lose_player: Optional[int],
-    formed_hand: list[Call],
+    formed_hand: list[Meld],
     calls: list[Call],
     flowers: list[TileId],
     player_count: int = 4,
     wind_round: int = 0,
     sub_round: int = 0,
-    **kwargs
-):
+    **kwargs: Any
+) -> dict[str, int]:
     win = Win(
         win_player=win_player,
         lose_player=lose_player,
-        hand=[tile for call in formed_hand for tile in call.tiles],
+        hand=[tile for meld in formed_hand for tile in meld.tiles],
         calls=calls,
         flowers=flowers,
         player_count=player_count,
@@ -35,104 +36,134 @@ def get_yaku_mults(
 
 
 class YakuTest(TestCase):
-    def test_no_flowers(self):
+    def test_no_flowers(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[],
         )
         self.assertDictEqual(yaku_mults, {"NO_FLOWERS": 1})
 
-    def test_player_flower(self):
+    def test_player_flower(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[410],
         )
         self.assertDictEqual(yaku_mults, {"SEAT_FLOWER": 1})
 
-    def test_sub_round_player_flower(self):
+    def test_sub_round_player_flower(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[440],
             sub_round=1,
         )
         self.assertDictEqual(yaku_mults, {"SEAT_FLOWER": 1})
 
-    def test_two_player_flowers(self):
+    def test_two_player_flowers(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[410, 450],
         )
         self.assertDictEqual(yaku_mults, {"SEAT_FLOWER": 2})
 
-    def test_set_of_flowers(self):
+    def test_set_of_flowers(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[410, 420, 430, 440],
         )
         self.assertDictEqual(yaku_mults, {"SEAT_FLOWER": 1, "SET_OF_FLOWERS": 1})
 
-    def test_seven_flowers(self):
+    def test_seven_flowers(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[410, 420, 430, 440, 460, 470, 480],
         )
@@ -140,18 +171,23 @@ class YakuTest(TestCase):
             yaku_mults, {"SEAT_FLOWER": 1, "SET_OF_FLOWERS": 1, "SEVEN_FLOWERS": 1}
         )
 
-    def test_two_sets_of_flowers(self):
+    def test_two_sets_of_flowers(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[410, 420, 430, 440, 450, 460, 470, 480],
         )
@@ -160,18 +196,23 @@ class YakuTest(TestCase):
             {"SEAT_FLOWER": 2, "TWO_SETS_OF_FLOWERS": 1},
         )
 
-    def test_draw(self):
+    def test_draw(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
             draw_count=1,
@@ -181,18 +222,23 @@ class YakuTest(TestCase):
             {"DRAW": 1},
         )
 
-    def test_after_a_flower(self):
+    def test_after_a_flower(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
             after_flower_count=1,
@@ -202,18 +248,23 @@ class YakuTest(TestCase):
             {"AFTER_A_FLOWER": 1},
         )
 
-    def test_after_a_kan(self):
+    def test_after_a_kan(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
             after_kan_count=1,
@@ -223,18 +274,23 @@ class YakuTest(TestCase):
             {"AFTER_A_KAN": 1},
         )
 
-    def test_player_wind(self):
+    def test_player_wind(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=1,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[320, 321, 322]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[320, 321, 322]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=0,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[440],
         )
@@ -243,18 +299,23 @@ class YakuTest(TestCase):
             {"SEAT_WIND": 1},
         )
 
-    def test_sub_round_player_wind(self):
+    def test_sub_round_player_wind(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=2,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[320, 321, 322]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[320, 321, 322]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=1,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[440],
             sub_round=1,
@@ -264,18 +325,23 @@ class YakuTest(TestCase):
             {"SEAT_WIND": 1},
         )
 
-    def test_prevalent_wind(self):
+    def test_prevalent_wind(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=1,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[310, 311, 312]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[310, 311, 312]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[440],
         )
@@ -284,18 +350,23 @@ class YakuTest(TestCase):
             {"PREVALENT_WIND": 1},
         )
 
-    def test_white_dragon(self):
+    def test_white_dragon(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[350, 351, 352]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[350, 351, 352]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
         )
@@ -304,18 +375,23 @@ class YakuTest(TestCase):
             {"WHITE_DRAGON": 1},
         )
 
-    def test_green_dragon(self):
+    def test_green_dragon(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[360, 361, 362]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[360, 361, 362]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
         )
@@ -324,18 +400,23 @@ class YakuTest(TestCase):
             {"GREEN_DRAGON": 1},
         )
 
-    def test_red_dragon(self):
+    def test_red_dragon(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[370, 371, 372]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[370, 371, 372]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
         )
@@ -344,243 +425,327 @@ class YakuTest(TestCase):
             {"RED_DRAGON": 1},
         )
 
-    def test_eyes(self):
+    def test_eyes(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[80, 81]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[80, 81]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=10,
+                    other_tiles=(20, 30),
+                ),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=150,
+                    other_tiles=(160, 170),
+                ),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
         )
         self.assertDictEqual(yaku_mults, {"EYES": 1})
 
-    def test_no_calls(self):
+    def test_no_calls(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[230, 240, 250]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+            ],
+            calls=[],
+            flowers=[420],
+        )
+        self.assertDictEqual(yaku_mults, {"NO_CALLS": 1})
+
+    def test_no_calls_closed_kan(self) -> None:
+        yaku_mults = get_yaku_mults(
+            win_player=0,
+            lose_player=None,
+            formed_hand=[
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[230, 240, 250]),
             ],
             calls=[
-                Call(call_type=CallType.CLOSED_KAN, tiles=[190, 191, 192, 193]),
+                ClosedKanCall(tiles=(190, 191, 192, 193)),
             ],
             flowers=[420],
         )
         self.assertDictEqual(yaku_mults, {"NO_CALLS": 1})
 
-    def test_no_calls_closed_kan(self):
+    def test_chankan(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CLOSED_KAN, tiles=[190, 191, 192, 193]),
-            ],
-            flowers=[420],
-        )
-        self.assertDictEqual(yaku_mults, {"NO_CALLS": 1})
-
-    def test_chankan(self):
-        yaku_mults = get_yaku_mults(
-            win_player=0,
-            lose_player=None,
-            formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
-            ],
-            calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
             is_chankan=True,
         )
         self.assertDictEqual(yaku_mults, {"ROBBING_A_KAN": 1})
 
-    def test_haitei(self):
+    def test_haitei(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
             is_haitei=True,
         )
         self.assertDictEqual(yaku_mults, {"UNDER_THE_SEA": 1})
 
-    def test_houtei(self):
+    def test_houtei(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
             is_houtei=True,
         )
         self.assertDictEqual(yaku_mults, {"UNDER_THE_RIVER": 1})
 
-    def test_all_runs(self):
+    def test_all_runs(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.PAIR, tiles=[10, 11]),
+                Meld(meld_type=MeldType.PAIR, tiles=[10, 11]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[12, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[140, 150, 160]),
-                Call(call_type=CallType.CHI, tiles=[151, 161, 170]),
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=12,
+                    other_tiles=(0, 30),
+                ),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=140,
+                    other_tiles=(150, 160),
+                ),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=151,
+                    other_tiles=(161, 170),
+                ),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
         )
         self.assertDictEqual(yaku_mults, {"ALL_RUNS": 1})
 
-    def test_all_simples(self):
+    def test_all_simples(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.PON, tiles=[30, 31, 32]),
-                Call(call_type=CallType.CHI, tiles=[40, 50, 60]),
-                Call(call_type=CallType.PAIR, tiles=[230, 231]),
+                Meld(meld_type=MeldType.PON, tiles=[30, 31, 32]),
+                Meld(meld_type=MeldType.CHI, tiles=[40, 50, 60]),
+                Meld(meld_type=MeldType.PAIR, tiles=[230, 231]),
             ],
             calls=[
-                Call(call_type=CallType.PON, tiles=[150, 151, 152]),
-                Call(call_type=CallType.CHI, tiles=[153, 160, 170]),
+                OpenCall(
+                    call_type=CallType.PON,
+                    called_player_index=3,
+                    called_tile=150,
+                    other_tiles=(151, 152),
+                ),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=153,
+                    other_tiles=(160, 170),
+                ),
             ],
             flowers=[420],
         )
         self.assertDictEqual(yaku_mults, {"ALL_SIMPLES": 1})
 
-    def test_pure_straight(self):
+    def test_pure_straight(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[210, 220, 230]),
-                Call(call_type=CallType.CHI, tiles=[240, 250, 260]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[210, 220, 230]),
+                Meld(meld_type=MeldType.CHI, tiles=[240, 250, 260]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[270, 280, 290]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=270,
+                    other_tiles=(280, 290),
+                ),
             ],
             flowers=[420],
         )
         self.assertDictEqual(yaku_mults, {"PURE_STRAIGHT": 1})
 
-    def test_all_triplets(self):
+    def test_all_triplets(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.PON, tiles=[10, 11, 12]),
-                Call(call_type=CallType.PON, tiles=[150, 151, 152]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.PON, tiles=[10, 11, 12]),
+                Meld(meld_type=MeldType.PON, tiles=[150, 151, 152]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.PON, tiles=[230, 231, 232]),
+                OpenCall(
+                    call_type=CallType.PON,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(231, 232),
+                ),
             ],
             flowers=[420],
         )
         self.assertDictEqual(yaku_mults, {"ALL_TRIPLETS": 1})
 
-    def test_half_flush(self):
+    def test_half_flush(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[50, 60, 70]),
-                Call(call_type=CallType.PON, tiles=[90, 91, 92]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[50, 60, 70]),
+                Meld(meld_type=MeldType.PON, tiles=[90, 91, 92]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[31, 40, 51]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=31,
+                    other_tiles=(40, 51),
+                ),
             ],
             flowers=[420],
         )
         self.assertDictEqual(yaku_mults, {"HALF_FLUSH": 1})
 
-    def test_full_flush(self):
+    def test_full_flush(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[50, 60, 70]),
-                Call(call_type=CallType.PON, tiles=[90, 91, 92]),
-                Call(call_type=CallType.PAIR, tiles=[31, 32]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[50, 60, 70]),
+                Meld(meld_type=MeldType.PON, tiles=[90, 91, 92]),
+                Meld(meld_type=MeldType.PAIR, tiles=[31, 32]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[33, 40, 51]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=33,
+                    other_tiles=(40, 51),
+                ),
             ],
             flowers=[420],
         )
         self.assertDictEqual(yaku_mults, {"FULL_FLUSH": 1})
 
-    def test_seven_pairs(self):
+    def test_seven_pairs(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.PAIR, tiles=[30, 31]),
-                Call(call_type=CallType.PAIR, tiles=[40, 41]),
-                Call(call_type=CallType.PAIR, tiles=[90, 91]),
-                Call(call_type=CallType.PAIR, tiles=[150, 151]),
-                Call(call_type=CallType.PAIR, tiles=[210, 211]),
-                Call(call_type=CallType.PAIR, tiles=[220, 221]),
-                Call(call_type=CallType.PAIR, tiles=[310, 311]),
+                Meld(meld_type=MeldType.PAIR, tiles=[30, 31]),
+                Meld(meld_type=MeldType.PAIR, tiles=[40, 41]),
+                Meld(meld_type=MeldType.PAIR, tiles=[90, 91]),
+                Meld(meld_type=MeldType.PAIR, tiles=[150, 151]),
+                Meld(meld_type=MeldType.PAIR, tiles=[210, 211]),
+                Meld(meld_type=MeldType.PAIR, tiles=[220, 221]),
+                Meld(meld_type=MeldType.PAIR, tiles=[310, 311]),
             ],
             calls=[],
             flowers=[420],
         )
         self.assertDictEqual(yaku_mults, {"SEVEN_PAIRS": 1})
 
-    def test_half_outside_hand(self):
+    def test_half_outside_hand(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[110, 120, 130]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[110, 120, 130]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[270, 280, 290]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=270,
+                    other_tiles=(280, 290),
+                ),
             ],
             flowers=[420],
         )
@@ -589,18 +754,23 @@ class YakuTest(TestCase):
             {"HALF_OUTSIDE_HAND": 1},
         )
 
-    def test_fully_outside_hand(self):
+    def test_fully_outside_hand(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[110, 120, 130]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[290, 291]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[110, 120, 130]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[290, 291]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[270, 280, 292]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=270,
+                    other_tiles=(280, 292),
+                ),
             ],
             flowers=[420],
         )
@@ -609,18 +779,23 @@ class YakuTest(TestCase):
             {"FULLY_OUTSIDE_HAND": 1},
         )
 
-    def test_pure_double_sequence(self):
+    def test_pure_double_sequence(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[11, 21, 31]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[11, 21, 31]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
         )
@@ -629,18 +804,23 @@ class YakuTest(TestCase):
             {"PURE_DOUBLE_SEQUENCE": 1},
         )
 
-    def test_twice_pure_double_sequence(self):
+    def test_twice_pure_double_sequence(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[10, 20, 30]),
-                Call(call_type=CallType.CHI, tiles=[11, 21, 31]),
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[11, 21, 31]),
+                Meld(meld_type=MeldType.CHI, tiles=[230, 240, 250]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[231, 241, 251]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=241,
+                    other_tiles=(231, 251),
+                ),
             ],
             flowers=[420],
         )
@@ -649,18 +829,73 @@ class YakuTest(TestCase):
             {"ALL_RUNS": 1, "TWICE_PURE_DOUBLE_SEQUENCE": 1},
         )
 
-    def test_mixed_triple_sequence(self):
+    def test_pure_triple_sequence(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.CHI, tiles=[30, 40, 50]),
-                Call(call_type=CallType.CHI, tiles=[130, 140, 150]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[11, 21, 31]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[240, 241]),
             ],
             calls=[
-                Call(call_type=CallType.CHI, tiles=[230, 240, 250]),
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=12,
+                    other_tiles=(22, 32),
+                ),
+            ],
+            flowers=[420],
+        )
+        self.assertDictEqual(
+            yaku_mults,
+            {"PURE_TRIPLE_SEQUENCE": 1},
+        )
+
+    def test_pure_quadruple_sequence(self) -> None:
+        yaku_mults = get_yaku_mults(
+            win_player=0,
+            lose_player=None,
+            formed_hand=[
+                Meld(meld_type=MeldType.CHI, tiles=[10, 20, 30]),
+                Meld(meld_type=MeldType.CHI, tiles=[11, 21, 31]),
+                Meld(meld_type=MeldType.CHI, tiles=[13, 23, 33]),
+                Meld(meld_type=MeldType.PAIR, tiles=[240, 241]),
+            ],
+            calls=[
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=12,
+                    other_tiles=(22, 32),
+                ),
+            ],
+            flowers=[420],
+        )
+        self.assertDictEqual(
+            yaku_mults,
+            {"ALL_RUNS": 1, "PURE_QUADRUPLE_SEQUENCE": 1},
+        )
+
+    def test_mixed_triple_sequence(self) -> None:
+        yaku_mults = get_yaku_mults(
+            win_player=0,
+            lose_player=None,
+            formed_hand=[
+                Meld(meld_type=MeldType.CHI, tiles=[30, 40, 50]),
+                Meld(meld_type=MeldType.CHI, tiles=[130, 140, 150]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
+            ],
+            calls=[
+                OpenCall(
+                    call_type=CallType.CHI,
+                    called_player_index=3,
+                    called_tile=230,
+                    other_tiles=(240, 250),
+                ),
             ],
             flowers=[420],
         )
@@ -669,18 +904,23 @@ class YakuTest(TestCase):
             {"MIXED_TRIPLE_SEQUENCE": 1},
         )
 
-    def test_triple_triplets(self):
+    def test_triple_triplets(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.PON, tiles=[90, 91, 92]),
-                Call(call_type=CallType.CHI, tiles=[150, 160, 170]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.PON, tiles=[90, 91, 92]),
+                Meld(meld_type=MeldType.CHI, tiles=[150, 160, 170]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.PON, tiles=[290, 291, 292]),
+                OpenCall(
+                    call_type=CallType.PON,
+                    called_player_index=3,
+                    called_tile=290,
+                    other_tiles=(291, 292),
+                ),
             ],
             flowers=[420],
         )
@@ -689,18 +929,23 @@ class YakuTest(TestCase):
             {"TRIPLE_TRIPLETS": 1},
         )
 
-    def test_all_terminals_and_honours(self):
+    def test_all_terminals_and_honours(self) -> None:
         yaku_mults = get_yaku_mults(
             win_player=0,
             lose_player=None,
             formed_hand=[
-                Call(call_type=CallType.PON, tiles=[10, 11, 12]),
-                Call(call_type=CallType.PON, tiles=[110, 111, 112]),
-                Call(call_type=CallType.PON, tiles=[190, 191, 192]),
-                Call(call_type=CallType.PAIR, tiles=[330, 331]),
+                Meld(meld_type=MeldType.PON, tiles=[10, 11, 12]),
+                Meld(meld_type=MeldType.PON, tiles=[110, 111, 112]),
+                Meld(meld_type=MeldType.PON, tiles=[190, 191, 192]),
+                Meld(meld_type=MeldType.PAIR, tiles=[330, 331]),
             ],
             calls=[
-                Call(call_type=CallType.PON, tiles=[290, 291, 292]),
+                OpenCall(
+                    call_type=CallType.PON,
+                    called_player_index=3,
+                    called_tile=290,
+                    other_tiles=(291, 292),
+                ),
             ],
             flowers=[420],
         )

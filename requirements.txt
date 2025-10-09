@@ -1,6 +1,0 @@
-psycopg[binary]
-pydantic
-python-socketio
-sqlalchemy
-werkzeug
-gunicorn

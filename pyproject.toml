@@ -1,16 +1,19 @@
 [project]
 name = "zundamahjong"
-dynamic = ["version"]
+version = "0.0.0"
+description = "Web-based Mahjong game"
+requires-python = ">=3.9"
 
 dependencies = [
-  "python-socketio",
   "pydantic",
+  "python-socketio",
   "sqlalchemy",
 ]
 
 [project.optional-dependencies]
-pg = ["sqlalchemy[postgresql-psycopg]"]
-dev = ["werkzeug"]
+postgresql = [
+  "sqlalchemy[postgresql-psycopg]"
+]
 
 [build-system]
 requires = ["setuptools"]
@@ -18,6 +21,23 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.package-dir]
 zundamahjong = "src"
+
+[dependency-groups]
+dev = [
+  "mypy",
+  "pytest",
+  "ruff",
+  "werkzeug",
+]
+
+postgresql = [
+  "psycopg[binary]",
+]
+
+production = [
+  {include-group = "postgresql"},
+  "gunicorn",
+]
 
 [tool.pyright]
 typeCheckingMode = "standard"
