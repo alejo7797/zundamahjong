@@ -20,10 +20,24 @@
 
       perSystem = { pkgs, ... }: {
 
-        devShells.default = pkgs.mkShell {
-          packages = [ pkgs.nodejs_22 pkgs.python313 ];
-          DEBUG_SERVER_PORT = 5070;
-        };
+        devShells.default =
+
+          let
+            python = pkgs.python313;
+            pythonEnv = python.withPackages (ps: [
+              ps.psycopg
+            ]);
+          in
+
+          pkgs.mkShell {
+
+            packages = [
+              pkgs.nodejs_24
+              python
+              pythonEnv
+            ];
+
+          };
 
       };
 
