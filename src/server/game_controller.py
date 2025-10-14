@@ -1,17 +1,19 @@
 from threading import Lock
 from typing import Any
+from random import sample
+
 from ..mahjong.action import Action
 from ..mahjong.game_options import GameOptions
 from ..mahjong.round import RoundStatus
 from ..mahjong.game import Game
 
 from .sio import sio
-from .player_info import Player
+from ..types.player import Player
 
 
 class GameController:
     def __init__(self, players: list[Player], options: GameOptions) -> None:
-        self._players = players
+        self._players = sample(players, len(players))
         self._game = Game(options=options)
         self._lock = Lock()
         with self._lock:
@@ -47,7 +49,7 @@ class GameController:
 
     def _game_info(self) -> dict[str, Any]:
         return {
-            "player_names": [player.name for player in self._players],
+            "players": [player.model_dump() for player in self._players],
             "wind_round": self._game.wind_round,
             "sub_round": self._game.sub_round,
             "draw_count": self._game.draw_count,
