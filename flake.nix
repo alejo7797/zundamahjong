@@ -47,55 +47,154 @@
       };
     in
 
-    flake-parts.lib.mkFlake { inherit inputs; } ({ lib, ... }: {
+    flake-parts.lib.mkFlake { inherit inputs; } (
+      { lib, getSystem, ... }: {
 
-      systems = [
-        "x86_64-linux" "aarch64-darwin"
-        "aarch64-linux" "x86_64-darwin"
-      ];
+        systems = [
+          "x86_64-linux" "aarch64-darwin"
+          "aarch64-linux" "x86_64-darwin"
+        ];
 
-      perSystem = { pkgs, ... }:
+        perSystem =
+          { pkgs, self', ... }:
 
-        let
-          python = pkgs.python313;
+          let
+            python = pkgs.python313;
 
-          pythonSet =
-            (pkgs.callPackage inputs.pyproject-nix.build.packages {
-              inherit python;
-            }).overrideScope (lib.composeManyExtensions [
-              inputs.pyproject-build-systems.overlays.wheel overlay
-            ]);
-        in
+            pythonSet =
+              (pkgs.callPackage inputs.pyproject-nix.build.packages {
+                inherit python;
+              }).overrideScope (lib.composeManyExtensions [
+                inputs.pyproject-build-systems.overlays.wheel overlay
+              ]);
+          in
 
-        {
-          devShells.default =
+          {
+            devShells.default =
 
-            let
-              devPythonSet = pythonSet.overrideScope editableOverlay;
-              virtualenv = devPythonSet.mkVirtualEnv "zundamahjong-dev-env" workspace.deps.all;
-            in
+              let
+                devPythonSet = pythonSet.overrideScope editableOverlay;
+                virtualenv = devPythonSet.mkVirtualEnv "zundamahjong-dev-env" workspace.deps.all;
+              in
 
-            pkgs.mkShell {
+              pkgs.mkShell {
 
-              packages = [
-                pkgs.nodejs virtualenv
-              ];
+                packages = [
+                  pkgs.nodejs virtualenv
+                ];
 
-              env = {
-                UV_NO_SYNC = "1";
-                UV_PYTHON = devPythonSet.python.interpreter;
-                UV_PYTHON_DOWNLOADS = "never";
+                env = {
+                  UV_NO_SYNC = "1";
+                  UV_PYTHON = devPythonSet.python.interpreter;
+                  UV_PYTHON_DOWNLOADS = "never";
+                };
+
+                shellHook = ''
+                  unset PYTHONPATH
+                  export REPO_ROOT=$(git rev-parse --show-toplevel)
+                '';
+
               };
 
-              shellHook = ''
-                unset PYTHONPATH
-                export REPO_ROOT=$(git rev-parse --show-toplevel)
-              '';
+            packages =
 
+              let
+                version = "0.1.1";
+              in
+
+              rec {
+
+                zundamahjong = pkgs.callPackage (
+                  {
+                    python3Packages,
+                    zundamahjong-client,
+                  }:
+
+                  python3Packages.buildPythonPackage {
+                    pname = "zundamahjong";
+                    inherit version;
+                    format = "pyproject";
+
+                    src = ./.;
+
+                    build-system = with python3Packages; [
+                      setuptools
+                      setuptools-scm
+                    ];
+
+                    dependencies = with python3Packages; [
+                      flask
+                      pydantic
+                      python-socketio
+                      sqlalchemy
+                    ];
+
+                    preBuild = ''
+                      cp -r ${zundamahjong-client} client_build
+                      chmod -R u+w client_build
+                    '';
+
+                    pythonImportsCheck = [
+                      "zundamahjong"
+                    ];
+
+                    nativeCheckInputs = [
+                      python3Packages.pytestCheckHook
+                    ];
+
+                    meta = {
+                      description = "Web-based Mahjong game";
+                      homepage = "https://github.com/faraplay/zundamahjong";
+                      license = lib.licenses.mit;
+                    };
+                  }
+                )
+                {
+                  inherit (self'.packages) zundamahjong-client;
+                };
+
+                zundamahjong-client = pkgs.callPackage (
+                  { buildNpmPackage }:
+
+                  buildNpmPackage {
+                    pname = "zundamahjong-client";
+                    inherit version;
+
+                    src = ./client;
+
+                    npmDepsHash = "sha256-8E71Mjo7iIN8/J3H/l742s5ukOeEP/ZaFwLwwUzY7go=";
+                    npmPackFlags = [ "--ignore-scripts" ];
+
+                    installPhase = ''
+                      runHook preInstall
+                      mkdir -p $out && cp -r ../client_build/* $out
+                      runHook postInstall
+                    '';
+                  }
+                ) { };
+
+                default = zundamahjong;
+
+              };
+
+          };
+
+        flake.overlays.default =
+          final: prev:
+
+          let
+            config = getSystem prev.stdenv.hostPlatform.system;
+
+            pythonOverlay = python-final: python-prev: {
+              zundamahjong = config.packages.zundamahjong.override { python3Packages = python-final; };
             };
+          in
 
-          packages.default = pythonSet.mkVirtualEnv "zundamahjong-env" workspace.deps.default;
-        };
+          {
+            pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [ pythonOverlay ];
+          };
 
-    });
+      }
+    );
+
 }
