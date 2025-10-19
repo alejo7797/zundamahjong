@@ -99,7 +99,7 @@
             packages =
 
               let
-                version = "0.1.1";
+                version = "0.2.0a2";
               in
 
               rec {
@@ -115,11 +115,20 @@
                     inherit version;
                     format = "pyproject";
 
+                    outputs = [
+                      "doc"
+                      "out"
+                    ];
+
                     src = ./.;
 
                     build-system = with python3Packages; [
                       setuptools
                       setuptools-scm
+                    ];
+
+                    nativeBuildInputs = [
+                      python3Packages.sphinxHook
                     ];
 
                     dependencies = with python3Packages; [
