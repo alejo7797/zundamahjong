@@ -124,8 +124,8 @@
 
                     dependencies = with python3Packages; [
                       flask
+                      flask-socketio
                       pydantic
-                      python-socketio
                       sqlalchemy
                     ];
 
