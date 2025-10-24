@@ -1,11 +1,11 @@
 import unittest
 
-from src.mahjong.call import CallType, OpenCall
-from src.mahjong.game_options import GameOptions
-from src.mahjong.game import Game
-from src.mahjong.meld import Meld, MeldType
-from src.mahjong.win import Win
-from src.mahjong.yaku import YakuCalculator
+from zundamahjong.mahjong.call import CallType, OpenCall
+from zundamahjong.mahjong.game_options import GameOptions
+from zundamahjong.mahjong.game import Game
+from zundamahjong.mahjong.meld import Meld, MeldType
+from zundamahjong.mahjong.win import Win
+from zundamahjong.mahjong.yaku import YakuCalculator
 
 
 class ThreePlayerTest(unittest.TestCase):
@@ -13,6 +13,7 @@ class ThreePlayerTest(unittest.TestCase):
         game = Game(options=GameOptions(player_count=3))
         self.assertEqual(game._player_count, 3)
 
+class ThreePlayerYakuTest(unittest.TestCase):
     def test_north_yaku(self) -> None:
         formed_hand = [
             Meld(meld_type=MeldType.CHI, tiles=[210, 220, 230]),

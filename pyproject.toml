@@ -3,8 +3,8 @@ name = "zundamahjong"
 dynamic = ["version"]
 dependencies = [
   "flask",
+  "flask-socketio",
   "pydantic",
-  "python-socketio",
   "sqlalchemy",
   "werkzeug",
 ]
@@ -42,9 +42,6 @@ Repository = "https://github.com/faraplay/zundamahjong"
 requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.package-dir]
-zundamahjong = "src"
-
 [tool.setuptools_scm]
 
 
@@ -74,11 +71,25 @@ postgresql = [
   "psycopg[binary]",
 ]
 
+alembic = [
+  "alembic[tz]",
+]
+
 
 # Other tool configs
 
+[tool.alembic]
+script_location = "%(here)s/alembic"
+timezone = "UTC"
+
+[[tool.alembic.post_write_hooks]]
+name = "ruff"
+type = "module"
+module = "ruff"
+options = "check --fix REVISION_SCRIPT_FILENAME"
+
 [[tool.mypy.overrides]]
-module = ["socketio.*"]
+module = ["flask_socketio.*"]
 ignore_missing_imports = true
 
 [tool.pyright]
