@@ -167,7 +167,7 @@
 
                     installPhase = ''
                       runHook preInstall
-                      mkdir -p $out && cp -r ../client_build/* $out
+                      mkdir -p $out && cp -r ../client_build/. $out
                       runHook postInstall
                     '';
                   }
