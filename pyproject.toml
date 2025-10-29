@@ -3,8 +3,8 @@ name = "zundamahjong"
 dynamic = ["version"]
 dependencies = [
   "flask",
-  "flask-socketio",
   "pydantic",
+  "python-socketio",
   "sqlalchemy",
   "werkzeug",
 ]
@@ -84,12 +84,12 @@ files = ["src", "tests"]
 strict = true
 
 [[tool.mypy.overrides]]
-module = ["flask_socketio.*"]
+module = ["socketio.*"]
 ignore_missing_imports = true
 
 [tool.basedpyright]
 include = ["src", "tests"]
-allowedUntypedLibraries = ["flask_socketio"]
+allowedUntypedLibraries = ["socketio"]
 pythonVersion = "3.10"
 
 reportUnusedCallResult = false
