@@ -36,7 +36,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.12", "3.13", "3.14"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - uses: actions/checkout@v4
@@ -75,7 +75,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.12", "3.13", "3.14"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - name: Set up Python ${{ matrix.python-version }}
@@ -90,10 +90,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install dist/zundamahjong-*-py3-none-any.whl
-      - name: Install gunicorn
+      - name: Test ASGI app
         run: |
-          python -m pip install gunicorn
-      - name: Test WSGI app
-        run: |
-          timeout --preserve-status 20s \
-            gunicorn --bind unix://web.sock zundamahjong.server:app
+          timeout --preserve-status --signal INT 20s \
+            uvicorn --uds web.sock zundamahjong:app
