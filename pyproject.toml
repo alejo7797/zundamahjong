@@ -2,10 +2,11 @@
 name = "zundamahjong"
 dynamic = ["version"]
 dependencies = [
-  "flask",
   "pydantic",
   "python-socketio",
+  "quart",
   "sqlalchemy",
+  "uvicorn",
   "werkzeug",
 ]
 requires-python = ">=3.10"
@@ -23,7 +24,6 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Topic :: Games/Entertainment",
   "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
-  "Framework :: Flask",
   "Framework :: Pydantic",
   "Programming Language :: JavaScript",
   "Programming Language :: Python",
@@ -61,11 +61,6 @@ lint = [
 
 test = [
   "pytest",
-]
-
-production = [
-  {include-group = "postgresql"},
-  "gunicorn",
 ]
 
 postgresql = [

@@ -4,10 +4,7 @@ import argparse
 import os
 from importlib.metadata import version
 
-from werkzeug import run_simple
-from werkzeug.serving import is_running_from_reloader
-
-from .server import app
+import uvicorn
 
 parser = argparse.ArgumentParser(
     prog="zundamahjong", description="Web-based Mahjong game server"
@@ -29,8 +26,13 @@ if __name__ == "__main__":
     else:
         port = args.port
 
-    if not is_running_from_reloader():
-        print(f"Starting Zundamahjong server version {version('zundamahjong')}.")
-        print(f"Go to http://localhost:{port} to play some Mahjong.")
+    print(f"Starting Zundamahjong server version {version('zundamahjong')}.")
+    print(f"Go to http://localhost:{port} to play some Mahjong.")
 
-    run_simple("localhost", port, app, threaded=True, use_reloader=args.debug)
+    uvicorn.run(
+        "zundamahjong.server:app",
+        host="localhost",
+        port=port,
+        reload=args.debug,
+        log_config={"version": 1},
+    )
