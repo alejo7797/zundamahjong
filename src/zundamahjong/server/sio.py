@@ -45,7 +45,7 @@ def sio_on(event: str) -> Callable[[Handler[P, T]], Handler[P, T]]:
         handler: Handler[P, T],
     ) -> Handler[P, T]:
         async def wrapped_handler(
-            sid: str, *args: P.args, **kwargs: P.kwargs
+            sid: str, /, *args: P.args, **kwargs: P.kwargs
         ) -> T | None:
             async with quart_app.app_context():
                 try:
@@ -58,7 +58,7 @@ def sio_on(event: str) -> Callable[[Handler[P, T]], Handler[P, T]]:
                     )
                     return return_value
                 except Exception as e:
-                    sio.emit_error(str(e), to=sid)
+                    await sio.emit_error(str(e), to=sid)
                     logger.exception(e)
                 return None
 

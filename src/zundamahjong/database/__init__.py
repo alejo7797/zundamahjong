@@ -20,7 +20,7 @@ def _app_ctx_id() -> int:
     # Quart lies about `app_ctx`: it's not an instance of `AppContext` but
     # of `LocalProxy[AppContext]`, which confuses type checkers here.
 
-    return id(app_ctx._get_current_object())  # type: ignore  # pyright: ignore
+    return id(app_ctx._get_current_object())  # pyright: ignore
 
 
 @final

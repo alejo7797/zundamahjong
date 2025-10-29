@@ -1,4 +1,5 @@
 from quart import Quart, redirect, url_for
+from quart.wrappers import Response as QResponse
 from werkzeug.wrappers import Response
 
 from ..database import db
@@ -11,10 +12,10 @@ db.init_app(quart_app)
 
 
 @quart_app.route("/")
-def base() -> Response:
+async def base() -> Response:
     return redirect(url_for("index"))
 
 
 @quart_app.route("/zundamahjong/")
-def index() -> Response:
-    return quart_app.send_static_file("index.html")
+async def index() -> QResponse:
+    return await quart_app.send_static_file("index.html")

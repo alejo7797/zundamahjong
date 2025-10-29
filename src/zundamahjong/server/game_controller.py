@@ -1,7 +1,8 @@
+import asyncio
 from collections.abc import Sequence
 from random import sample
 from threading import Lock
-from typing import final
+from typing import Self, final
 
 from pydantic import BaseModel
 
@@ -67,34 +68,41 @@ class GameController:
         self._players = sample(players, len(players))
         self._game = Game(options=options)
         self._lock = Lock()
+
+    @classmethod
+    async def create(cls, players: list[Player], options: GameOptions) -> Self:
+        self = cls(players, options)
         with self._lock:
-            self._emit_info_all_inner(self._game.round.history)
+            await self._emit_info_all_inner(self._game.round.history)
+        return self
 
     @property
     def game(self) -> Game:
         return self._game
 
-    def emit_info(self, player: Player) -> None:
+    async def emit_info(self, player: Player) -> None:
         with self._lock:
             index = self._get_player_index(player)
-            sio.emit("info", self._info(index, []).model_dump(), to=player.id)
+            await sio.emit("info", self._info(index, []).model_dump(), to=player.id)
 
-    def submit_action(self, player: Player, action: Action, history_index: int) -> None:
+    async def submit_action(
+        self, player: Player, action: Action, history_index: int
+    ) -> None:
         with self._lock:
             player_index = self._get_player_index(player)
             history_updates = self._game.submit_action(
                 player_index, action, history_index
             )
             if history_updates is not None and len(history_updates) > 0:
-                self._emit_info_all_inner(history_updates)
+                await self._emit_info_all_inner(history_updates)
 
-    def start_next_round(self, player: Player) -> None:
+    async def start_next_round(self, player: Player) -> None:
         with self._lock:
             self._get_player_index(player)
             if not self._game.can_start_next_round:
                 raise Exception("Cannot start next round!")
             self._game.start_next_round()
-            self._emit_info_all_inner(self._game.round.history)
+            await self._emit_info_all_inner(self._game.round.history)
 
     def _get_player_index(self, player: Player) -> int:
         try:
@@ -171,8 +179,15 @@ class GameController:
             scoring_info=(self._game.scoring if self._game.scoring else None),
         )
 
-    def _emit_info_all_inner(self, history_updates: list[tuple[int, Action]]) -> None:
-        for index, player in enumerate(self._players):
-            sio.emit(
-                "info", self._info(index, history_updates).model_dump(), to=player.id
-            )
+    async def _emit_info_all_inner(
+        self, history_updates: list[tuple[int, Action]]
+    ) -> None:
+        async with asyncio.TaskGroup() as tg:
+            for index, player in enumerate(self._players):
+                tg.create_task(
+                    sio.emit(
+                        "info",
+                        self._info(index, history_updates).model_dump(),
+                        to=player.id,
+                    )
+                )
