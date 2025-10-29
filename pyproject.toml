@@ -32,6 +32,9 @@ classifiers = [
 [project.optional-dependencies]
 postgresql = ["sqlalchemy[postgresql-psycopgbinary]"]
 
+[project.scripts]
+zundamahjong = "zundamahjong:main"
+
 [project.urls]
 Repository = "https://github.com/faraplay/zundamahjong"
 

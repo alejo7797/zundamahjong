@@ -18,33 +18,22 @@ source .venv/bin/activate
 pip install zundamahjong
 ```
 
-To start the bundled WSGI server, listening at the port `PORT`, run
+To start the bundled Uvicorn server, listening at port `PORT`, run
 
 ```sh
-python -m zundamahjong [-p PORT]  # defaults to 5000
+zundamahjong [-p PORT]  # defaults to 5000
 ```
 
-> [!WARNING]
-> The bundled WSGI server should not be used in production.
-
-## Running in Production
-
-Install Gunicorn (or another [production WSGI server](https://flask.palletsprojects.com/en/stable/deploying/)) to your venv with
+If you want to pass other options to Uvicorn, you can also use
 
 ```sh
-pip install gunicorn
-```
-
-And tell Gunicorn to start `zundamahjong` up by running
-
-```sh
-gunicorn --threads 100 --bind 127.0.0.1:5000 zundamahjong.server:app
+uvicorn --uds ./web.sock zundamahjong:app
 ```
 
 > [!NOTE]
-> It is recommended to run Gunicorn [behind a reverse proxy](https://docs.gunicorn.org/en/stable/deploy.html) such as nginx.
-> But make sure to proxy [WebSocket requests](https://nginx.org/en/docs/http/websocket.html) to Gunicorn!
-> If you don't, Socket.IO will fall back to using HTTP long-polling.
+> In production is recommended to run Uvicorn [behind a reverse proxy](https://docs.gunicorn.org/en/stable/deploy.html) such as nginx.
+> But make sure to proxy [WebSocket requests](https://nginx.org/en/docs/http/websocket.html) to Uvicorn!
+> If you don't, Socket.IO will need to fall back to using HTTP long-polling.
 
 ### Database configuration
 
@@ -74,10 +63,10 @@ To install the Node.js dependencies, navigate to the `client` folder and run
 npm install
 ```
 
-Start the bundled Werkzeug server in debug mode by running
+Start the bundled Uvicorn server in debug mode by running
 
 ```sh
-uv run -m zundamahjong --debug
+uv run zundamahjong --debug
 ```
 
 To run the debug client, navigate to the `client` folder and start the Vite debug server with

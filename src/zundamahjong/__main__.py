@@ -17,7 +17,7 @@ parser.add_argument(
 )
 
 
-if __name__ == "__main__":
+def main() -> None:
     args = parser.parse_args()
 
     if args.port is None:
@@ -36,3 +36,7 @@ if __name__ == "__main__":
         reload=args.debug,
         log_config={"version": 1},
     )
+
+
+if __name__ == "__main__":
+    main()
