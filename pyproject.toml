@@ -9,7 +9,7 @@ dependencies = [
   "uvicorn",
   "werkzeug",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 
 # Project metadata
@@ -85,7 +85,7 @@ ignore_missing_imports = true
 [tool.basedpyright]
 include = ["src", "tests"]
 allowedUntypedLibraries = ["socketio"]
-pythonVersion = "3.10"
+pythonVersion = "3.11"
 
 reportUnusedCallResult = false
 reportUnusedFunction = false
