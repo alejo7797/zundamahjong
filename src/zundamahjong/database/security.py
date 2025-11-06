@@ -3,10 +3,18 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..types.player import Player
 from . import db
-from .users import get_user, try_get_user
 from .models import User
+from .users import get_user, try_get_user
 
 max_users = 256
+
+
+class WrongPasswordException(Exception):
+    """The client typed in an incorrect password."""
+
+
+class UserLimitException(Exception):
+    """We have reached the configured user limit."""
 
 
 def login(name: str, password: str) -> Player:
@@ -15,7 +23,7 @@ def login(name: str, password: str) -> Player:
 
         if user:
             if not check_password_hash(user.password, password):
-                raise Exception("Incorrect password!")
+                raise WrongPasswordException()
 
             else:
                 return Player(name=name, has_account=True)
@@ -24,7 +32,7 @@ def login(name: str, password: str) -> Player:
             num_users = db.session.scalar(sa.select(sa.func.count(User.id)))
 
             if num_users and num_users >= max_users:
-                raise Exception("Unable to register new user!")
+                raise UserLimitException
 
             else:
                 db.session.add(
