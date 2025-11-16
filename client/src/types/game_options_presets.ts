@@ -1,3 +1,5 @@
+import type { GameOptions } from "./game_options";
+
 const default_pattern_data = {
   BLESSING_OF_HEAVEN: {
     display_name: "Blessing of Heaven",
@@ -77,6 +79,21 @@ const default_pattern_data = {
   TRUE_NINE_GATES: {
     display_name: "True Nine Gates",
     han: 19,
+    fu: 0,
+  },
+  RIICHI: {
+    display_name: "Riichi",
+    han: 1,
+    fu: 0,
+  },
+  DOUBLE_RIICHI: {
+    display_name: "Double Riichi",
+    han: 2,
+    fu: 0,
+  },
+  IPPATSU: {
+    display_name: "Ippatsu",
+    han: 1,
     fu: 0,
   },
   ALL_RUNS: {
@@ -366,11 +383,15 @@ const default_pattern_data = {
   },
 };
 
-export const default_4player_preset = {
+export const default_4player_preset: GameOptions = {
   player_count: 4,
   game_length_wind_rounds: 1,
   game_length_sub_rounds: 0,
+  use_flowers: true,
   auto_replace_flowers: true,
+  end_wall_count: 14,
+  min_han: 0,
+  allow_riichi: false,
   show_waits: true,
   show_shanten_info: false,
   start_score: 0,
@@ -383,14 +404,19 @@ export const default_4player_preset = {
   base_fu: 25,
   round_up_fu: false,
   round_up_points: false,
+  base_score_limits: [{ han: 6, score: 6400 }],
   pattern_data: default_pattern_data,
 };
 
-export const default_3player_preset = {
+export const default_3player_preset: GameOptions = {
   player_count: 3,
   game_length_wind_rounds: 1,
   game_length_sub_rounds: 0,
+  use_flowers: true,
   auto_replace_flowers: true,
+  end_wall_count: 14,
+  min_han: 0,
+  allow_riichi: false,
   show_waits: true,
   show_shanten_info: false,
   start_score: 0,
@@ -403,6 +429,7 @@ export const default_3player_preset = {
   base_fu: 25,
   round_up_fu: false,
   round_up_points: false,
+  base_score_limits: [{ han: 6, score: 6400 }],
   pattern_data: default_pattern_data,
 };
 
@@ -485,6 +512,21 @@ const riichi_pattern_data = {
   TRUE_NINE_GATES: {
     display_name: "True Nine Gates",
     han: 13,
+    fu: 0,
+  },
+  RIICHI: {
+    display_name: "Riichi",
+    han: 1,
+    fu: 0,
+  },
+  DOUBLE_RIICHI: {
+    display_name: "Double Riichi",
+    han: 2,
+    fu: 0,
+  },
+  IPPATSU: {
+    display_name: "Ippatsu",
+    han: 1,
     fu: 0,
   },
   ALL_RUNS: {
@@ -649,32 +691,32 @@ const riichi_pattern_data = {
   },
   NO_FLOWERS: {
     display_name: "No Flowers",
-    han: 1,
+    han: 0,
     fu: 0,
   },
   SEAT_FLOWER: {
     display_name: "Seat Flower",
-    han: 1,
+    han: 0,
     fu: 0,
   },
   SET_OF_FLOWERS: {
     display_name: "Set of Flowers",
-    han: 2,
+    han: 0,
     fu: 0,
   },
   FIVE_FLOWERS: {
     display_name: "Five Flowers",
-    han: 2,
+    han: 0,
     fu: 0,
   },
   SEVEN_FLOWERS: {
     display_name: "Seven Flowers",
-    han: 2,
+    han: 0,
     fu: 0,
   },
   TWO_SETS_OF_FLOWERS: {
     display_name: "Two Sets of Flowers",
-    han: 8,
+    han: 0,
     fu: 0,
   },
   DRAW: {
@@ -774,11 +816,15 @@ const riichi_pattern_data = {
   },
 };
 
-export const riichi_4player_preset = {
+export const riichi_4player_preset: GameOptions = {
   player_count: 4,
   game_length_wind_rounds: 1,
   game_length_sub_rounds: 0,
+  use_flowers: false,
   auto_replace_flowers: true,
+  end_wall_count: 14,
+  min_han: 1,
+  allow_riichi: true,
   show_waits: true,
   start_score: 25000,
   score_dealer_ron_multiplier: 6,
@@ -791,14 +837,25 @@ export const riichi_4player_preset = {
   round_up_fu: true,
   round_up_points: true,
   show_shanten_info: false,
+  base_score_limits: [
+    { han: 5, score: 2000 },
+    { han: 6, score: 3000 },
+    { han: 8, score: 4000 },
+    { han: 11, score: 6000 },
+    { han: 13, score: 8000 },
+  ],
   pattern_data: riichi_pattern_data,
 };
 
-export const riichi_3player_preset = {
+export const riichi_3player_preset: GameOptions = {
   player_count: 3,
   game_length_wind_rounds: 1,
   game_length_sub_rounds: 0,
+  use_flowers: false,
   auto_replace_flowers: true,
+  end_wall_count: 14,
+  min_han: 1,
+  allow_riichi: true,
   show_waits: true,
   start_score: 35000,
   score_dealer_ron_multiplier: 6,
@@ -811,5 +868,12 @@ export const riichi_3player_preset = {
   round_up_fu: true,
   round_up_points: true,
   show_shanten_info: false,
+  base_score_limits: [
+    { han: 5, score: 2000 },
+    { han: 6, score: 3000 },
+    { han: 8, score: 4000 },
+    { han: 11, score: 6000 },
+    { han: 13, score: 8000 },
+  ],
   pattern_data: riichi_pattern_data,
 };

@@ -403,6 +403,33 @@ class PatternCalculator:
         return int(nine_gates_last_tile == self._winning_tile)
 
     @_register_pattern(
+        "RIICHI",
+        display_name="Riichi",
+        han=1,
+        fu=0,
+    )
+    def _riichi(self) -> int:
+        return int(self._win.is_riichi and not self._win.is_double_riichi)
+
+    @_register_pattern(
+        "DOUBLE_RIICHI",
+        display_name="Double Riichi",
+        han=2,
+        fu=0,
+    )
+    def _double_riichi(self) -> int:
+        return int(self._win.is_double_riichi)
+
+    @_register_pattern(
+        "IPPATSU",
+        display_name="Ippatsu",
+        han=1,
+        fu=0,
+    )
+    def _ippatsu(self) -> int:
+        return int(self._win.is_ippatsu)
+
+    @_register_pattern(
         "ALL_RUNS",
         display_name="All Runs",
         han=1,

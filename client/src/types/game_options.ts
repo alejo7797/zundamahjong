@@ -2,8 +2,12 @@ export type GameOptions = {
   player_count: number;
   game_length_wind_rounds: number;
   game_length_sub_rounds: number;
+  use_flowers: boolean;
   auto_replace_flowers: boolean;
   end_wall_count: number;
+  min_han: number;
+
+  allow_riichi: boolean;
 
   show_waits: boolean;
   show_shanten_info: boolean;
@@ -20,7 +24,14 @@ export type GameOptions = {
   round_up_fu: boolean;
   round_up_points: boolean;
 
+  base_score_limits: ScoreLimit[];
+
   pattern_data: PatternDataDict;
+};
+
+export type ScoreLimit = {
+  han: number;
+  score: number;
 };
 
 export type PatternData = {
@@ -46,6 +57,9 @@ export const patterns = [
   "FOUR_QUADS",
   "NINE_GATES",
   "TRUE_NINE_GATES",
+  "RIICHI",
+  "DOUBLE_RIICHI",
+  "IPPATSU",
   "ALL_RUNS",
   "ALL_SIMPLES",
   "PURE_STRAIGHT",
@@ -122,6 +136,9 @@ export const patternDisplayNames = {
   FOUR_QUADS: "Four Quads",
   NINE_GATES: "Nine Gates",
   TRUE_NINE_GATES: "True Nine Gates",
+  RIICHI: "Riichi",
+  DOUBLE_RIICHI: "Double Riichi",
+  IPPATSU: "Ippatsu",
   ALL_RUNS: "All Runs",
   ALL_SIMPLES: "All Simples",
   PURE_STRAIGHT: "Pure Straight",

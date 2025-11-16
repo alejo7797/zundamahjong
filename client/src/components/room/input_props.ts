@@ -54,8 +54,30 @@ export const inputPropsList: GameOptionsInputProps[] = [
     max: 3,
   },
   {
+    name: "use_flowers",
+    labelText: "Use flowers",
+    type: "checkbox",
+  },
+  {
     name: "auto_replace_flowers",
     labelText: "Auto flowers",
+    type: "checkbox",
+  },
+  {
+    name: "end_wall_count",
+    labelText: "Number of tiles in dead wall",
+    type: "number",
+    min: 0,
+  },
+  {
+    name: "min_han",
+    labelText: "Minimum han to win",
+    type: "number",
+    min: 0,
+  },
+  {
+    name: "allow_riichi",
+    labelText: "Allow riichi",
     type: "checkbox",
   },
   {

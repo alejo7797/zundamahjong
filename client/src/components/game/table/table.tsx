@@ -1,4 +1,4 @@
-import type { AllServerInfo } from "../../../types/game";
+import type { AllServerInfo, Discard } from "../../../types/game";
 import type { TileId } from "../../../types/tile";
 
 import { CenterInfo } from "../center_info/center_info";
@@ -16,15 +16,19 @@ export function Table({ info }: { info: AllServerInfo }) {
   }
   known_hands[info.player_index] = info.player_info.hand;
   if (info.win_info) {
-    known_hands[info.win_info.win_player] = info.win_info.hand;
+    if (info.win_info.lose_player == null) {
+      known_hands[info.win_info.win_player] = info.win_info.hand;
+    } else {
+      known_hands[info.win_info.win_player] = info.win_info.hand.slice(0, -1);
+    }
   }
 
-  const player_discards: TileId[][] = [];
+  const player_discards: Discard[][] = [];
   for (let player_index = 0; player_index < info.player_count; ++player_index) {
     player_discards.push(
-      info.round_info.discards
-        .filter((discard) => discard.player == player_index)
-        .map((discard) => discard.tile),
+      info.round_info.discards.filter(
+        (discard) => discard.player == player_index,
+      ),
     );
   }
   return (
@@ -50,8 +54,8 @@ export function Table({ info }: { info: AllServerInfo }) {
         ))}
       </div>
       <div id="discard_pool">
-        {player_discards.map((tiles, index) => (
-          <TableDiscards key={index} player_index={index} tiles={tiles} />
+        {player_discards.map((discards, index) => (
+          <TableDiscards key={index} player_index={index} discards={discards} />
         ))}
       </div>
     </div>
