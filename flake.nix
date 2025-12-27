@@ -48,7 +48,7 @@
     in
 
     flake-parts.lib.mkFlake { inherit inputs; } (
-      { lib, getSystem, ... }: {
+      { lib, ... }: {
 
         systems = [
           "x86_64-linux" "aarch64-darwin"
@@ -99,108 +99,67 @@
             packages =
 
               let
-                version = "0.2.0a2";
-              in
-
-              rec {
-
-                zundamahjong = pkgs.callPackage (
-                  {
-                    python3Packages,
-                    zundamahjong-client,
-                  }:
-
-                  python3Packages.buildPythonPackage {
-                    pname = "zundamahjong";
-                    inherit version;
-                    format = "pyproject";
-
+                myOverlay = _: prev: {
+                  zundamahjong = prev.zundamahjong.overrideAttrs (oldAttrs: {
                     outputs = [
-                      "doc"
-                      "out"
+                      "out" "doc"
                     ];
 
-                    src = ./.;
-
-                    build-system = with python3Packages; [
-                      setuptools
-                      setuptools-scm
+                    nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [
+                      python.pkgs.sphinxHook
                     ];
 
-                    nativeBuildInputs = [
-                      python3Packages.sphinxHook
-                    ];
-
-                    dependencies = with python3Packages; [
-                      flask
-                      flask-socketio
-                      pydantic
-                      sqlalchemy
-                    ];
+                    preBuildSphinx = ''
+                      export PYTHONPATH=${lib.makeSearchPath python.sitePackages [
+                        (pythonSet.mkVirtualEnv "zundamahjong-deps" pythonSet.zundamahjong.dependencies) "$out"
+                      ]}
+                    '';
 
                     preBuild = ''
-                      cp -r ${zundamahjong-client} client_build
+                      cp -r ${self'.packages.zundamahjong-client} client_build
                       chmod -R u+w client_build
                     '';
-
-                    pythonImportsCheck = [
-                      "zundamahjong"
-                    ];
-
-                    nativeCheckInputs = [
-                      python3Packages.pytestCheckHook
-                    ];
-
-                    meta = {
-                      description = "Web-based Mahjong game";
-                      homepage = "https://github.com/faraplay/zundamahjong";
-                      license = lib.licenses.mit;
-                    };
-                  }
-                )
-                {
-                  inherit (self'.packages) zundamahjong-client;
+                  });
                 };
 
-                zundamahjong-client = pkgs.callPackage (
-                  { buildNpmPackage }:
+                inherit (pkgs.callPackages inputs.pyproject-nix.build.util { }) mkApplication;
+                distPythonSet = pythonSet.overrideScope myOverlay;
+              in
 
-                  buildNpmPackage {
-                    pname = "zundamahjong-client";
-                    inherit version;
+              {
+                default = self'.packages.zundamahjong;
 
-                    src = ./client;
+                venv = distPythonSet.mkVirtualEnv "venv" (
+                  workspace.deps.optionals // { gunicorn = [ ]; }
+                );
 
-                    npmDepsHash = "sha256-nAUdwnayf0CtYmXfKEfudBztMq7LLBUi3eFudHAO+Ak=";
-                    npmPackFlags = [ "--ignore-scripts" ];
+                zundamahjong-client = pkgs.buildNpmPackage {
+                  name = "zundamahjong-client";
+                  src = ./client;
 
-                    installPhase = ''
-                      runHook preInstall
-                      mkdir -p $out && cp -r ../client_build/. $out
-                      runHook postInstall
-                    '';
+                  npmDepsHash = "sha256-nAUdwnayf0CtYmXfKEfudBztMq7LLBUi3eFudHAO+Ak=";
+                  npmPackFlags = [ "--ignore-scripts" ];
+
+                  installPhase = ''
+                    runHook preInstall
+                    mkdir -p $out && cp -r ../client_build/. $out
+                    runHook postInstall
+                  '';
+                };
+
+                zundamahjong = (
+                  mkApplication {
+                    package = distPythonSet.zundamahjong;
+                    inherit (self'.packages) venv;
                   }
-                ) { };
-
-                default = zundamahjong;
-
+                ).overrideAttrs {
+                  passthru = {
+                    inherit (distPythonSet.zundamahjong) doc;
+                    inherit (self'.packages) venv;
+                  };
+                };
               };
 
-          };
-
-        flake.overlays.default =
-          final: prev:
-
-          let
-            config = getSystem prev.stdenv.hostPlatform.system;
-
-            pythonOverlay = python-final: python-prev: {
-              zundamahjong = config.packages.zundamahjong.override { python3Packages = python-final; };
-            };
-          in
-
-          {
-            pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [ pythonOverlay ];
           };
 
       }
