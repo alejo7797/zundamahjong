@@ -111,7 +111,9 @@
 
                     preBuildSphinx = ''
                       export PYTHONPATH=${lib.makeSearchPath python.sitePackages [
-                        (pythonSet.mkVirtualEnv "zundamahjong-deps" pythonSet.zundamahjong.dependencies) "$out"
+                        (pythonSet.mkVirtualEnv "zundamahjong-deps" (
+                          { sphinx-rtd-theme = [ ]; } // pythonSet.zundamahjong.dependencies
+                        )) "$out" # This "fix" is pretty cursed :(
                       ]}
                     '';
 
