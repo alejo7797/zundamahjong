@@ -20,6 +20,7 @@ from .call import (
     get_call_tiles,
 )
 from .deck import Deck
+from .discard_pool import DiscardPool
 from .form_hand import is_winning
 from .shanten import get_waits
 from .tile import (
@@ -35,54 +36,109 @@ from .tile import (
 
 @final
 class Hand:
-    def __init__(self, deck: Deck) -> None:
+    """
+    Represents a player's hand in a round of mahjong.
+
+    :param deck: The deck for the current round of mahjong. The hand will
+                 draw tiles from this deck.
+    """
+
+    def __init__(
+        self, player_index: int, deck: Deck, discard_pool: DiscardPool
+    ) -> None:
+        self._player_index = player_index
         self._deck = deck
+        self._discard_pool = discard_pool
         self._tiles: list[TileId] = []
         self._calls: list[Call] = []
         self._flowers: list[TileId] = []
         self._waits: frozenset[TileValue] | None = None
-        self._is_riichi: bool = False
+        self._riichi_discard_index: int | None = None
 
     @property
     def tiles(self) -> Sequence[TileId]:
+        """
+        Return a sequence of :py:class:`TileId` s of the tiles in the player's
+        hand (does not include flowers or tiles in calls).
+        """
         return self._tiles
 
     @property
-    def call_tiles(self) -> list[TileId]:
-        return [tile for call in self._calls for tile in get_call_tiles(call)]
-
-    @property
     def tile_values(self) -> Sequence[TileValue]:
+        """
+        Return a sequence of :py:class:`TileValue` s of the tiles in the player's
+        hand (does not include flowers or tiles in calls).
+        """
         return get_tile_values(self._tiles)
 
     @property
+    def is_riichi(self) -> bool:
+        """
+        Return a bool indicating whether the hand has called riichi.
+        """
+        return self._riichi_discard_index is not None
+
+    @property
+    def riichi_discard_index(self) -> int | None:
+        """
+        Return the number of discards made before the hand called riichi,
+        or ``None`` if the hand has not called riichi.
+
+        :param player: The index of the player to check.
+        """
+        return self._riichi_discard_index
+
+    @property
     def calls(self) -> Sequence[Call]:
+        """
+        Return a sequence of the player's :py:class:`Call` s.
+        """
         return self._calls
 
     @property
-    def flowers(self) -> Sequence[TileId]:
-        return self._flowers
+    def call_tiles(self) -> list[TileId]:
+        """
+        Return a list of :py:class:`TileId` s of the tiles in the player's calls.
+        """
+        return [tile for call in self._calls for tile in get_call_tiles(call)]
 
     @property
-    def is_riichi(self) -> bool:
-        return self._is_riichi
+    def flowers(self) -> Sequence[TileId]:
+        """
+        Return a sequence of :py:class:`TileId` s of the player's flowers.
+        """
+        return self._flowers
 
     def sort(self) -> None:
+        "Sort the hand's tiles in ascending order of :py:class:`TileId` ."
         self._tiles.sort()
 
     def add_to_hand(self, tile_count: int) -> None:
+        """
+        Draw tiles from the deck and add them to the hand.
+
+        :param tile_count: The number of tiles to draw (must be >= 0).
+        """
         assert tile_count >= 0
         self._tiles.extend(self._deck.pop() for _ in range(tile_count))
         self._waits = None
 
     def draw(self) -> None:
+        "Draw a tile from the deck and add it to the hand."
         self._tiles.append(self._deck.pop())
         self._waits = None
 
     def _draw_from_back(self) -> None:
+        "Draw a tile from the back of the deck and add it to the hand."
         self._tiles.append(self._deck.popleft())
 
     def get_discards(self) -> list[Action]:
+        """
+        Return a list of :py:class:`Action` s of the hand's legal discard actions.
+
+        If the hand has riichi'd, then this is just the last drawn tile.
+        Otherwise, every tile can be discarded.
+        """
         if self.is_riichi:
             return [
                 HandTileAction(action_type=ActionType.DISCARD, tile=self._tiles[-1])
@@ -93,11 +149,24 @@ class Hand:
         ]
 
     def discard(self, tile: TileId) -> None:
+        """
+        Discard the tile with the specified :py:class:`TileId` .
+
+        :param tile: The :py:class:`TileId` of the tile to discard.
+        """
         self._tiles.remove(tile)
+        self._discard_pool.append(self._player_index, tile)
         self.sort()
         self._waits = None
 
     def get_riichis(self) -> list[Action]:
+        """
+        Return a list of :py:class:`Action` s of the hand's legal riichi actions.
+
+        If the hand has no open calls and has not riichi'd, then this will
+        consist of discards that put the hand into tenpai.
+        Otherwise, no riichi actions are allowed.
+        """
         if self.is_riichi or not all(
             call.call_type == CallType.CLOSED_KAN for call in self._calls
         ):
@@ -114,17 +183,31 @@ class Hand:
         ]
 
     def riichi(self, tile: TileId) -> None:
-        self._is_riichi = True
+        """
+        Call riichi, discarding the tile with the specified :py:class:`TileId` .
+
+        :param tile: The :py:class:`TileId` of the tile to discard.
+        """
         self._tiles.remove(tile)
+        self._riichi_discard_index = len(self._discard_pool.discards)
+        self._discard_pool.append(self._player_index, tile)
         self.sort()
         self._waits = None
 
-    def get_chiis(self, last_discard: TileId) -> list[Action]:
-        if self.is_riichi:
-            return []
+    def get_chiis(self) -> list[Action]:
+        """
+        Return a list of :py:class:`Action` s of the hand's legal chii actions.
 
-        discard_value = get_tile_value(last_discard)
+        :param last_discard: The :py:class:`TileId` of the last discarded tile.
+        """
         actions: list[Action] = []
+        if self.is_riichi:
+            return actions
+
+        last_discarded_tile = self._discard_pool.last_discarded_tile
+        if last_discarded_tile is None:
+            return actions
+        discard_value = get_tile_value(last_discarded_tile)
         if not is_number(discard_value):
             return actions
         # get lists of tiles with values discard_value-2, ..., discard_value+2
@@ -165,27 +248,43 @@ class Hand:
     def chii(
         self,
         called_player_index: int,
-        last_discard: TileId,
         other_tiles: tuple[TileId, TileId],
     ) -> None:
+        """
+        Form a chii :py:class:`OpenCall` with the last discarded tile
+        and add it to the hand's list of calls.
+
+        :param called_player_index: The index of the player who discarded the
+                                    last tile.
+        :param other_tiles: The tiles in the hand that are used to form a chii
+                            :py:class:`OpenCall` with the last discarded tile.
+        """
         self._tiles.remove(other_tiles[0])
         self._tiles.remove(other_tiles[1])
         self._calls.append(
             OpenCall(
                 call_type=CallType.CHI,
                 called_player_index=called_player_index,
-                called_tile=last_discard,
+                called_tile=self._discard_pool.pop(),
                 other_tiles=other_tiles,
             )
         )
         self._waits = None
 
-    def get_pons(self, last_discard: TileId) -> list[Action]:
-        if self.is_riichi:
-            return []
+    def get_pons(self) -> list[Action]:
+        """
+        Return a list of :py:class:`Action` s of the hand's legal pon actions.
 
-        discard_value = get_tile_value(last_discard)
+        :param last_discard: The :py:class:`TileId` of the last discarded tile.
+        """
         actions: list[Action] = []
+        if self.is_riichi:
+            return actions
+
+        last_discarded_tile = self._discard_pool.last_discarded_tile
+        if last_discarded_tile is None:
+            return actions
+        discard_value = get_tile_value(last_discarded_tile)
         same_tiles = [
             tile for tile in self._tiles if get_tile_value(tile) == discard_value
         ]
@@ -201,27 +300,43 @@ class Hand:
     def pon(
         self,
         called_player_index: int,
-        last_discard: TileId,
         other_tiles: tuple[TileId, TileId],
     ) -> None:
+        """
+        Form a pon :py:class:`OpenCall` with the last discarded tile
+        and add it to the hand's list of calls.
+
+        :param called_player_index: The index of the player who discarded the
+                                    last tile.
+        :param other_tiles: The tiles in the hand that are used to form a pon
+                            :py:class:`OpenCall` with the last discarded tile.
+        """
         self._tiles.remove(other_tiles[0])
         self._tiles.remove(other_tiles[1])
         self._calls.append(
             OpenCall(
                 call_type=CallType.PON,
                 called_player_index=called_player_index,
-                called_tile=last_discard,
+                called_tile=self._discard_pool.pop(),
                 other_tiles=other_tiles,
             )
         )
         self._waits = None
 
-    def get_open_kans(self, last_discard: TileId) -> list[Action]:
-        if self.is_riichi:
-            return []
+    def get_open_kans(self) -> list[Action]:
+        """
+        Return a list of :py:class:`Action` s of the hand's legal open kan actions.
 
-        discard_value = get_tile_value(last_discard)
+        :param last_discard: The :py:class:`TileId` of the last discarded tile.
+        """
         actions: list[Action] = []
+        if self.is_riichi:
+            return actions
+
+        last_discarded_tile = self._discard_pool.last_discarded_tile
+        if last_discarded_tile is None:
+            return actions
+        discard_value = get_tile_value(last_discarded_tile)
         same_tiles = [
             tile for tile in self._tiles if get_tile_value(tile) == discard_value
         ]
@@ -237,9 +352,18 @@ class Hand:
     def open_kan(
         self,
         called_player_index: int,
-        last_discard: TileId,
         other_tiles: tuple[TileId, TileId, TileId],
     ) -> None:
+        """
+        Form an :py:class:`OpenKanCall` with the last discarded tile
+        and add it to the hand's list of calls. Then draw a bonus tile
+        from the back of the deck.
+
+        :param called_player_index: The index of the player who discarded the
+                                    last tile.
+        :param other_tiles: The tiles in the hand that are used to form an
+                            :py:class:`OpenKanCall` with the last discarded tile.
+        """
         self._tiles.remove(other_tiles[0])
         self._tiles.remove(other_tiles[1])
         self._tiles.remove(other_tiles[2])
@@ -247,7 +371,7 @@ class Hand:
             OpenKanCall(
                 call_type=CallType.OPEN_KAN,
                 called_player_index=called_player_index,
-                called_tile=last_discard,
+                called_tile=self._discard_pool.pop(),
                 other_tiles=other_tiles,
             )
         )
@@ -256,6 +380,9 @@ class Hand:
         self._waits = None
 
     def get_add_kans(self) -> list[Action]:
+        """
+        Return a list of :py:class:`Action` s of the hand's legal added kan actions.
+        """
         pon_values = dict(
             (get_tile_value(call.called_tile), call)
             for call in self._calls
@@ -270,6 +397,16 @@ class Hand:
         return actions
 
     def add_kan(self, tile: TileId, pon_call: OpenCall) -> None:
+        """
+        Form an :py:class:`AddKanCall` with an existing pon :py:class:`OpenCall`
+        and a tile in the hand, and replace the pon :py:class:`OpenCall`
+        with this new :py:class:`AddKanCall` . Then draw a bonus tile
+        from the back of the deck.
+
+        :param tile: The :py:class:`TileId` of the tile to add to the
+                     pon :py:class:`OpenCall`.
+        :param pon_call: The existing pon :py:class:`OpenCall`.
+        """
         self._tiles.remove(tile)
         call_index = self._calls.index(pon_call)
         self._calls[call_index] = AddKanCall(
@@ -278,11 +415,15 @@ class Hand:
             added_tile=tile,
             other_tiles=pon_call.other_tiles,
         )
+        self._discard_pool.append(self._player_index, tile, is_added_kan=True)
         self.sort()
         self._draw_from_back()
         self._waits = None
 
     def get_closed_kans(self) -> list[Action]:
+        """
+        Return a list of :py:class:`Action` s of the hand's legal closed kan actions.
+        """
         tile_value_buckets = get_tile_value_buckets(self._tiles)
         if self.is_riichi:
             last_tile_value = get_tile_value(self._tiles[-1])
@@ -307,16 +448,27 @@ class Hand:
         return actions
 
     def closed_kan(self, tiles: tuple[TileId, TileId, TileId, TileId]) -> None:
+        """
+        Form a :py:class:`ClosedKanCall` using four tiles from the hand.
+        Then draw a bonus tile from the back of the deck.
+
+        :param tiles: A tuple of the :py:class:`TileId` s of the four tiles
+                      used to make the closed kan.
+        """
         self._tiles.remove(tiles[0])
         self._tiles.remove(tiles[1])
         self._tiles.remove(tiles[2])
         self._tiles.remove(tiles[3])
         self._calls.append(ClosedKanCall(tiles=tiles))
+        self._discard_pool.append(self._player_index, tiles[0], is_closed_kan=True)
         self.sort()
         self._draw_from_back()
         self._waits = None
 
     def get_flowers(self) -> list[Action]:
+        """
+        Return a list of :py:class:`Action` s of the hand's legal flower actions.
+        """
         return [
             HandTileAction(action_type=ActionType.FLOWER, tile=tile)
             for tile in self._tiles
@@ -324,6 +476,12 @@ class Hand:
         ]
 
     def flower(self, tile: TileId) -> None:
+        """
+        Move a flower from the hand's tiles to the hand's list of flowers.
+        Then draw a bonus tile from the back of the deck.
+
+        :param tile: The :py:class:`TileId` of the flower in the hand.
+        """
         self._tiles.remove(tile)
         self._flowers.append(tile)
         self.sort()
@@ -331,10 +489,20 @@ class Hand:
         self._waits = None
 
     def can_tsumo(self) -> bool:
+        """
+        Return a bool indicating whether the hand forms a winning shape.
+        """
         return is_winning(self._tiles)
 
     @property
     def waits(self) -> frozenset[TileValue]:
+        """
+        Return a frozenset of the :py:class:`TileValue` s that this hand
+        needs to form a winning shape.
+
+        This frozenset of the hand's waits is cached so that it is not
+        recalculated if the hand has not changed.
+        """
         if self._waits is None:
             self._waits = self._calculate_waits(self._tiles)
         return self._waits
@@ -350,3 +518,58 @@ class Hand:
         }
         waits = get_waits(get_tile_values(hand_tiles))
         return waits - unusable_tile_values
+
+    @property
+    def is_temporary_furiten(self) -> bool:
+        """
+        Whether any old discard since the player's last discard is
+        one of the hand's waits.
+        """
+        for discard in reversed(self._discard_pool.discards):
+            if discard.player == self._player_index:
+                if get_tile_value(discard.tile) in self.waits:
+                    return True
+                break
+            if discard.is_new:
+                continue
+            if discard.is_closed_kan:
+                continue
+            if get_tile_value(discard.tile) in self.waits:
+                return True
+        return False
+
+    @property
+    def is_riichi_furiten(self) -> bool:
+        """
+        Whether any old discard since the player's riichi discard is
+        one of the hand's waits.
+        If the player has not called riichi, this will be ``False``.
+        """
+        if self._riichi_discard_index is None:
+            return False
+        riichi_back_index = (
+            len(self._discard_pool.discards) - 1 - self._riichi_discard_index
+        )
+        for back_index, discard in enumerate(reversed(self._discard_pool.discards)):
+            if back_index == riichi_back_index:
+                if get_tile_value(discard.tile) in self.waits:
+                    return True
+                break
+            if discard.is_new:
+                continue
+            if discard.is_closed_kan:
+                continue
+            if get_tile_value(discard.tile) in self.waits:
+                return True
+        return False
+
+    @property
+    def is_own_discard_furiten(self) -> bool:
+        """
+        Whether any of the player's own discards is one of the hand's waits.
+        """
+        return any(
+            discard.player == self._player_index
+            and get_tile_value(discard.tile) in self.waits
+            for discard in reversed(self._discard_pool.discards)
+        )

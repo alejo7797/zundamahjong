@@ -96,8 +96,8 @@ const default_pattern_data = {
     han: 1,
     fu: 0,
   },
-  ALL_RUNS: {
-    display_name: "All Runs",
+  ALL_SEQUENCES: {
+    display_name: "All Sequences",
     han: 1,
     fu: 0,
   },
@@ -361,7 +361,7 @@ const default_pattern_data = {
     han: 0,
     fu: 2,
   },
-  PINFU: {
+  CLOSED_PINFU: {
     display_name: "Pinfu",
     han: 0,
     fu: 0,
@@ -392,6 +392,9 @@ export const default_4player_preset: GameOptions = {
   end_wall_count: 14,
   min_han: 0,
   allow_riichi: false,
+  use_temporary_furiten: true,
+  use_riichi_furiten: true,
+  use_own_discard_furiten: true,
   show_waits: true,
   show_shanten_info: false,
   start_score: 0,
@@ -417,6 +420,9 @@ export const default_3player_preset: GameOptions = {
   end_wall_count: 14,
   min_han: 0,
   allow_riichi: false,
+  use_temporary_furiten: true,
+  use_riichi_furiten: true,
+  use_own_discard_furiten: true,
   show_waits: true,
   show_shanten_info: false,
   start_score: 0,
@@ -529,8 +535,8 @@ const riichi_pattern_data = {
     han: 1,
     fu: 0,
   },
-  ALL_RUNS: {
-    display_name: "All Runs",
+  ALL_SEQUENCES: {
+    display_name: "All Sequences",
     han: 0,
     fu: 0,
   },
@@ -794,7 +800,7 @@ const riichi_pattern_data = {
     han: 0,
     fu: 2,
   },
-  PINFU: {
+  CLOSED_PINFU: {
     display_name: "Pinfu",
     han: 1,
     fu: 0,
@@ -825,6 +831,9 @@ export const riichi_4player_preset: GameOptions = {
   end_wall_count: 14,
   min_han: 1,
   allow_riichi: true,
+  use_temporary_furiten: true,
+  use_riichi_furiten: true,
+  use_own_discard_furiten: true,
   show_waits: true,
   start_score: 25000,
   score_dealer_ron_multiplier: 6,
@@ -856,6 +865,9 @@ export const riichi_3player_preset: GameOptions = {
   end_wall_count: 14,
   min_han: 1,
   allow_riichi: true,
+  use_temporary_furiten: true,
+  use_riichi_furiten: true,
+  use_own_discard_furiten: true,
   show_waits: true,
   start_score: 35000,
   score_dealer_ron_multiplier: 6,

@@ -162,7 +162,7 @@
 
                     src = ./client;
 
-                    npmDepsHash = "sha256-8E71Mjo7iIN8/J3H/l742s5ukOeEP/ZaFwLwwUzY7go=";
+                    npmDepsHash = "sha256-nAUdwnayf0CtYmXfKEfudBztMq7LLBUi3eFudHAO+Ak=";
                     npmPackFlags = [ "--ignore-scripts" ];
 
                     installPhase = ''

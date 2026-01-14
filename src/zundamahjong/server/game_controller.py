@@ -19,6 +19,11 @@ from .sio import sio
 
 
 class GameInfo(BaseModel):
+    """
+    Represents the information about a game of mahjong that is retained
+    across rounds.
+    """
+
     players: list[Player]
     wind_round: int
     sub_round: int
@@ -27,29 +32,47 @@ class GameInfo(BaseModel):
 
 
 class HistoryItem(BaseModel):
+    """
+    Represents an action taken and the player who performed it in a round of Mahjong.
+    """
+
     player_index: int
     action: Action
 
 
 class RoundInfo(BaseModel):
+    """
+    Represents the public information at a given moment in a round of mahjong.
+    """
+
     tiles_left: int
     current_player: int
     status: RoundStatus
-    hand_counts: list[int]
     discards: list[Discard]
+    history: list[HistoryItem]
+    hand_counts: list[int]
+    riichi_discard_indexes: list[int | None]
     calls: list[Sequence[Call]]
     flowers: list[Sequence[TileId]]
-    history: list[HistoryItem]
 
 
 class PlayerInfo(BaseModel):
+    """
+    Represents the information specific to a player during a round of mahjong.
+    """
+
     hand: list[TileId]
-    last_tile: TileId
     actions: list[Action]
     action_selected: bool
+    is_furiten: bool
 
 
 class AllInfo(BaseModel):
+    """
+    Represents all the info a player should have at a given moment in a round
+    of mahjong.
+    """
+
     player_count: int
     player_index: int
     is_game_end: bool
@@ -63,6 +86,13 @@ class AllInfo(BaseModel):
 
 @final
 class GameController:
+    """
+    Controls a game of mahjong and handles sending game information to players.
+
+    :param players: A list of the players who will play the game.
+    :param options: The game options to use for the game.
+    """
+
     def __init__(self, players: list[Player], options: GameOptions) -> None:
         self._players = sample(players, len(players))
         self._game = Game(options=options)
@@ -72,14 +102,29 @@ class GameController:
 
     @property
     def game(self) -> Game:
+        """The underlying :py:class:`Game` object."""
         return self._game
 
     def emit_info(self, player: Player) -> None:
+        """
+        Send game info to one of the players playing the game.
+
+        :param player: The player to send info to.
+        """
         with self._lock:
             index = self._get_player_index(player)
             sio.emit("info", self._info(index, []).model_dump(), to=player.id)
 
     def submit_action(self, player: Player, action: Action, history_index: int) -> None:
+        """
+        Submit a player's action to the game.
+
+        :param player: The player submitting the action.
+        :param action_data: The :py:class:`Action` the player is submitting.
+        :param history_index: The moment within the game when they are submitting
+                            the action, measured in terms of number of actions
+                            in the game's history.
+        """
         with self._lock:
             player_index = self._get_player_index(player)
             history_updates = self._game.submit_action(
@@ -89,6 +134,13 @@ class GameController:
                 self._emit_info_all_inner(history_updates)
 
     def start_next_round(self, player: Player) -> None:
+        """
+        Start the next round of the game.
+
+        :param player: The player starting the next round.
+                       This will raise an exception if this is not one
+                       of the players in the game.
+        """
         with self._lock:
             self._get_player_index(player)
             if not self._game.can_start_next_round:
@@ -112,6 +164,7 @@ class GameController:
         )
 
     def _round_info(self) -> RoundInfo:
+        discards = self._game.round.discards
         history = [
             HistoryItem(player_index=action[0], action=action[1])
             for action in self._game.round.history
@@ -120,7 +173,10 @@ class GameController:
             len(self._game.round.get_hand(player))
             for player in range(self._game.player_count)
         ]
-        discards = self._game.round.discards
+        riichi_discard_indexes = [
+            self._game.round.get_riichi_discard_index(player)
+            for player in range(self._game.player_count)
+        ]
         calls = [
             self._game.round.get_calls(player)
             for player in range(self._game.player_count)
@@ -133,11 +189,12 @@ class GameController:
             tiles_left=self._game.round.tiles_left,
             current_player=self._game.round.current_player,
             status=self._game.round.status,
-            hand_counts=hand_counts,
             discards=list(discards),
+            history=history,
+            hand_counts=hand_counts,
+            riichi_discard_indexes=riichi_discard_indexes,
             calls=calls,
             flowers=flowers,
-            history=history,
         )
 
     def _player_info(self, index: int) -> PlayerInfo:
@@ -146,13 +203,14 @@ class GameController:
             actions = []
         else:
             actions = self._game.round.allowed_actions[index].actions
+        is_furiten = self._game.round.is_furiten(index)
 
         action_selected = False
         return PlayerInfo(
             hand=hand,
-            last_tile=self._game.round.last_tile,
             actions=actions,
             action_selected=action_selected,
+            is_furiten=is_furiten,
         )
 
     def _info(self, index: int, history_updates: list[tuple[int, Action]]) -> AllInfo:

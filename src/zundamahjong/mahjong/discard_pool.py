@@ -7,21 +7,94 @@ from .tile import TileId
 
 
 class Discard(BaseModel):
+    """
+    Represents a discarded tile.
+
+    Also represents a tile added to a kan or used to form a closed kan,
+    since those tiles can be won off of.
+    """
+
     player: int
+    "The index of the player who discarded the tile."
     tile: TileId
-    is_riichi: bool
+    "The :py:class:`TileId` of the discarded tile."
+    is_new: bool
+    "Whether the tile has just been discarded."
+    is_called: bool
+    "Whether the discarded tile has been called."
+    is_added_kan: bool
+    "Whether the tile was part of an added kan."
+    is_closed_kan: bool
+    "Whether the tile was part of a closed kan."
 
 
 class DiscardPool:
+    "Represents the list of discarded tiles in a round of mahjong."
+
     def __init__(self) -> None:
         self._discards: deque[Discard] = deque()
 
     @property
     def discards(self) -> Sequence[Discard]:
+        "A sequence of :py:class:`Discard` s representing the discarded tiles."
         return self._discards
 
-    def append(self, player: int, tile: TileId, is_riichi: bool) -> None:
-        self._discards.append(Discard(player=player, tile=tile, is_riichi=is_riichi))
+    @property
+    def last_discarded_tile(self) -> TileId | None:
+        """
+        The :py:class:`TileId` of the last discarded tile, or ``None`` if the
+        last discarded tile has been called.
+        """
+        if len(self._discards) == 0:
+            return None
+        last_discard = self._discards[-1]
+        if last_discard.is_called:
+            return None
+        return last_discard.tile
 
-    def pop(self) -> Discard:
-        return self._discards.pop()
+    def append(
+        self,
+        player: int,
+        tile: TileId,
+        *,
+        is_added_kan: bool = False,
+        is_closed_kan: bool = False,
+    ) -> None:
+        """
+        Add a tile to the discard pool.
+
+        :param player: The index of the player who discarded the tile.
+        :param tile: The :py:class:`TileId` of the discarded tile.
+        :param is_riichi: Whether the player was in riichi when they discarded the tile.
+        :param is_kan: (Defaults to false) Whether the tile was actually part of a kan
+                       instead of being discarded.
+        """
+        self._discards.append(
+            Discard(
+                player=player,
+                tile=tile,
+                is_new=True,
+                is_called=False,
+                is_added_kan=is_added_kan,
+                is_closed_kan=is_closed_kan,
+            )
+        )
+
+    def unnew_last_discard(self) -> None:
+        """
+        Set the status of the last discard to not new.
+        """
+        if len(self._discards) == 0:
+            return
+        self._discards[-1].is_new = False
+
+    def pop(self) -> TileId:
+        """
+        Set the last discarded tile to the called state.
+
+        :return: The :py:class:`TileId` representing the last discarded tile.
+        """
+        last_discard = self._discards[-1]
+        last_discard.is_new = False
+        last_discard.is_called = True
+        return last_discard.tile
