@@ -1,0 +1,212 @@
+import type { ClientOptions } from "../../../types/client_options";
+import type { GameOptions } from "../../../types/game_options";
+
+type OptionsOfValueType<Options, Value> = {
+  [key in keyof Options as Options[key] extends Value ? key : never]: Value;
+};
+
+export type NumberInputProps<Options> = {
+  name: keyof OptionsOfValueType<Options, number>;
+  labelText: string;
+  type: "number";
+  min?: number;
+  max?: number;
+  step?: number;
+  readonly?: boolean;
+};
+
+export type CheckboxInputProps<Options> = {
+  name: keyof OptionsOfValueType<Options, boolean>;
+  labelText: string;
+  type: "checkbox";
+  disabled?: boolean;
+};
+
+export type InputExpanderProps<Options> = {
+  type: "collection";
+  name: string;
+  children: OptionsInputProps<Options>[];
+};
+
+export type OptionsInputProps<Options> =
+  | NumberInputProps<Options>
+  | CheckboxInputProps<Options>
+  | InputExpanderProps<Options>;
+
+export const clientInputPropsList: OptionsInputProps<ClientOptions>[] = [
+  {
+    name: "show_tile_numbers",
+    labelText: "Show tile numbers",
+    type: "checkbox",
+  },
+];
+
+export const inputPropsList: OptionsInputProps<GameOptions>[] = [
+  {
+    name: "player_count",
+    labelText: "Number of players",
+    type: "number",
+    readonly: true,
+  },
+  {
+    name: "game_length_wind_rounds",
+    labelText: "Number of wind rounds",
+    type: "number",
+    min: 0,
+    max: 4,
+  },
+  {
+    name: "game_length_sub_rounds",
+    labelText: "Number of sub rounds",
+    type: "number",
+    min: 0,
+    max: 3,
+  },
+  {
+    type: "collection",
+    name: "Rules options",
+    children: [
+      {
+        name: "use_flowers",
+        labelText: "Use flowers",
+        type: "checkbox",
+      },
+      {
+        name: "end_wall_count",
+        labelText: "Number of tiles in dead wall",
+        type: "number",
+        min: 0,
+      },
+      {
+        name: "min_han",
+        labelText: "Minimum han to win",
+        type: "number",
+        min: 0,
+      },
+      {
+        name: "allow_riichi",
+        labelText: "Allow riichi",
+        type: "checkbox",
+      },
+      {
+        name: "allow_rob_added_kan",
+        labelText: "Allow robbing an added kan",
+        type: "checkbox",
+      },
+      {
+        name: "allow_thirteen_orphans_rob_closed_kan",
+        labelText: "Allow robbing a closed kan to form thirteen orphans",
+        type: "checkbox",
+      },
+      {
+        name: "allow_rob_closed_kan",
+        labelText: "Allow robbing a closed kan",
+        type: "checkbox",
+      },
+      {
+        name: "use_temporary_furiten",
+        labelText: "Use temporary furiten",
+        type: "checkbox",
+      },
+      {
+        name: "use_riichi_furiten",
+        labelText: "Use riichi furiten",
+        type: "checkbox",
+      },
+      {
+        name: "use_own_discard_furiten",
+        labelText: "Use own-discard furiten",
+        type: "checkbox",
+      },
+    ],
+  },
+  {
+    type: "collection",
+    name: "Quality-of-life options",
+    children: [
+      {
+        name: "auto_replace_flowers",
+        labelText: "Automatically replace flowers",
+        type: "checkbox",
+      },
+      {
+        name: "show_waits",
+        labelText: "Show waits",
+        type: "checkbox",
+      },
+      {
+        name: "show_shanten_info",
+        labelText: "Show shanten info",
+        type: "checkbox",
+      },
+    ],
+  },
+  {
+    type: "collection",
+    name: "Base Scores",
+    children: [
+      {
+        name: "start_score",
+        labelText: "Starting score",
+        type: "number",
+      },
+      {
+        name: "score_dealer_ron_multiplier",
+        labelText: "Dealer ron base score",
+        type: "number",
+        step: 0.5,
+      },
+      {
+        name: "score_dealer_tsumo_multiplier",
+        labelText: "Dealer tsumo base score",
+        type: "number",
+        step: 0.5,
+      },
+      {
+        name: "score_nondealer_ron_multiplier",
+        labelText: "Nondealer ron base score",
+        type: "number",
+        step: 0.5,
+      },
+      {
+        name: "score_nondealer_tsumo_nondealer_multiplier",
+        labelText: "Nondealer-nondealer tsumo base score",
+        type: "number",
+        step: 0.5,
+      },
+      {
+        name: "score_nondealer_tsumo_dealer_multiplier",
+        labelText: "Nondealer-dealer tsumo base score",
+        type: "number",
+        step: 0.5,
+      },
+    ],
+  },
+  {
+    type: "collection",
+    name: "Fu options",
+    children: [
+      {
+        name: "calculate_fu",
+        labelText: "Calculate fu",
+        type: "checkbox",
+      },
+      {
+        name: "base_fu",
+        labelText: "Base fu",
+        type: "number",
+        step: 1,
+      },
+      {
+        name: "round_up_fu",
+        labelText: "Round up fu",
+        type: "checkbox",
+      },
+      {
+        name: "round_up_points",
+        labelText: "Round up points",
+        type: "checkbox",
+      },
+    ],
+  },
+] as const;
