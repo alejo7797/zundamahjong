@@ -26,11 +26,12 @@ import {
   ShantenDisplay,
   ShantenDisplayButton,
 } from "../shanten_display/shanten_display";
-import { type TileId } from "../../../types/tile";
+import { getTileValue, type TileId } from "../../../types/tile";
 import { VoiceCollection } from "../../audio_collection/audio_collection";
 import { CutinCollection } from "../cutin/cutin";
 import { OptionsBar } from "../options_bar/options_bar";
 import { OptionsContext } from "../../options_context/options_context";
+import { TileHighlightContext } from "../tile_highlight_context/tile_highlight_context";
 
 export function GameScreen({
   playerAvatarIds,
@@ -147,59 +148,65 @@ export function GameScreen({
     hoverTile &&
     info.player_info.discard_shanten_info[hoverTile];
 
+  const tileHighlight = {
+    hoverTileValue: hoverTile ? getTileValue(hoverTile) : 0,
+  };
+
   return (
     <EmitAction.Provider value={emit_action}>
-      <div
-        class={`screen game_screen me_player_${info.player_index} status_${info.round_info.status} show_tile_names_${options.client_options.show_tile_numbers ? "true" : "false"}`}
-      >
-        {voiceCollections}
-        <CutinCollection
-          historyUpdates={info.history_updates}
-          avatarIds={avatarIds}
-        />
-        <PlayerIcons
-          players={info.game_info.players}
-          playerAvatarIds={playerAvatarIds}
-        />
-        <Hand
-          handActionType={handActionType}
-          tiles={info.player_info.hand}
-          didDrawTile={didDrawTile(info)}
-          actions={info.player_info.actions}
-          actionSubmitted={actionSubmitted}
-          isFuriten={info.player_info.is_furiten}
-          setHoverTile={setHoverTile}
-        />
-        {actionSubmitted ? (
-          <></>
-        ) : (
-          <ActionMenu
-            actions={info.player_info.actions}
+      <TileHighlightContext value={tileHighlight}>
+        <div
+          class={`screen game_screen me_player_${info.player_index} status_${info.round_info.status} show_tile_names_${options.client_options.show_tile_numbers ? "true" : "false"}`}
+        >
+          {voiceCollections}
+          <CutinCollection
+            historyUpdates={info.history_updates}
+            avatarIds={avatarIds}
+          />
+          <PlayerIcons
+            players={info.game_info.players}
+            playerAvatarIds={playerAvatarIds}
+          />
+          <Hand
             handActionType={handActionType}
-            setHandActionType={setHandActionType}
+            tiles={info.player_info.hand}
+            didDrawTile={didDrawTile(info)}
+            actions={info.player_info.actions}
+            actionSubmitted={actionSubmitted}
+            isFuriten={info.player_info.is_furiten}
+            setHoverTile={setHoverTile}
           />
-        )}
-        {info.player_info.shanten_info ? (
-          <ShantenDisplayButton
-            shantenInfo={info.player_info.shanten_info}
-            remainingTileCounts={info.player_info.remaining_tile_counts}
-          />
-        ) : (
-          <></>
-        )}
-        {discard_shanten_info ? (
-          <ShantenDisplay
-            shantenInfo={discard_shanten_info}
-            remainingTileCounts={info.player_info.remaining_tile_counts}
-            visible
-          />
-        ) : (
-          <></>
-        )}
-        <Table info={info} />
-        {winOverlay}
-        <OptionsBar />
-      </div>
+          {actionSubmitted ? (
+            <></>
+          ) : (
+            <ActionMenu
+              actions={info.player_info.actions}
+              handActionType={handActionType}
+              setHandActionType={setHandActionType}
+            />
+          )}
+          {info.player_info.shanten_info ? (
+            <ShantenDisplayButton
+              shantenInfo={info.player_info.shanten_info}
+              remainingTileCounts={info.player_info.remaining_tile_counts}
+            />
+          ) : (
+            <></>
+          )}
+          {discard_shanten_info ? (
+            <ShantenDisplay
+              shantenInfo={discard_shanten_info}
+              remainingTileCounts={info.player_info.remaining_tile_counts}
+              visible
+            />
+          ) : (
+            <></>
+          )}
+          <Table info={info} />
+          {winOverlay}
+          <OptionsBar />
+        </div>
+      </TileHighlightContext>
     </EmitAction.Provider>
   );
 }

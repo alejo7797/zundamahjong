@@ -1,8 +1,10 @@
-import type { TileId } from "../../../types/tile";
+import { useContext } from "preact/hooks";
+import { getTileValue, type TileId } from "../../../types/tile";
 
 import { TileImage } from "../tile_image/tile_image";
 
 import "./tile_3d.css";
+import { TileHighlightContext } from "../tile_highlight_context/tile_highlight_context";
 
 export function Tile3D({
   tile,
@@ -19,13 +21,18 @@ export function Tile3D({
   is_closed_kan?: boolean;
   isFirstRiichi?: boolean;
 }) {
+  const tileHighlight = useContext(TileHighlightContext);
   return (
     <div
       class={`tile_3d tile_id_${tile} ${is_new ? "is_new " : ""}${
         is_called ? "is_called " : ""
       }${is_added_kan ? "is_added_kan " : ""}${
         is_closed_kan ? "is_closed_kan " : ""
-      }${isFirstRiichi ? "is_first_riichi " : ""}`}
+      }${isFirstRiichi ? "is_first_riichi " : ""}${
+        tile && getTileValue(tile) == tileHighlight.hoverTileValue
+          ? "is_hover_highlight "
+          : ""
+      }`}
     >
       <div class={`tile_3d_extra_transform`}>
         <span class="tile_face tile_back" />

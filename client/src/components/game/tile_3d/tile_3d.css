@@ -38,6 +38,10 @@
     }
   }
 
+  &.is_hover_highlight {
+    --tile-front-color: rgb(197, 197, 197);
+  }
+
   .tile_3d_extra_transform {
     width: var(--tile-width);
     height: var(--tile-height);
