@@ -1,4 +1,3 @@
-from collections.abc import Sequence
 from random import sample
 from threading import Lock
 from typing import final
@@ -6,80 +5,12 @@ from typing import final
 from pydantic import BaseModel
 
 from ..mahjong.action import Action
-from ..mahjong.call import Call
-from ..mahjong.discard_pool import Discard
 from ..mahjong.game import Game
 from ..mahjong.game_options import GameOptions
-from ..mahjong.round import RoundStatus
-from ..mahjong.scoring import Scoring
-from ..mahjong.tile import TileId
-from ..mahjong.win import Win
+from ..mahjong.info import AllGameInfo, HistoryItem
 from ..types.player import Player
 from .sio import sio
 
-
-class GameInfo(BaseModel):
-    """
-    Represents the information about a game of mahjong that is retained
-    across rounds.
-    """
-
-    wind_round: int
-    sub_round: int
-    draw_count: int
-    player_scores: tuple[float, ...]
-
-
-class HistoryItem(BaseModel):
-    """
-    Represents an action taken and the player who performed it in a round of Mahjong.
-    """
-
-    player_index: int
-    action: Action
-
-
-class RoundInfo(BaseModel):
-    """
-    Represents the public information at a given moment in a round of mahjong.
-    """
-
-    tiles_left: int
-    current_player: int
-    status: RoundStatus
-    discards: list[Discard]
-    history: list[HistoryItem]
-    hand_counts: list[int]
-    riichi_discard_indexes: list[int | None]
-    calls: list[Sequence[Call]]
-    flowers: list[Sequence[TileId]]
-
-
-class PlayerInfo(BaseModel):
-    """
-    Represents the information specific to a player during a round of mahjong.
-    """
-
-    hand: list[TileId]
-    actions: list[Action]
-    action_selected: bool
-    is_furiten: bool
-
-
-class AllGameInfo(BaseModel):
-    """
-    Represents all the game-related info a player should have at a given moment
-    in a round of mahjong.
-    """
-
-    player_count: int
-    player_index: int
-    is_game_end: bool
-    game_info: GameInfo
-    round_info: RoundInfo
-    player_info: PlayerInfo
-    win_info: Win | None
-    scoring_info: Scoring | None
 
 class AllInfo(BaseModel):
     """
@@ -161,79 +92,9 @@ class GameController:
         except ValueError:
             raise Exception(f"Player {player.id} not found in this game!")
 
-    def _game_info(self) -> GameInfo:
-        return GameInfo(
-            wind_round=self._game.wind_round,
-            sub_round=self._game.sub_round,
-            draw_count=self._game.draw_count,
-            player_scores=self._game.player_scores,
-        )
-
-    def _round_info(self) -> RoundInfo:
-        discards = self._game.round.discards
-        history = [
-            HistoryItem(player_index=action[0], action=action[1])
-            for action in self._game.round.history
-        ]
-        hand_counts = [
-            len(self._game.round.get_hand(player))
-            for player in range(self._game.player_count)
-        ]
-        riichi_discard_indexes = [
-            self._game.round.get_riichi_discard_index(player)
-            for player in range(self._game.player_count)
-        ]
-        calls = [
-            self._game.round.get_calls(player)
-            for player in range(self._game.player_count)
-        ]
-        flowers = [
-            self._game.round.get_flowers(player)
-            for player in range(self._game.player_count)
-        ]
-        return RoundInfo(
-            tiles_left=self._game.round.tiles_left,
-            current_player=self._game.round.current_player,
-            status=self._game.round.status,
-            discards=list(discards),
-            history=history,
-            hand_counts=hand_counts,
-            riichi_discard_indexes=riichi_discard_indexes,
-            calls=calls,
-            flowers=flowers,
-        )
-
-    def _player_info(self, index: int) -> PlayerInfo:
-        hand = list(self._game.round.get_hand(index))
-        if self._game.round.status == RoundStatus.END:
-            actions = []
-        else:
-            actions = self._game.round.allowed_actions[index].actions
-        is_furiten = self._game.round.is_furiten(index)
-
-        action_selected = False
-        return PlayerInfo(
-            hand=hand,
-            actions=actions,
-            action_selected=action_selected,
-            is_furiten=is_furiten,
-        )
-
-    def _all_game_info(self, index: int) -> AllGameInfo:
-        return AllGameInfo(
-            player_count=self._game.player_count,
-            player_index=index,
-            is_game_end=self._game.is_game_end,
-            game_info=self._game_info(),
-            round_info=self._round_info(),
-            player_info=self._player_info(index),
-            win_info=self._game.win if self._game.win else None,
-            scoring_info=(self._game.scoring if self._game.scoring else None),
-        )
-
     def _info(self, index: int, history_updates: list[tuple[int, Action]]) -> AllInfo:
         return AllInfo(
-            all_game_info=self._all_game_info(index),
+            all_game_info=self._game.info(index),
             players=self._players,
             history_updates=[
                 HistoryItem(player_index=history_item[0], action=history_item[1])
