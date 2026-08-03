@@ -24,7 +24,6 @@ class GameInfo(BaseModel):
     across rounds.
     """
 
-    players: list[Player]
     wind_round: int
     sub_round: int
     draw_count: int
@@ -67,10 +66,10 @@ class PlayerInfo(BaseModel):
     is_furiten: bool
 
 
-class AllInfo(BaseModel):
+class AllGameInfo(BaseModel):
     """
-    Represents all the info a player should have at a given moment in a round
-    of mahjong.
+    Represents all the game-related info a player should have at a given moment
+    in a round of mahjong.
     """
 
     player_count: int
@@ -82,6 +81,14 @@ class AllInfo(BaseModel):
     player_info: PlayerInfo
     win_info: Win | None
     scoring_info: Scoring | None
+
+class AllInfo(BaseModel):
+    """
+    Represents all the info a player should have, including avatars of players.
+    """
+
+    all_game_info: AllGameInfo
+    players: list[Player]
 
 
 @final
@@ -156,7 +163,6 @@ class GameController:
 
     def _game_info(self) -> GameInfo:
         return GameInfo(
-            players=self._players,
             wind_round=self._game.wind_round,
             sub_round=self._game.sub_round,
             draw_count=self._game.draw_count,
@@ -213,8 +219,8 @@ class GameController:
             is_furiten=is_furiten,
         )
 
-    def _info(self, index: int, history_updates: list[tuple[int, Action]]) -> AllInfo:
-        return AllInfo(
+    def _all_game_info(self, index: int, history_updates: list[tuple[int, Action]]) -> AllGameInfo:
+        return AllGameInfo(
             player_count=self._game.player_count,
             player_index=index,
             is_game_end=self._game.is_game_end,
@@ -227,6 +233,12 @@ class GameController:
             player_info=self._player_info(index),
             win_info=self._game.win if self._game.win else None,
             scoring_info=(self._game.scoring if self._game.scoring else None),
+        )
+
+    def _info(self, index: int, history_updates: list[tuple[int, Action]]) -> AllInfo:
+        return AllInfo(
+            all_game_info=self._all_game_info(index, history_updates),
+            players=self._players,
         )
 
     def _emit_info_all_inner(self, history_updates: list[tuple[int, Action]]) -> None:

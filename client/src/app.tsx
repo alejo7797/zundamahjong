@@ -4,8 +4,8 @@ import { io, Socket } from "socket.io-client";
 import type { ServerMessage, Severity } from "./types/server_message";
 import type { Player } from "./types/player";
 import type { DetailedRoom, BasicRoom } from "./types/room";
-import { RoundStatus, type AllServerInfo } from "./types/game";
-import { processInfo, type AllInfo } from "./process_info";
+import { RoundStatus, type AllServerInfo, type EnhancedInfo } from "./types/game";
+import { processInfo } from "./process_info";
 import type { EmitFunc } from "./types/emit_func";
 
 import { Emitter } from "./components/emitter/emitter";
@@ -41,7 +41,7 @@ export function App() {
   const [rooms, setRooms] = useState<BasicRoom[]>([]);
   const [myRoom, setMyRoom] = useState<DetailedRoom>();
 
-  const [info, setInfo] = useState<AllInfo>();
+  const [info, setInfo] = useState<EnhancedInfo>();
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [actionSubmitted, setActionSubmitted] = useState<boolean>(false);
   const [seeResults, setSeeResults] = useState<boolean>(false);
@@ -81,12 +81,15 @@ export function App() {
     });
     socket.current.on("info", (info: AllServerInfo | undefined) => {
       if (info) {
-        setInfo(processInfo(info));
+        setInfo({
+          all_game_info: processInfo(info.all_game_info),
+          players: info.players,
+        });
       } else {
         setInfo(undefined);
       }
       setActionSubmitted(false);
-      if (info && info.round_info.status != RoundStatus.END) {
+      if (info && info.all_game_info.round_info.status != RoundStatus.END) {
         setSeeResults(false);
       }
     });
@@ -131,7 +134,7 @@ function getScreen(
   myPlayer: Player | undefined,
   rooms: BasicRoom[],
   myRoom: DetailedRoom | undefined,
-  info: AllInfo | undefined,
+  info: EnhancedInfo | undefined,
   actionSubmitted: boolean,
   setActionSubmitted: (value: boolean) => void,
   seeResults: boolean,
@@ -189,7 +192,8 @@ function getScreen(
     <OptionsContext.Provider value={options}>
       <GameScreen
         playerAvatarIds={myRoom.avatars}
-        info={info}
+        players={info.players}
+        info={info.all_game_info}
         actionSubmitted={actionSubmitted}
         setActionSubmitted={() => setActionSubmitted(true)}
         seeResults={seeResults}

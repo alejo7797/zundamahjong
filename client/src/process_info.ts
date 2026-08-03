@@ -1,19 +1,9 @@
 import { calculate_shanten } from "./shanten";
 import { getCallTiles } from "./types/call";
-import type { AllServerInfo } from "./types/game";
+import type { AllGameInfo, EnhancedGameInfo } from "./types/game";
 import { tileValueTop, type TileId, type TileValue } from "./types/tile";
 
-export type AllInfo = AllServerInfo & {
-  player_info: {
-    shanten_info?: [number, Set<TileValue>];
-    discard_shanten_info?: {
-      [tile in TileId]?: [number, Set<TileValue>];
-    };
-    remaining_tile_counts: number[];
-  };
-};
-
-export function processInfo(info: AllServerInfo): AllInfo {
+export function processInfo(info: AllGameInfo): EnhancedGameInfo {
   let shantenInfo: [number, Set<TileValue>] | undefined;
   let discardShantenInfo:
     | {
