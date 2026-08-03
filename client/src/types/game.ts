@@ -77,7 +77,6 @@ export type AllGameInfo = {
   is_game_end: boolean;
   game_info: GameInfo;
   round_info: RoundInfo;
-  history_updates: HistoryItem[];
   player_info: PlayerInfo;
   win_info: Win | null;
   scoring_info: Scoring | null;
@@ -96,6 +95,7 @@ export type EnhancedGameInfo = AllGameInfo & {
 export type AllServerInfo = {
   all_game_info: AllGameInfo;
   players: Player[];
+  history_updates: HistoryItem[];
 }
 
 export type EnhancedInfo = AllServerInfo & {

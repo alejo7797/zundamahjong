@@ -8,6 +8,7 @@ import {
 } from "../../../types/action";
 import {
   RoundStatus,
+  type HistoryItem,
   type EnhancedGameInfo,
 } from "../../../types/game";
 import { type Player } from "../../../types/player";
@@ -40,6 +41,7 @@ export function GameScreen({
   playerAvatarIds,
   players,
   info,
+  historyUpdates,
   actionSubmitted,
   setActionSubmitted,
   seeResults,
@@ -48,6 +50,7 @@ export function GameScreen({
   playerAvatarIds: AvatarIdDict;
   players: Player[];
   info: EnhancedGameInfo;
+  historyUpdates: HistoryItem[];
   actionSubmitted: boolean;
   setActionSubmitted: () => void;
   seeResults: boolean;
@@ -84,8 +87,8 @@ export function GameScreen({
     const avatarIds = players.map(
       (player) => playerAvatarIds[player.id],
     );
-    setAnimations(info.history_updates, avatarIds);
-  }, [players, info, playerAvatarIds]);
+    setAnimations(historyUpdates, avatarIds);
+  }, [players, historyUpdates, playerAvatarIds]);
 
   const avatarIds = players.map(
     (player) => playerAvatarIds[player.id],
@@ -165,7 +168,7 @@ export function GameScreen({
         >
           {voiceCollections}
           <CutinCollection
-            historyUpdates={info.history_updates}
+            historyUpdates={historyUpdates}
             avatarIds={avatarIds}
           />
           <PlayerIcons

@@ -77,7 +77,6 @@ class AllGameInfo(BaseModel):
     is_game_end: bool
     game_info: GameInfo
     round_info: RoundInfo
-    history_updates: list[HistoryItem]
     player_info: PlayerInfo
     win_info: Win | None
     scoring_info: Scoring | None
@@ -88,6 +87,7 @@ class AllInfo(BaseModel):
     """
 
     all_game_info: AllGameInfo
+    history_updates: list[HistoryItem]
     players: list[Player]
 
 
@@ -219,17 +219,13 @@ class GameController:
             is_furiten=is_furiten,
         )
 
-    def _all_game_info(self, index: int, history_updates: list[tuple[int, Action]]) -> AllGameInfo:
+    def _all_game_info(self, index: int) -> AllGameInfo:
         return AllGameInfo(
             player_count=self._game.player_count,
             player_index=index,
             is_game_end=self._game.is_game_end,
             game_info=self._game_info(),
             round_info=self._round_info(),
-            history_updates=[
-                HistoryItem(player_index=history_item[0], action=history_item[1])
-                for history_item in history_updates
-            ],
             player_info=self._player_info(index),
             win_info=self._game.win if self._game.win else None,
             scoring_info=(self._game.scoring if self._game.scoring else None),
@@ -237,8 +233,12 @@ class GameController:
 
     def _info(self, index: int, history_updates: list[tuple[int, Action]]) -> AllInfo:
         return AllInfo(
-            all_game_info=self._all_game_info(index, history_updates),
+            all_game_info=self._all_game_info(index),
             players=self._players,
+            history_updates=[
+                HistoryItem(player_index=history_item[0], action=history_item[1])
+                for history_item in history_updates
+            ],
         )
 
     def _emit_info_all_inner(self, history_updates: list[tuple[int, Action]]) -> None:

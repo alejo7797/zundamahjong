@@ -82,8 +82,8 @@ export function App() {
     socket.current.on("info", (info: AllServerInfo | undefined) => {
       if (info) {
         setInfo({
+          ...info,
           all_game_info: processInfo(info.all_game_info),
-          players: info.players,
         });
       } else {
         setInfo(undefined);
@@ -194,6 +194,7 @@ function getScreen(
         playerAvatarIds={myRoom.avatars}
         players={info.players}
         info={info.all_game_info}
+        historyUpdates={info.history_updates}
         actionSubmitted={actionSubmitted}
         setActionSubmitted={() => setActionSubmitted(true)}
         seeResults={seeResults}
