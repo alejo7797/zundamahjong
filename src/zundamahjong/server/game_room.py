@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 rooms: dict[str, GameRoom] = {}
-player_rooms: dict[str, GameRoom] = {}
+user_player_rooms: dict[str, GameRoom] = {}
 rooms_lock = Lock()
 
 
@@ -140,7 +140,7 @@ class GameRoom:
         :param player: The player to find the game room of.
         """
         with rooms_lock:
-            return player_rooms.get(player.id)
+            return user_player_rooms.get(player.id)
 
     @classmethod
     def create_room(
@@ -154,12 +154,12 @@ class GameRoom:
         :param player_count: The number of players the room should hold.
         """
         with rooms_lock:
-            if creator.id in player_rooms:
+            if creator.id in user_player_rooms:
                 raise Exception(f"Player {creator.id} is already in a room!")
             if room_name in rooms:
                 raise Exception(f"Room {room_name} name already exists!")
             game_room = cls(creator, room_name, player_count)
-            player_rooms[creator.id] = game_room
+            user_player_rooms[creator.id] = game_room
             rooms[room_name] = game_room
         logger.info(f"Player {creator.id} has created room {room_name}")
         game_room.broadcast_room_info()
@@ -176,7 +176,7 @@ class GameRoom:
         :param room_name: The name of the game room to add the player to.
         """
         with rooms_lock:
-            if player.id in player_rooms:
+            if player.id in user_player_rooms:
                 raise Exception(f"Player {player.id} is already in a room!")
             game_room = rooms.get(room_name)
             if not game_room:
@@ -192,7 +192,7 @@ class GameRoom:
                     PlayerConnection(player=player)
                 )
                 game_room.avatars[player.id] = get_avatar(player)
-            player_rooms[player.id] = game_room
+            user_player_rooms[player.id] = game_room
         # broadcast new player to room
         game_room.broadcast_room_info()
         return game_room
@@ -206,7 +206,7 @@ class GameRoom:
         """
         with rooms_lock:
             try:
-                game_room = player_rooms[player.id]
+                game_room = user_player_rooms[player.id]
             except KeyError:
                 raise Exception("Player is not in a room!")
             if game_room.game_controller:
@@ -238,7 +238,7 @@ class GameRoom:
                 save_avatar(player, self.avatars[player.id])
             self.avatars.pop(player.id)
         if isinstance(player, UserPlayer):
-            player_rooms.pop(player.id)
+            user_player_rooms.pop(player.id)
         if all(isinstance(player, BotPlayer) for player in self.joined_players):
             logger.info(f"Room {self.room_name} is now empty, removing from rooms dict")
             rooms.pop(self.room_name)
@@ -252,7 +252,7 @@ class GameRoom:
         """
         with rooms_lock:
             try:
-                game_room = player_rooms[player.id]
+                game_room = user_player_rooms[player.id]
             except KeyError:
                 raise Exception("Player is not in a room!")
             if game_room.game_controller:
@@ -274,7 +274,7 @@ class GameRoom:
         """
         with rooms_lock:
             try:
-                game_room = player_rooms[player.id]
+                game_room = user_player_rooms[player.id]
             except KeyError:
                 raise Exception("Player is not in a room!")
             if game_room.game_controller:
@@ -322,7 +322,7 @@ class GameRoom:
         :param player: The player to set as disconnected.
         """
         with rooms_lock:
-            game_room = player_rooms.get(player.id)
+            game_room = user_player_rooms.get(player.id)
             if game_room is None:
                 return
             player_connection = game_room.get_player_connection(player.id)
@@ -340,7 +340,7 @@ class GameRoom:
                         f"Room {game_room.room_name} has no connections, closing room"
                     )
                     for joined_player in game_room.joined_players:
-                        player_rooms.pop(joined_player.id)
+                        user_player_rooms.pop(joined_player.id)
                     with game_room.avatar_lock:
                         game_room.joined_player_connections.clear()
                         game_room.avatars.clear()
@@ -357,7 +357,7 @@ class GameRoom:
         :param player: The player to reconnect.
         """
         with rooms_lock:
-            game_room = player_rooms.get(player.id)
+            game_room = user_player_rooms.get(player.id)
             if game_room is not None:
                 game_room.get_player_connection(player.id).is_connected = True
         sio.emit(
