@@ -121,7 +121,7 @@ def on_join_room(sid: str, room_name: object) -> None:
 
 
 @sio_on("add_bot")
-def add_bot(sid: str) -> None:
+def on_add_bot(sid: str) -> None:
     """
     Add a bot to the game room the player is currently in.
 

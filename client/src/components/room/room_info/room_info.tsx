@@ -15,6 +15,7 @@ export function RoomInfo({ room }: { room: BasicRoom }) {
     emit("leave_room");
     emit("get_rooms");
   };
+  const canAddBot = (room.joined_players.length < room.player_count);
   const addBot = (e: MouseEvent) => {
     e.preventDefault();
     emit("add_bot");
@@ -25,7 +26,7 @@ export function RoomInfo({ room }: { room: BasicRoom }) {
       <button type="button" id="leave_room" onClick={leaveRoom}>
         Leave room
       </button>
-      <button type="button" id="add_bot" onClick={addBot}>
+      <button type="button" id="add_bot" disabled={!canAddBot} onClick={addBot}>
         Add bot
       </button>
     </>
