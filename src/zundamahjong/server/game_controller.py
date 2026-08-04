@@ -1,11 +1,11 @@
 from random import sample
 from threading import Lock
-from time import sleep
 from typing import final
 
 from pydantic import BaseModel
 
 from ..mahjong.action import Action
+from ..mahjong.bot import calculate_bot_action
 from ..mahjong.game import Game
 from ..mahjong.game_options import GameOptions
 from ..mahjong.info import AllGameInfo, HistoryItem
@@ -124,10 +124,8 @@ class GameController:
                 player_index += 1
                 continue
 
-            # stupid bot, always performs first possible action
-            if len(info.player_info.actions) > 1:
-                sleep(0.5)
-            action = info.player_info.actions[0]
+            # calculate bot action, this could take a while
+            action = calculate_bot_action(info)
 
             history_updates = self.submit_action(
                 player, action, history_index, is_user=False
