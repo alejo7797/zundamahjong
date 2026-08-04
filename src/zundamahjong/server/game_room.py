@@ -237,7 +237,8 @@ class GameRoom:
             if isinstance(player, UserPlayer):
                 save_avatar(player, self.avatars[player.id])
             self.avatars.pop(player.id)
-        player_rooms.pop(player.id)
+        if isinstance(player, UserPlayer):
+            player_rooms.pop(player.id)
         if all(isinstance(player, BotPlayer) for player in self.joined_players):
             logger.info(f"Room {self.room_name} is now empty, removing from rooms dict")
             rooms.pop(self.room_name)
@@ -256,9 +257,31 @@ class GameRoom:
                 raise Exception("Player is not in a room!")
             if game_room.game_controller:
                 raise Exception("Game already in progress!")
-            player_connection = game_room.get_player_connection(player)
+            player_connection = game_room.get_player_connection(player.id)
             game_room._remove_player(player_connection)
         sio.emit("room_info", None, to=player.id)
+        game_room.broadcast_room_info()
+        return game_room
+
+    @classmethod
+    def kick_from_room(cls, player: Player, kick_player_id: str) -> GameRoom:
+        """
+        Kick the player with a specified id from a game room.
+        The player doing the kicking should be in the same game room.
+
+        :param player: The player kicking someone from a room.
+        :param kick_player_id: The id of the player to be kicked.
+        """
+        with rooms_lock:
+            try:
+                game_room = player_rooms[player.id]
+            except KeyError:
+                raise Exception("Player is not in a room!")
+            if game_room.game_controller:
+                raise Exception("Game already in progress!")
+            player_connection = game_room.get_player_connection(kick_player_id)
+            game_room._remove_player(player_connection)
+        sio.emit("room_info", None, to=kick_player_id)
         game_room.broadcast_room_info()
         return game_room
 
@@ -277,17 +300,17 @@ class GameRoom:
         for player in self.joined_players:
             sio.emit("info", None, to=player.id)
 
-    def get_player_connection(self, player: Player) -> PlayerConnection:
+    def get_player_connection(self, player_id: str) -> PlayerConnection:
         """
         Get the :py:class:`PlayerConnection` object associated to a player
         in the game room.
 
-        :param player: The player to look up.
+        :param player_id: The player id to look up.
         """
         return next(
             player_connection
             for player_connection in self.joined_player_connections
-            if player_connection.player == player
+            if player_connection.player.id == player_id
         )
 
     @classmethod
@@ -302,7 +325,7 @@ class GameRoom:
             game_room = player_rooms.get(player.id)
             if game_room is None:
                 return
-            player_connection = game_room.get_player_connection(player)
+            player_connection = game_room.get_player_connection(player.id)
             player_connection.is_connected = False
             if game_room.game_controller is None:
                 game_room._remove_player(player_connection)
@@ -336,7 +359,7 @@ class GameRoom:
         with rooms_lock:
             game_room = player_rooms.get(player.id)
             if game_room is not None:
-                game_room.get_player_connection(player).is_connected = True
+                game_room.get_player_connection(player.id).is_connected = True
         sio.emit(
             "room_info",
             game_room.room_detailed_info.model_dump()

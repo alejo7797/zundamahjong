@@ -10,14 +10,20 @@ import "./avatar_selector.css";
 export function AvatarSelector({
   player,
   canEdit,
+  canKick,
   avatarId,
 }: {
   player: Player;
   canEdit: boolean;
+  canKick: boolean;
   avatarId: number;
 }) {
   const emit = useContext(Emitter);
   const avatar = avatars[avatarId];
+  const kickFromRoom = (e: Event) => {
+    e.preventDefault();
+    emit("kick_from_room", player.id);
+  };
   const increaseAvatarId = (e: Event) => {
     e.preventDefault();
     emit("set_avatar", player.id, (avatarId + 1) % avatars.length);
@@ -28,11 +34,24 @@ export function AvatarSelector({
   };
   return (
     <div class="avatar_selector">
-      <img
-        class="avatar_selector_image"
-        src={avatar.imageURL}
-        alt={avatar.name}
-      />
+      <div class="avatar_selector_image_div">
+        <img
+          class="avatar_selector_image"
+          src={avatar.imageURL}
+          alt={avatar.name}
+        />
+        {canKick ? (
+          <button
+            type="button"
+            class="kick_from_room"
+            onClick={kickFromRoom}
+          >
+            &times;
+          </button>
+          ) : (
+            <></>
+          )}
+      </div>
       <div class="avatar_selector_player_name">{player.display_name}</div>
       {canEdit ? (
         <>
@@ -76,6 +95,7 @@ export function AvatarDisplay({
           key={player.id}
           player={player}
           canEdit={player.id == myPlayer.id || (player.id.startsWith("bot:") && isCaptain)}
+          canKick={player.id != myPlayer.id && isCaptain}
           avatarId={avatars[player.id]}
         />
       ))}

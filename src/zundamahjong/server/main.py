@@ -140,6 +140,19 @@ def on_leave_room(sid: str) -> None:
     GameRoom.leave_room(get_player(sid))
 
 
+@sio_on("kick_from_room")
+def on_kick_from_room(sid: str, player_id: object) -> None:
+    """
+    Kick a player from the game room they are currently in. The player to be kicked should be in the same room as the player sending the event.
+
+    :param sid: The Socket.IO session id of the connection.
+    :param player_id: The player to be kicked out of the room.
+    """
+    if not isinstance(player_id, str):
+        raise Exception("Player id is not a string!")
+    GameRoom.kick_from_room(get_player(sid), player_id)
+
+
 @sio_on("set_avatar")
 def on_set_avatar(sid: str, player_id: object, avatar_code: object) -> None:
     """
