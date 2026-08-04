@@ -53,6 +53,27 @@ class UserPlayer(Player, frozen=True):
         return f"player:{self.name}"
 
 
+class BotPlayer(Player, frozen=True):
+    """Pydantic model representing a bot-controlled player."""
+
+    name_index: int
+    """The index of the bot in this game room, used for the bot's display name."""
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    @override
+    def display_name(self) -> str:
+        """The player's display name."""
+        return f"Bot {self.name_index}"
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    @override
+    def id(self) -> str:
+        """Unique id value used internally by :py:mod:`zundamahjong`."""
+        return f"bot:{self.name_index}"
+
+
 class PlayerConnection(BaseModel):
     """Used by :py:class:`.GameRoom` instances to track players in rooms."""
 

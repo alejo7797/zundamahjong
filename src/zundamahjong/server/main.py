@@ -120,6 +120,16 @@ def on_join_room(sid: str, room_name: object) -> None:
     GameRoom.join_room(get_player(sid), room_name)
 
 
+@sio_on("add_bot")
+def add_bot(sid: str) -> None:
+    """
+    Add a bot to the game room the player is currently in.
+
+    :param sid: The Socket.IO session id of the connection.
+    """
+    GameRoom.add_bot_to_room(get_player(sid))
+
+
 @sio_on("leave_room")
 def on_leave_room(sid: str) -> None:
     """

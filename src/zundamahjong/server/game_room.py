@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from ..database.avatars import get_avatar, save_avatar
 from ..mahjong.game_options import GameOptions
 from ..types.avatar import Avatar
-from ..types.player import Player, PlayerConnection, UserPlayer
+from ..types.player import BotPlayer, Player, PlayerConnection, UserPlayer
 from .game_controller import GameController
 from .sio import sio
 
@@ -197,6 +197,39 @@ class GameRoom:
         game_room.broadcast_room_info()
         return game_room
 
+    @classmethod
+    def add_bot_to_room(cls, player: UserPlayer) -> GameRoom:
+        """
+        Adds a bot to the room the user player is in.
+
+        :param player: The player who is adding a bot.
+        """
+        with rooms_lock:
+            try:
+                game_room = player_rooms[player.id]
+            except KeyError:
+                raise Exception("Player is not in a room!")
+            if game_room.game_controller:
+                raise Exception("Game already in progress!")
+            if len(game_room.joined_players) >= game_room.player_count:
+                raise Exception(f"Room {game_room.room_name} is full!")
+            bot_index = next(
+                index
+                for index in range(1, game_room.player_count + 1)
+                if not any(
+                    isinstance(player_connection.player, BotPlayer)
+                    and player_connection.player.name_index == index
+                    for player_connection in game_room.joined_player_connections
+                )
+            )
+            bot = BotPlayer(name_index=bot_index)
+            with game_room.avatar_lock:
+                game_room.joined_player_connections.append(PlayerConnection(player=bot))
+                game_room.avatars[bot.id] = Avatar(0)
+        # broadcast new player to room
+        game_room.broadcast_room_info()
+        return game_room
+
     def _remove_player(self, player_connection: PlayerConnection) -> None:
         player = player_connection.player
         with self.avatar_lock:
@@ -205,7 +238,7 @@ class GameRoom:
                 save_avatar(player, self.avatars[player.id])
             self.avatars.pop(player.id)
         player_rooms.pop(player.id)
-        if len(self.joined_players) == 0:
+        if all(isinstance(player, BotPlayer) for player in self.joined_players):
             logger.info(f"Room {self.room_name} is now empty, removing from rooms dict")
             rooms.pop(self.room_name)
 

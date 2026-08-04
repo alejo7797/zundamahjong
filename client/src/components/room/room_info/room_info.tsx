@@ -15,11 +15,18 @@ export function RoomInfo({ room }: { room: BasicRoom }) {
     emit("leave_room");
     emit("get_rooms");
   };
+  const addBot = (e: MouseEvent) => {
+    e.preventDefault();
+    emit("add_bot");
+  };
   return (
     <>
       <span id="room_info">{room_info_text}</span>
       <button type="button" id="leave_room" onClick={leaveRoom}>
         Leave room
+      </button>
+      <button type="button" id="add_bot" onClick={addBot}>
+        Add bot
       </button>
     </>
   );
