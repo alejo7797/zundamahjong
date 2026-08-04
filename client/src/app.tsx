@@ -167,6 +167,8 @@ function getScreen(
     );
   }
   if (!info) {
+    const isCaptain =
+      myRoom.joined_players.filter((player) => !player.id.startsWith("bot:"))[0].id == myPlayer.id;
     return (
       <div id="room_screen" class="screen">
         <RoomInfo room={myRoom} />
@@ -177,7 +179,7 @@ function getScreen(
         />
         <GameOptionsForm
           gameOptions={myRoom.game_options}
-          isEditable={myRoom.joined_players[0].id == myPlayer.id}
+          isEditable={isCaptain}
           can_start={myRoom.joined_players.length == myRoom.player_count}
         />
       </div>
