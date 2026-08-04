@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from ..database.avatars import get_avatar, save_avatar
 from ..mahjong.game_options import GameOptions
 from ..types.avatar import Avatar
-from ..types.player import Player, PlayerConnection
+from ..types.player import Player, PlayerConnection, UserPlayer
 from .game_controller import GameController
 from .sio import sio
 
@@ -48,7 +48,7 @@ class GameRoom:
 
     def __init__(
         self,
-        creator: Player,
+        creator: UserPlayer,
         room_name: str,
         player_count: int,
     ) -> None:
@@ -144,7 +144,7 @@ class GameRoom:
 
     @classmethod
     def create_room(
-        cls, creator: Player, room_name: str, player_count: int
+        cls, creator: UserPlayer, room_name: str, player_count: int
     ) -> GameRoom:
         """
         Create a game room.
@@ -166,9 +166,9 @@ class GameRoom:
         return game_room
 
     @classmethod
-    def join_room(cls, player: Player, room_name: str) -> GameRoom:
+    def join_room(cls, player: UserPlayer, room_name: str) -> GameRoom:
         """
-        Make a player join a game room.
+        Make a user player join a game room.
 
         The player should not already be in a game room.
 
@@ -201,7 +201,8 @@ class GameRoom:
         player = player_connection.player
         with self.avatar_lock:
             self.joined_player_connections.remove(player_connection)
-            save_avatar(player, self.avatars[player.id])
+            if isinstance(player, UserPlayer):
+                save_avatar(player, self.avatars[player.id])
             self.avatars.pop(player.id)
         player_rooms.pop(player.id)
         if len(self.joined_players) == 0:
@@ -257,7 +258,7 @@ class GameRoom:
         )
 
     @classmethod
-    def try_disconnect(cls, player: Player) -> None:
+    def try_disconnect(cls, player: UserPlayer) -> None:
         """
         Set a player's connection status to disconnected in the game room
         they are in, and remove them from the game room if a game is not in progress.
@@ -282,15 +283,15 @@ class GameRoom:
                     print(
                         f"Room {game_room.room_name} has no connections, closing room"
                     )
-                    for player in game_room.joined_players:
-                        player_rooms.pop(player.id)
+                    for joined_player in game_room.joined_players:
+                        player_rooms.pop(joined_player.id)
                     with game_room.avatar_lock:
                         game_room.joined_player_connections.clear()
                         game_room.avatars.clear()
                     rooms.pop(game_room.room_name)
 
     @classmethod
-    def try_reconnect(cls, player: Player) -> GameRoom | None:
+    def try_reconnect(cls, player: UserPlayer) -> GameRoom | None:
         """
         Set a player's connection status to connected in the game room
         they are in (if they are in a game room).
@@ -330,10 +331,11 @@ class GameRoom:
     def _save_avatars(self) -> None:
         for player_connection in self.joined_player_connections:
             player = player_connection.player
-            save_avatar(player, self.avatars[player.id])
+            if isinstance(player, UserPlayer):
+                save_avatar(player, self.avatars[player.id])
 
     @classmethod
-    def set_game_options(cls, player: Player, game_options: GameOptions) -> None:
+    def set_game_options(cls, player: UserPlayer, game_options: GameOptions) -> None:
         """
         Set the game options for the game room a player is in.
 

@@ -9,7 +9,7 @@ export function RoomInfo({ room }: { room: BasicRoom }) {
   const room_info_text =
     `Room ${room.room_name} --- ` +
     `${room.player_count} player game --- ` +
-    `Players: ${room.joined_players.map((player) => player.name).join(", ")}`;
+    `Players: ${room.joined_players.map((player) => player.display_name).join(", ")}`;
   const leaveRoom = (e: MouseEvent) => {
     e.preventDefault();
     emit("leave_room");

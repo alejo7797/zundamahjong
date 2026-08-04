@@ -7,7 +7,7 @@ from ..database.security import change_password
 from ..mahjong.action import action_adapter
 from ..mahjong.game_options import GameOptions
 from ..types.avatar import Avatar
-from ..types.player import Player
+from ..types.player import UserPlayer
 from .game_room import GameRoom
 from .name_sid import get_player, set_player, try_get_player, unset_player
 from .sio import sio, sio_on
@@ -24,15 +24,15 @@ def connect(sid: str, environ: dict[str, Any], auth: object = None) -> None:  # 
 
     Get player information from the Flask ``session`` object.
     Then set the player on the :py:mod:`name_sid` module and send the client their
-    :py:class:`Player` object.
+    :py:class:`UserPlayer` object.
     If they are in an active game, make them rejoin the game.
 
     :param sid: The Socket.IO session id of the connection.
     """
     logger.info(f"Client connecting with sid {sid}")
     if "player" not in session:
-        raise Exception("Player object missing from client session!")
-    player = Player.model_validate_json(session["player"])  # pyright: ignore[reportAny]
+        raise Exception("UserPlayer object missing from client session!")
+    player = UserPlayer.model_validate_json(session["player"])  # pyright: ignore[reportAny]
     set_player(sid, player)
     if player.new_user and session["first"]:
         sio.emit_info("Account successfully created.", to=sid)

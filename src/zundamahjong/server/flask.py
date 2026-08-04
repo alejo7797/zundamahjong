@@ -8,7 +8,7 @@ from werkzeug.serving import is_running_from_reloader
 from ..database import db
 from ..database.security import UserLimitException, WrongPasswordException, login
 from ..templates import manifest
-from ..types.player import Player
+from ..types.player import UserPlayer
 from .name_sid import id_to_sid
 
 app = Flask("zundamahjong", static_folder="client", static_url_path="/")
@@ -62,10 +62,10 @@ class PlayerStatus(Enum):
     """Player Id in use from same device!"""
 
 
-def check_player(player: Player | None = None) -> PlayerStatus:
+def check_player(player: UserPlayer | None = None) -> PlayerStatus:
     """Check if a player Id is already connected to the Socket.IO server.
 
-    :param player: Optional :py:class:`Player` instance to check against.
+    :param player: Optional :py:class:`UserPlayer` instance to check against.
                    If not given, grab the player in the client's session.
     """
 
@@ -75,7 +75,7 @@ def check_player(player: Player | None = None) -> PlayerStatus:
     elif "player" not in session:
         return PlayerStatus.NO_PLAYER
 
-    session_player = Player.model_validate_json(session["player"])  # pyright: ignore[reportAny]
+    session_player = UserPlayer.model_validate_json(session["player"])  # pyright: ignore[reportAny]
 
     if session_player.id in id_to_sid:
         return PlayerStatus.SAME_SESSION

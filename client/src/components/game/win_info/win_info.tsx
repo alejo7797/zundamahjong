@@ -45,7 +45,7 @@ export function WinInfo({
       <WinTotalScore
         win_player_name={
           info.scoring_info
-            ? players[info.scoring_info.win_player].name
+            ? players[info.scoring_info.win_player].display_name
             : ""
         }
         scoring_info={info.scoring_info}

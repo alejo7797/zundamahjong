@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "preact/hooks";
 import { io, Socket } from "socket.io-client";
 
 import type { ServerMessage, Severity } from "./types/server_message";
-import type { Player } from "./types/player";
+import type { UserPlayer } from "./types/player";
 import type { DetailedRoom, BasicRoom } from "./types/room";
 import { RoundStatus, type AllServerInfo, type EnhancedInfo } from "./types/game";
 import { processInfo } from "./process_info";
@@ -37,7 +37,7 @@ export function App() {
     list: ServerMessage[];
   }>({ currentIndex: 0, list: [] });
 
-  const [myPlayer, setMyPlayer] = useState<Player>();
+  const [myPlayer, setMyPlayer] = useState<UserPlayer>();
   const [rooms, setRooms] = useState<BasicRoom[]>([]);
   const [myRoom, setMyRoom] = useState<DetailedRoom>();
 
@@ -70,7 +70,7 @@ export function App() {
         });
       },
     );
-    socket.current.on("player_info", (player: Player) => {
+    socket.current.on("player_info", (player: UserPlayer) => {
       setMyPlayer(player);
     });
     socket.current.on("rooms_info", (rooms: Array<BasicRoom>) => {
@@ -131,7 +131,7 @@ export function App() {
 }
 
 function getScreen(
-  myPlayer: Player | undefined,
+  myPlayer: UserPlayer | undefined,
   rooms: BasicRoom[],
   myRoom: DetailedRoom | undefined,
   info: EnhancedInfo | undefined,

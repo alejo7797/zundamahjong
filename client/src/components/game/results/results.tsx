@@ -57,7 +57,7 @@ export function Results({
   for (let player_index = 0; player_index < info.player_count; ++player_index) {
     player_score_elements.push(
       <ResultItem
-        player_name={players[player_index].name}
+        player_name={players[player_index].display_name}
         avatarId={playerAvatarIds[players[player_index].id]}
         new_score={player_scores[player_index]}
         score_change={score_diffs[player_index]}

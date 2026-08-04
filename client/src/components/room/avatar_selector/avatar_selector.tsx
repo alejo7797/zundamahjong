@@ -33,7 +33,7 @@ export function AvatarSelector({
         src={avatar.imageURL}
         alt={avatar.name}
       />
-      <div class="avatar_selector_player_name">{player.name}</div>
+      <div class="avatar_selector_player_name">{player.display_name}</div>
       {canEdit ? (
         <>
           <button
