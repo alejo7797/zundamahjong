@@ -141,17 +141,21 @@ def on_leave_room(sid: str) -> None:
 
 
 @sio_on("set_avatar")
-def on_set_avatar(sid: str, avatar_code: object) -> None:
+def on_set_avatar(sid: str, player_id: object, avatar_code: object) -> None:
     """
-    Set a player's avatar. The player should be in a game room.
+    Set a specified player's avatar. The player should be in the same game
+    room as the player sending the event.
 
     :param sid: The Socket.IO session id of the connection.
+    :param player_id: The id of the player to set the avatar of.
     :param avatar_code: The code of the avatar.
     """
+    if not isinstance(player_id, str):
+        raise Exception("Player id is not a string!")
     if not isinstance(avatar_code, int):
         raise Exception("Avatar code is not an integer!")
     avatar = Avatar(avatar_code)
-    GameRoom.set_avatar(get_player(sid), avatar)
+    GameRoom.set_avatar(get_player(sid), player_id, avatar)
 
 
 @sio_on("game_options")

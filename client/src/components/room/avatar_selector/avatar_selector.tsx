@@ -20,11 +20,11 @@ export function AvatarSelector({
   const avatar = avatars[avatarId];
   const increaseAvatarId = (e: Event) => {
     e.preventDefault();
-    emit("set_avatar", (avatarId + 1) % avatars.length);
+    emit("set_avatar", player.id, (avatarId + 1) % avatars.length);
   };
   const decreaseAvatarId = (e: Event) => {
     e.preventDefault();
-    emit("set_avatar", (avatarId + avatars.length - 1) % avatars.length);
+    emit("set_avatar", player.id, (avatarId + avatars.length - 1) % avatars.length);
   };
   return (
     <div class="avatar_selector">
@@ -67,13 +67,15 @@ export function AvatarDisplay({
   players: ReadonlyArray<Player>;
   avatars: AvatarIdDict;
 }) {
+  const isCaptain =
+    players.filter((player) => !player.id.startsWith("bot:"))[0].id == myPlayer.id;
   return (
     <div class="avatar_display">
       {players.map((player) => (
         <AvatarSelector
           key={player.id}
           player={player}
-          canEdit={player.id == myPlayer.id}
+          canEdit={player.id == myPlayer.id || (player.id.startsWith("bot:") && isCaptain)}
           avatarId={avatars[player.id]}
         />
       ))}

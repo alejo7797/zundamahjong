@@ -347,18 +347,20 @@ class GameRoom:
         return game_room
 
     @classmethod
-    def set_avatar(cls, player: Player, avatar: Avatar) -> None:
+    def set_avatar(cls, player: Player, avatar_player_id: str, avatar: Avatar) -> None:
         """
         Set a player's avatar in the game room the player is in.
 
-        :param player: The player to set an avatar for.
+        :param player: The player setting the avatar.
+        :param avatar_player_id: The player to set an avatar for.
         :param avatar: The avatar to set.
         """
         game_room = cls.get_player_room(player)
         if game_room is None:
             raise Exception("Player is not in a room!")
         with game_room.avatar_lock:
-            game_room.avatars[player.id] = avatar
+            if avatar_player_id in game_room.avatars:
+                game_room.avatars[avatar_player_id] = avatar
         game_room.broadcast_room_info()
 
     def _save_avatars(self) -> None:
