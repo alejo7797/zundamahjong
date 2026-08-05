@@ -1,10 +1,8 @@
-from time import sleep
-
 from .action import Action, ActionType
 from .call import get_call_tiles
 from .info import AllGameInfo
 from .shanten import calculate_shanten
-from .tile import TileValue, all_tiles, get_tile_value
+from .tile import TileValue, all_tiles, get_tile_value, tile_id_is_flower
 
 
 def calculate_bot_action(info: AllGameInfo) -> Action:
@@ -30,11 +28,11 @@ def calculate_bot_action(info: AllGameInfo) -> Action:
             action_scores[action] += 100000
 
     # add shanten scores
-    freqs = unseen_frequencies(info)
-    for action in action_scores:
-        action_scores[action] += get_shanten_score(action, info, freqs)
+    if all(not tile_id_is_flower(tile) for tile in info.player_info.hand):
+        freqs = unseen_frequencies(info)
+        for action in action_scores:
+            action_scores[action] += get_shanten_score(action, info, freqs)
 
-    sleep(0.5)
     best_action, _ = max(action_scores.items(), key=lambda a: a[1])
     return best_action
 

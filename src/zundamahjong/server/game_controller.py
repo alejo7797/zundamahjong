@@ -1,10 +1,11 @@
 from random import sample
 from threading import Lock
+from time import sleep
 from typing import final
 
 from pydantic import BaseModel
 
-from ..mahjong.action import Action
+from ..mahjong.action import Action, animation_length
 from ..mahjong.bot import calculate_bot_action
 from ..mahjong.game import Game
 from ..mahjong.game_options import GameOptions
@@ -38,6 +39,11 @@ class GameController:
         self._lock = Lock()
         with self._lock:
             self._emit_info_all_inner(self._game.round.history)
+        delay = sum(
+            animation_length(history_item[1])
+            for history_item in self._game.round.history
+        )
+        sleep(delay)
         self.perform_bot_actions()
 
     @property
@@ -75,6 +81,12 @@ class GameController:
             if history_updates is not None and len(history_updates) > 0:
                 self._emit_info_all_inner(history_updates)
         if is_user:
+            if history_updates is not None:
+                delay = sum(
+                    animation_length(history_item[1])
+                    for history_item in history_updates
+                )
+                sleep(delay)
             self.perform_bot_actions()
         return history_updates
 
@@ -92,6 +104,11 @@ class GameController:
                 raise Exception("Cannot start next round!")
             self._game.start_next_round()
             self._emit_info_all_inner(self._game.round.history)
+        delay = sum(
+            animation_length(history_item[1])
+            for history_item in self._game.round.history
+        )
+        sleep(delay)
         self.perform_bot_actions()
 
     def perform_bot_actions(self) -> None:
@@ -137,6 +154,11 @@ class GameController:
             if len(history_updates) > 0:
                 # submit_action changed the game state, restart loop
                 player_index = 0
+                delay = sum(
+                    animation_length(history_item[1])
+                    for history_item in history_updates
+                )
+                sleep(delay)
             else:
                 # submit_action did not change the game state
                 player_index += 1
