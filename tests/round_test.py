@@ -8,7 +8,8 @@ from tests.decks import (
     test_deck5,
     test_deck_haitei,
     test_deck_kan_tenhou,
-    test_deck_rinshan,
+    test_deck_rinshan1,
+    test_deck_rinshan2,
 )
 from zundamahjong.mahjong.action import (
     Action,
@@ -807,18 +808,29 @@ class RoundTest(unittest.TestCase):
         self.assertTrue(round.win.is_houtei)
 
     def test_after_flower(self) -> None:
-        round = Round(tiles=test_deck_rinshan)
+        round = Round(tiles=test_deck_rinshan1)
         round.do_action(0, SimpleAction(action_type=ActionType.TSUMO))
         win_info = round.win
         assert win_info is not None
         self.assertEqual(win_info.after_flower_count, 5)
 
-    def test_after_flower_and_kan(self) -> None:
-        round = Round(tiles=test_deck_rinshan)
+    def test_after_flower_and_closed_kan(self) -> None:
+        round = Round(tiles=test_deck_rinshan1)
         round.do_action(0, HandTileAction(action_type=ActionType.DISCARD, tile=110))
         round.do_action(1, SimpleAction(action_type=ActionType.DRAW))
         round.do_action(1, ClosedKanAction(tiles=(10, 11, 12, 13)))
         round.do_action(1, SimpleAction(action_type=ActionType.CONTINUE))
+        round.do_action(1, HandTileAction(action_type=ActionType.FLOWER, tile=480))
+        round.do_action(1, SimpleAction(action_type=ActionType.TSUMO))
+        win_info = round.win
+        assert win_info is not None
+        self.assertEqual(win_info.after_flower_count, 1)
+        self.assertEqual(win_info.after_kan_count, 1)
+
+    def test_after_flower_and_open_kan(self) -> None:
+        round = Round(tiles=test_deck_rinshan2)
+        round.do_action(0, HandTileAction(action_type=ActionType.DISCARD, tile=10))
+        round.do_action(1, OpenKanAction(other_tiles=(11, 12, 13)))
         round.do_action(1, HandTileAction(action_type=ActionType.FLOWER, tile=480))
         round.do_action(1, SimpleAction(action_type=ActionType.TSUMO))
         win_info = round.win

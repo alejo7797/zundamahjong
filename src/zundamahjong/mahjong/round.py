@@ -669,9 +669,11 @@ class Round:
             action_type = action.action_type
             if action_type == ActionType.FLOWER:
                 after_flower_count += 1
-            elif action_type == ActionType.ADD_KAN:
-                after_kan_count += 1
-            elif action_type == ActionType.CLOSED_KAN:
+            elif (
+                action_type == ActionType.OPEN_KAN
+                or action_type == ActionType.ADD_KAN
+                or action_type == ActionType.CLOSED_KAN
+            ):
                 after_kan_count += 1
             elif action_type == ActionType.CONTINUE:
                 pass
