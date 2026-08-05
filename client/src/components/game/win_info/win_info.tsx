@@ -1,6 +1,6 @@
 import { avatars, type AvatarIdDict } from "../../../types/avatars";
 import type { Player } from "../../../types/player";
-import type { AllServerInfo } from "../../../types/game";
+import type { AllGameInfo } from "../../../types/game";
 
 import { WinHand } from "../win_hand/win_hand";
 import { PatternInfo } from "../pattern_info/pattern_info";
@@ -16,7 +16,7 @@ export function WinInfo({
 }: {
   players: ReadonlyArray<Player>;
   playerAvatarIds: AvatarIdDict;
-  info: AllServerInfo;
+  info: AllGameInfo;
   goToResults: () => void;
 }) {
   let winInfoInner = <></>;
@@ -45,7 +45,7 @@ export function WinInfo({
       <WinTotalScore
         win_player_name={
           info.scoring_info
-            ? info.game_info.players[info.scoring_info.win_player].name
+            ? players[info.scoring_info.win_player].display_name
             : ""
         }
         scoring_info={info.scoring_info}

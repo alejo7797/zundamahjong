@@ -9,17 +9,25 @@ export function RoomInfo({ room }: { room: BasicRoom }) {
   const room_info_text =
     `Room ${room.room_name} --- ` +
     `${room.player_count} player game --- ` +
-    `Players: ${room.joined_players.map((player) => player.name).join(", ")}`;
+    `Players: ${room.joined_players.map((player) => player.display_name).join(", ")}`;
   const leaveRoom = (e: MouseEvent) => {
     e.preventDefault();
     emit("leave_room");
     emit("get_rooms");
+  };
+  const canAddBot = (room.joined_players.length < room.player_count);
+  const addBot = (e: MouseEvent) => {
+    e.preventDefault();
+    emit("add_bot");
   };
   return (
     <>
       <span id="room_info">{room_info_text}</span>
       <button type="button" id="leave_room" onClick={leaveRoom}>
         Leave room
+      </button>
+      <button type="button" id="add_bot" disabled={!canAddBot} onClick={addBot}>
+        Add bot
       </button>
     </>
   );

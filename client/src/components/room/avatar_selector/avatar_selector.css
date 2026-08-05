@@ -12,15 +12,32 @@
     height: 20cqw;
     position: relative;
 
-    .avatar_selector_image {
+    .avatar_selector_image_div {
       width: 20cqw;
       height: 16cqw;
       position: absolute;
       left: 0;
       top: 0;
       border: 1px solid navy;
-      object-fit: cover;
-      object-position: top left;
+
+      .avatar_selector_image {
+        width: 20cqw;
+        height: 16cqw;
+        object-fit: cover;
+        object-position: top left;
+      }
+
+      .kick_from_room {
+        width: 3cqw;
+        height: 3cqw;
+        position: absolute;
+        right: 0;
+        top: 0;
+        border: 1px solid navy;
+        border-top: none;
+        border-right: none;
+        font-size: 2cqw;
+      }
     }
 
     .avatar_selector_player_name {

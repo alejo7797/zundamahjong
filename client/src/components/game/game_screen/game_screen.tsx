@@ -6,8 +6,12 @@ import {
   type Action,
   type HandTileActionType,
 } from "../../../types/action";
-import { RoundStatus } from "../../../types/game";
-import { type AllInfo } from "../../../process_info";
+import {
+  RoundStatus,
+  type HistoryItem,
+  type EnhancedGameInfo,
+} from "../../../types/game";
+import { type Player } from "../../../types/player";
 
 import { Emitter } from "../../emitter/emitter";
 import { EmitAction } from "../emit_action/emit_action";
@@ -35,14 +39,18 @@ import { TileHighlightContext } from "../tile_highlight_context/tile_highlight_c
 
 export function GameScreen({
   playerAvatarIds,
+  players,
   info,
+  historyUpdates,
   actionSubmitted,
   setActionSubmitted,
   seeResults,
   goToResults,
 }: {
   playerAvatarIds: AvatarIdDict;
-  info: AllInfo;
+  players: Player[];
+  info: EnhancedGameInfo;
+  historyUpdates: HistoryItem[];
   actionSubmitted: boolean;
   setActionSubmitted: () => void;
   seeResults: boolean;
@@ -76,13 +84,13 @@ export function GameScreen({
   useLayoutEffect(() => {
     // calculate this inside to avoid triggering this effect every time
     // this component is rerendered
-    const avatarIds = info.game_info.players.map(
+    const avatarIds = players.map(
       (player) => playerAvatarIds[player.id],
     );
-    setAnimations(info.history_updates, avatarIds);
-  }, [info, playerAvatarIds]);
+    setAnimations(historyUpdates, avatarIds);
+  }, [players, historyUpdates, playerAvatarIds]);
 
-  const avatarIds = info.game_info.players.map(
+  const avatarIds = players.map(
     (player) => playerAvatarIds[player.id],
   );
   const voiceCollections = [...new Set(Object.values(playerAvatarIds))].map(
@@ -94,20 +102,20 @@ export function GameScreen({
       <></>
     ) : !seeResults ? (
       <WinInfo
-        players={info.game_info.players}
+        players={players}
         playerAvatarIds={playerAvatarIds}
         info={info}
         goToResults={goToResults}
       />
     ) : (
       <Results
-        players={info.game_info.players}
+        players={players}
         playerAvatarIds={playerAvatarIds}
         info={info}
       />
     );
 
-  function didDrawTile(info: AllInfo) {
+  function didDrawTile(info: EnhancedGameInfo) {
     console.log(info.round_info.history);
     if (info.round_info.current_player != info.player_index) {
       return false;
@@ -160,11 +168,11 @@ export function GameScreen({
         >
           {voiceCollections}
           <CutinCollection
-            historyUpdates={info.history_updates}
+            historyUpdates={historyUpdates}
             avatarIds={avatarIds}
           />
           <PlayerIcons
-            players={info.game_info.players}
+            players={players}
             playerAvatarIds={playerAvatarIds}
           />
           <Hand

@@ -7,7 +7,7 @@ import { Emitter } from "../emitter/emitter";
 function RoomOption({ room }: { room: BasicRoom }) {
   const roomCapacityString = `(${room.joined_players.length}/${room.player_count})`;
   const roomPlayersString = room.joined_players
-    .map((player) => player.name)
+    .map((player) => player.display_name)
     .join(", ");
   return (
     <option

@@ -1,9 +1,24 @@
 from __future__ import annotations
 
 from pydantic import BaseModel, computed_field
+from typing_extensions import override
 
 
 class Player(BaseModel, frozen=True):
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def display_name(self) -> str:
+        """The player's display name."""
+        raise NotImplementedError
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def id(self) -> str:
+        """Unique id value for the player, for internal use."""
+        raise NotImplementedError
+
+
+class UserPlayer(Player, frozen=True):
     """Pydantic model representing a player as seen by the server."""
 
     name: str
@@ -25,9 +40,38 @@ class Player(BaseModel, frozen=True):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
+    @override
+    def display_name(self) -> str:
+        """The player's display name."""
+        return self.name
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    @override
     def id(self) -> str:
         """Unique id value used internally by :py:mod:`zundamahjong`."""
         return f"player:{self.name}"
+
+
+class BotPlayer(Player, frozen=True):
+    """Pydantic model representing a bot-controlled player."""
+
+    name_index: int
+    """The index of the bot in this game room, used for the bot's display name."""
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    @override
+    def display_name(self) -> str:
+        """The player's display name."""
+        return f"Bot {self.name_index}"
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    @override
+    def id(self) -> str:
+        """Unique id value used internally by :py:mod:`zundamahjong`."""
+        return f"bot:{self.name_index}"
 
 
 class PlayerConnection(BaseModel):

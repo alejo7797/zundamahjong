@@ -1,6 +1,9 @@
 export type Player = {
+  display_name: string;
   id: string;
-  name: string;
+};
+
+export type UserPlayer = Player & {
   has_account: boolean;
   new_user: boolean;
 };

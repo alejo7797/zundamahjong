@@ -1,14 +1,14 @@
 from ..types.avatar import Avatar
-from ..types.player import Player
+from ..types.player import UserPlayer
 from . import db
 from .users import get_user
 
 
-def get_avatar(player: Player) -> Avatar:
+def get_avatar(player: UserPlayer) -> Avatar:
     """Return a player's last-chosen :py:class:`.Avatar`, if available. Fall
     back to :py:obj:`Avatar(0)`.
 
-    :param player: Player whose name is used to search for an avatar.
+    :param player: UserPlayer whose name is used to search for an avatar.
 
     """
 
@@ -19,12 +19,12 @@ def get_avatar(player: Player) -> Avatar:
         return get_user(player.name).avatar
 
 
-def save_avatar(player: Player, avatar: Avatar) -> None:
+def save_avatar(player: UserPlayer, avatar: Avatar) -> None:
     """Store a player's newly chosen :py:class:`.Avatar` value in the
     application database. If the given :py:obj:`player` does not have a user
     account this is a no-op.
 
-    :param player: Player for whom to save the new :py:class:`.Avatar` value.
+    :param player: UserPlayer for whom to save the new :py:class:`.Avatar` value.
 
     :param avatar: Value of :py:class:`.Avatar` to store in the database.
 
