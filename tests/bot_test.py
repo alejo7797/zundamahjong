@@ -3,13 +3,13 @@ import unittest
 from tests.decks import test_deck1
 from zundamahjong.mahjong.action import (
     ActionType,
+    AddKanAction,
     HandTileAction,
     OpenCallAction,
     SimpleAction,
-    AddKanAction,
 )
 from zundamahjong.mahjong.bot import unseen_frequencies
-from zundamahjong.mahjong.call import OpenCall, CallType
+from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.game import Game
 
 

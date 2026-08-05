@@ -1,8 +1,9 @@
 from time import sleep
 
-from .action import Action
+from .action import Action, ActionType
 from .call import get_call_tiles
-from .info import AllGameInfo, RoundInfo
+from .info import AllGameInfo
+from .shanten import calculate_shanten
 from .tile import TileValue, all_tiles, get_tile_value
 
 
@@ -17,8 +18,25 @@ def calculate_bot_action(info: AllGameInfo) -> Action:
     if len(info.player_info.actions) == 1:
         return info.player_info.actions[0]
 
+    action_scores = {action: 0 for action in info.player_info.actions}
+
+    # prioritise winning and flowers
+    for action in action_scores:
+        if (
+            action.action_type == ActionType.RON
+            or action.action_type == ActionType.TSUMO
+            or action.action_type == ActionType.FLOWER
+        ):
+            action_scores[action] += 100000
+
+    # add shanten scores
+    freqs = unseen_frequencies(info)
+    for action in action_scores:
+        action_scores[action] += get_shanten_score(action, info, freqs)
+
     sleep(0.5)
-    return info.player_info.actions[0]
+    best_action, _ = max(action_scores.items(), key=lambda a: a[1])
+    return best_action
 
 
 def unseen_frequencies(info: AllGameInfo) -> dict[TileValue, int]:
@@ -39,3 +57,23 @@ def unseen_frequencies(info: AllGameInfo) -> dict[TileValue, int]:
             freqs[get_tile_value(discard.tile)] -= 1
 
     return freqs
+
+
+def get_shanten_score(
+    action: Action, info: AllGameInfo, freqs: dict[TileValue, int]
+) -> int:
+    if (
+        action.action_type == ActionType.DISCARD
+        or action.action_type == ActionType.RIICHI
+    ):
+        hand_values = [
+            get_tile_value(tile)
+            for tile in info.player_info.hand
+            if tile != action.tile
+        ]
+        (shanten, useful_tiles) = calculate_shanten(
+            hand_values, is_3player=(info.player_count == 3)
+        )
+        useful_tiles_count = sum(freqs[tile_value] for tile_value in useful_tiles)
+        return 1000 - 100 * shanten + useful_tiles_count
+    return 0
