@@ -391,10 +391,14 @@ class Round:
         return (player + 1) % self._player_count
 
     def _is_instant(self, player: int, history_items: list[tuple[int, Action]]) -> bool:
-        return all(
-            (action.action_type not in call_action_types)
-            and not (
-                action.action_type == ActionType.DISCARD and history_player == player
+        return not any(
+            (action.action_type in call_action_types)
+            or (
+                history_player == player
+                and (
+                    action.action_type == ActionType.DISCARD
+                    or action.action_type == ActionType.RIICHI
+                )
             )
             for history_player, action in history_items
         )
@@ -617,7 +621,7 @@ class Round:
             return (
                 True,
                 self._is_instant(player, self._history[:riichi_index]),
-                self._is_instant(player, self._history[riichi_index:]),
+                self._is_instant(player, self._history[riichi_index + 1 :]),
             )
         else:
             return (False, False, False)

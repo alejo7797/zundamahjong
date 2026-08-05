@@ -248,3 +248,20 @@ class RiichiTest(unittest.TestCase):
         self.assertTrue(round.win.is_riichi)
         self.assertTrue(round.win.is_double_riichi)
         self.assertFalse(round.win.is_ippatsu)
+
+    def test_double_riichi_and_ippatsu(self) -> None:
+        round = get_round()
+        round.do_action(0, HandTileAction(action_type=ActionType.RIICHI, tile=160))
+        round.do_action(1, SimpleAction(action_type=ActionType.DRAW))
+        round.do_action(1, HandTileAction(action_type=ActionType.DISCARD, tile=350))
+        round.do_action(2, SimpleAction(action_type=ActionType.DRAW))
+        round.do_action(2, HandTileAction(action_type=ActionType.DISCARD, tile=13))
+        round.do_action(3, SimpleAction(action_type=ActionType.DRAW))
+        round.do_action(3, HandTileAction(action_type=ActionType.DISCARD, tile=223))
+        round.do_action(0, SimpleAction(action_type=ActionType.DRAW))
+        round.do_action(0, SimpleAction(action_type=ActionType.TSUMO))
+        assert round.win is not None
+        self.assertTrue(round.win.is_riichi)
+        self.assertTrue(round.win.is_double_riichi)
+        self.assertTrue(round.win.is_ippatsu)
+        self.assertFalse(round.win.is_tenhou)
