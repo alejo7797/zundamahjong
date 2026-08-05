@@ -116,7 +116,6 @@ export function GameScreen({
     );
 
   function didDrawTile(info: EnhancedGameInfo) {
-    console.log(info.round_info.history);
     if (info.round_info.current_player != info.player_index) {
       return false;
     }

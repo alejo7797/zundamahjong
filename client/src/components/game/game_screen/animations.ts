@@ -369,7 +369,6 @@ export function setAnimations(
   historyUpdates: ReadonlyArray<HistoryItem>,
   avatarIds: number[],
 ) {
-  console.log(historyUpdates);
   unsetAnimations();
   let delayMilliseconds = 0;
   for (const historyItem of historyUpdates) {
