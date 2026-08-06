@@ -2,7 +2,6 @@ import unittest
 
 from tests.decks import test_deck1
 from zundamahjong.mahjong.action import (
-    Action,
     ActionType,
     AddKanAction,
     ClosedKanAction,
