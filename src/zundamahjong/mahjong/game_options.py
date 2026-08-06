@@ -73,8 +73,11 @@ class GameOptions(BaseModel):
     "The maximum number of dora indicators to reveal in a round."
     start_dora_count: int = 1
     "The number of dora indicators revealed at the start of a round."
-    end_wall_count: int = 22
-    "The number of tiles left in the wall for an exhaustive draw."
+    dead_wall_additional_tiles: int = 0
+    """
+    The number of extra tiles in the dead wall, in addition to the dora
+    indicators and tiles needed for kan/flowers.
+    """
 
     start_score: float = 0.0
     "The score each player starts with at the start of the game."
