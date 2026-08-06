@@ -777,7 +777,12 @@ class RoundTest(unittest.TestCase):
         self.assertIsNone(round.win)
 
     def test_haitei(self) -> None:
-        round = Round(tiles=test_deck_haitei, options=GameOptions(end_wall_count=14))
+        round = Round(
+            tiles=test_deck_haitei,
+            options=GameOptions(
+                max_dora_count=0, start_dora_count=0, end_wall_count=14
+            ),
+        )
         while round.wall_count > 14:
             actions = [action_set.default for action_set in round.allowed_actions]
             playeraction = round.get_priority_action(actions)
@@ -791,7 +796,12 @@ class RoundTest(unittest.TestCase):
         self.assertTrue(round.win.is_haitei)
 
     def test_houtei(self) -> None:
-        round = Round(tiles=test_deck4, options=GameOptions(end_wall_count=14))
+        round = Round(
+            tiles=test_deck4,
+            options=GameOptions(
+                max_dora_count=0, start_dora_count=0, end_wall_count=14
+            ),
+        )
         round.do_action(0, ClosedKanAction(tiles=(40, 41, 42, 43)))
         while round.wall_count > 14:
             actions = [action_set.default for action_set in round.allowed_actions]

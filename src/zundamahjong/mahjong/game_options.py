@@ -69,11 +69,11 @@ class GameOptions(BaseModel):
 
     max_kan_count: int = 4
     "The maximum number of kans allowed in a round."
-    max_dora_count: int = 0
+    max_dora_count: int = 5
     "The maximum number of dora indicators to reveal in a round."
-    start_dora_count: int = 0
+    start_dora_count: int = 1
     "The number of dora indicators revealed at the start of a round."
-    end_wall_count: int = 14
+    end_wall_count: int = 22
     "The number of tiles left in the wall for an exhaustive draw."
 
     start_score: float = 0.0
