@@ -123,6 +123,7 @@ class Round:
         if self._options.use_flowers:
             self._max_back_draw += 2 * self._player_count
         max_dora_count = self._options.max_dora_count
+        self.kan_count = 0
         if tiles is not None:
             self._deck = Deck(tiles, self._max_back_draw, max_dora_count)
         else:
@@ -248,6 +249,18 @@ class Round:
     def wind_round(self) -> int:
         "The wind round number of the round."
         return self._wind_round
+
+    @property
+    def dora(self) -> list[TileId]:
+        "The currently revealed dora indicators."
+        return list(self._deck.dora[: self._options.start_dora_count + self.kan_count])
+
+    @property
+    def ura_dora(self) -> list[TileId]:
+        "The tiles under the currently revealed dora indicators."
+        return list(
+            self._deck.ura_dora[: self._options.start_dora_count + self.kan_count]
+        )
 
     @property
     def allowed_actions(self) -> tuple[ActionList, ...]:
@@ -432,8 +445,9 @@ class Round:
                 actions.add_actions(discard_actions[:-1])
                 if self._options.allow_riichi:
                     actions.add_actions(hand.get_riichis())
-                actions.add_actions(hand.get_add_kans())
-                actions.add_actions(hand.get_closed_kans())
+                if self.kan_count < self._options.max_kan_count:
+                    actions.add_actions(hand.get_add_kans())
+                    actions.add_actions(hand.get_closed_kans())
                 actions.add_actions(flower_actions)
                 if self._can_tsumo(player):
                     actions.add_simple_action(ActionType.TSUMO)
@@ -491,7 +505,8 @@ class Round:
             actions.add_actions(hand.get_chiis())
         if self._current_player != player:
             actions.add_actions(hand.get_pons())
-            actions.add_actions(hand.get_open_kans())
+            if self.kan_count < self._options.max_kan_count:
+                actions.add_actions(hand.get_open_kans())
             if self._can_ron(player):
                 actions.add_simple_action(ActionType.RON)
         return actions
@@ -581,6 +596,7 @@ class Round:
     @_register_do_action(ActionType.OPEN_KAN)
     def _open_kan(self, player: int, action: Action) -> None:
         assert action.action_type == ActionType.OPEN_KAN
+        self.kan_count += 1
         self._hands[player].open_kan(self._current_player, action.other_tiles)
         self._current_player = player
         self._status = RoundStatus.PLAY
@@ -588,12 +604,14 @@ class Round:
     @_register_do_action(ActionType.ADD_KAN)
     def _add_kan(self, player: int, action: Action) -> None:
         assert action.action_type == ActionType.ADD_KAN
+        self.kan_count += 1
         self._hands[player].add_kan(action.tile, action.pon_call)
         self._status = RoundStatus.ADD_KAN_AFTER
 
     @_register_do_action(ActionType.CLOSED_KAN)
     def _closed_kan(self, player: int, action: Action) -> None:
         assert action.action_type == ActionType.CLOSED_KAN
+        self.kan_count += 1
         self._hands[player].closed_kan(action.tiles)
         self._status = RoundStatus.CLOSED_KAN_AFTER
 
@@ -659,6 +677,8 @@ class Round:
             wind_round=self._wind_round,
             sub_round=self._sub_round,
             draw_count=self._draw_count,
+            dora=self.dora,
+            ura_dora=self.ura_dora,
             is_riichi=is_riichi,
             is_double_riichi=is_double_riichi,
             is_ippatsu=is_ippatsu,
@@ -709,6 +729,8 @@ class Round:
             draw_count=self._draw_count,
             after_flower_count=after_flower_count,
             after_kan_count=after_kan_count,
+            dora=self.dora,
+            ura_dora=self.ura_dora,
             is_riichi=is_riichi,
             is_double_riichi=is_double_riichi,
             is_ippatsu=is_ippatsu,
