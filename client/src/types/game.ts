@@ -46,6 +46,7 @@ export type RoundInfo = {
   riichi_discard_indexes: (number | null)[];
   calls: Call[][];
   flowers: TileId[][];
+  dora: TileId[];
 };
 
 export type PlayerInfo = {

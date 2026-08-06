@@ -18,6 +18,7 @@ import { EmitAction } from "../emit_action/emit_action";
 
 import { PlayerIcons } from "../player_icon/player_icon";
 import { Hand } from "../hand/hand";
+import { DoraDisplay } from "../dora_display/dora_display.tsx";
 import { ActionMenu } from "../action_menu/action_menu";
 import { Table } from "../table/table";
 import { WinInfo } from "../win_info/win_info";
@@ -182,6 +183,10 @@ export function GameScreen({
             actionSubmitted={actionSubmitted}
             isFuriten={info.player_info.is_furiten}
             setHoverTile={setHoverTile}
+          />
+          <DoraDisplay
+            dora={info.round_info.dora}
+            max_dora_count={options.game_options.max_dora_count}
           />
           {actionSubmitted ? (
             <></>

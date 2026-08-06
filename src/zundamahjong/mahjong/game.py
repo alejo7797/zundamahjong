@@ -217,6 +217,7 @@ class Game:
             riichi_discard_indexes=riichi_discard_indexes,
             calls=calls,
             flowers=flowers,
+            dora=self.round.dora,
         )
 
     def _player_info(self, player_index: int) -> PlayerInfo:
