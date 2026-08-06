@@ -118,8 +118,13 @@ class Round:
         self._player_count = _options.player_count
         self._options = _options
         self._end_callback = round_end_callback
+
+        max_back_draw = self._options.max_kan_count
+        if self._options.use_flowers:
+            max_back_draw += 2 * self._player_count
+        max_dora_count = self._options.max_dora_count
         if tiles is not None:
-            self._deck = Deck(tiles)
+            self._deck = Deck(tiles, max_back_draw, max_dora_count)
         else:
             if _options.player_count == 3:
                 deck = three_player_deck.copy()
@@ -129,7 +134,8 @@ class Round:
                 deck = four_player_deck.copy()
                 if _options.use_flowers:
                     deck.extend(four_player_flowers)
-            self._deck = Deck.shuffled_deck(deck)
+            self._deck = Deck.shuffled_deck(deck, max_back_draw, max_dora_count)
+
         self._discard_pool = DiscardPool()
         self._hands = [
             Hand(player_index, self._deck, self._discard_pool)

@@ -25,8 +25,6 @@ class GameOptions(BaseModel):
     "Whether to use flower tiles."
     auto_replace_flowers: bool = True
     "Whether to automatically replace flowers."
-    end_wall_count: int = 14
-    "The number of tiles left in the wall for an exhaustive draw."
     min_han: int = 0
     "The minimum number of han needed in a winning hand."
 
@@ -68,6 +66,15 @@ class GameOptions(BaseModel):
     "Whether to show waits in the client UI."
     show_shanten_info: bool = False
     "Whether to show the shanten and useful tiles in the client UI."
+
+    max_kan_count: int = 4
+    "The maximum number of kans allowed in a round."
+    max_dora_count: int = 0
+    "The maximum number of dora indicators to reveal in a round."
+    start_dora_count: int = 0
+    "The number of dora indicators revealed at the start of a round."
+    end_wall_count: int = 14
+    "The number of tiles left in the wall for an exhaustive draw."
 
     start_score: float = 0.0
     "The score each player starts with at the start of the game."

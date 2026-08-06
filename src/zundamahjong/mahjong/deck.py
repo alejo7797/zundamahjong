@@ -54,23 +54,35 @@ class Deck:
 
     :param tiles: List of :py:class:`TileId` s that the :py:class:`Deck`
                   will contain.
+    :param max_back_draw: The maximum number of times a player will draw
+                          a tile from the back.
+                          Used to determine the location of the dora indicator.
+    :param max_dora_count: The maximum number of dora indicators revealed.
     """
 
-    def __init__(self, tiles: Iterable[TileId]) -> None:
+    def __init__(
+        self, tiles: Iterable[TileId], max_back_draw: int, max_dora_count: int
+    ) -> None:
         self._tiles = deque(tiles)
 
     @classmethod
-    def shuffled_deck(cls, tiles: list[TileId]) -> Deck:
+    def shuffled_deck(
+        cls, tiles: list[TileId], max_back_draw: int, max_dora_count: int
+    ) -> Deck:
         """
         Creates a new :py:class:`Deck` containing the given list of
         :py:class:`TileId` s, shuffled.
 
         :param tiles: A list of the :py:class:`TileId` s the new
                       :py:class:`Deck` will contain.
+        :param max_back_draw: The maximum number of times a player will draw
+                              a tile from the back.
+                              Used to determine the location of the dora indicator.
+        :param max_dora_count: The maximum number of dora indicators revealed.
         """
         new_deck = tiles.copy()
         shuffle(new_deck)
-        return cls(new_deck)
+        return cls(new_deck, max_back_draw, max_dora_count)
 
     @property
     def tiles(self) -> tuple[TileId, ...]:
