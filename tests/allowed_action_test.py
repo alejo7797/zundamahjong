@@ -79,7 +79,7 @@ class AllowedActionTest(unittest.TestCase):
         )
 
     def test_turn_discard_actions(self) -> None:
-        round = Round(tiles=test_deck1)
+        round = Round(tiles=test_deck1, options=GameOptions(allow_riichi=True))
         self.assertSequenceEqual(
             round.allowed_actions[0].actions,
             [
@@ -97,6 +97,9 @@ class AllowedActionTest(unittest.TestCase):
                 HandTileAction(action_type=ActionType.DISCARD, tile=170),
                 HandTileAction(action_type=ActionType.DISCARD, tile=210),
                 HandTileAction(action_type=ActionType.DISCARD, tile=211),
+                HandTileAction(action_type=ActionType.RIICHI, tile=10),
+                HandTileAction(action_type=ActionType.RIICHI, tile=12),
+                HandTileAction(action_type=ActionType.RIICHI, tile=170),
             ],
         )
 
@@ -276,7 +279,7 @@ class AllowedActionTest(unittest.TestCase):
         )
 
     def test_can_tsumo(self) -> None:
-        round = Round(tiles=test_deck2)
+        round = Round(tiles=test_deck2, options=GameOptions(allow_riichi=True))
         round.do_action(0, HandTileAction(action_type=ActionType.DISCARD, tile=10))
         round.do_action(1, SimpleAction(action_type=ActionType.DRAW))
         round.do_action(1, HandTileAction(action_type=ActionType.DISCARD, tile=20))
@@ -298,6 +301,20 @@ class AllowedActionTest(unittest.TestCase):
                 HandTileAction(action_type=ActionType.DISCARD, tile=320),
                 HandTileAction(action_type=ActionType.DISCARD, tile=321),
                 HandTileAction(action_type=ActionType.DISCARD, tile=322),
+                HandTileAction(action_type=ActionType.RIICHI, tile=110),
+                HandTileAction(action_type=ActionType.RIICHI, tile=111),
+                HandTileAction(action_type=ActionType.RIICHI, tile=112),
+                HandTileAction(action_type=ActionType.RIICHI, tile=120),
+                HandTileAction(action_type=ActionType.RIICHI, tile=121),
+                HandTileAction(action_type=ActionType.RIICHI, tile=122),
+                HandTileAction(action_type=ActionType.RIICHI, tile=140),
+                HandTileAction(action_type=ActionType.RIICHI, tile=150),
+                HandTileAction(action_type=ActionType.RIICHI, tile=310),
+                HandTileAction(action_type=ActionType.RIICHI, tile=311),
+                HandTileAction(action_type=ActionType.RIICHI, tile=320),
+                HandTileAction(action_type=ActionType.RIICHI, tile=321),
+                HandTileAction(action_type=ActionType.RIICHI, tile=322),
+                HandTileAction(action_type=ActionType.RIICHI, tile=160),
                 SimpleAction(action_type=ActionType.TSUMO),
             ],
         )

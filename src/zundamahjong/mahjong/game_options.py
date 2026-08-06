@@ -30,7 +30,7 @@ class GameOptions(BaseModel):
     min_han: int = 0
     "The minimum number of han needed in a winning hand."
 
-    allow_riichi: bool = False
+    allow_riichi: bool = True
     "Whether to allow riichi."
 
     allow_rob_added_kan: bool = True
@@ -97,14 +97,14 @@ class GameOptions(BaseModel):
     if a nondealer wins by tsumo.
     """
 
-    calculate_fu: bool = False
+    calculate_fu: bool = True
     """
     Whether to calculate fu in score calculation.
 
     If this is set to ``False``, all winning hands will use the
     :py:attr:`base_fu` as the total fu in the score calculation.
     """
-    base_fu: int = 25
+    base_fu: int = 20
     """
     The base amount of fu that any winning hand starts with.
     """
@@ -127,7 +127,10 @@ class GameOptions(BaseModel):
     multiple of 100.
     """
 
-    base_score_limits: list[ScoreLimit] = [ScoreLimit(han=6, score=6400.0)]
+    base_score_limits: list[ScoreLimit] = [
+        ScoreLimit(han=6, score=6400.0),
+        ScoreLimit(han=10, score=12800.0),
+    ]
     """
     A list of limit hans and their corresponding base scores.
 
