@@ -28,6 +28,8 @@ class PatternData(BaseModel):
     "The han value of the pattern."
     fu: int
     "The fu value of the pattern."
+    description: str
+    "A description of the pattern."
 
 
 default_pattern_data: dict[str, PatternData] = {}
@@ -56,7 +58,6 @@ Patterns are indexed by the internal names of the patterns
 def register_pattern(
     name: str, display_name: str, han: int, fu: int
 ) -> Callable[[Callable[[PatternCalculator], int]], Callable[[PatternCalculator], int]]:
-    default_pattern_data[name] = PatternData(display_name=display_name, han=han, fu=fu)
     """
     Decorator to register a :py:class:`PatternCalculator` method as a method
     that calculates a pattern's multiplicity.
@@ -71,6 +72,12 @@ def register_pattern(
     def _register_pattern_inner(
         func: Callable[[PatternCalculator], int],
     ) -> Callable[[PatternCalculator], int]:
+        default_pattern_data[name] = PatternData(
+            display_name=display_name,
+            han=han,
+            fu=fu,
+            description=(func.__doc__ or "").strip().replace("\n", " "),
+        )
         pattern_mult_funcs[name] = func
         return func
 

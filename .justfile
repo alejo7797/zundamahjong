@@ -43,6 +43,10 @@ check-server: lint-server test-server
 [doc("Run all checks")]
 check-all: check-client check-server
 
+# Generating client pattern data
+[doc("Generate client pattern data")]
+gen-pattern:
+    python src/zundamahjong/mahjong/pattern/print_ts.py > client/src/types/pattern.ts
 
 # Working with the Sphinx docs
 

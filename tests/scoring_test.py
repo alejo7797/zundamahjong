@@ -2,7 +2,6 @@ import unittest
 
 from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.game_options import GameOptions, ScoreLimit
-from zundamahjong.mahjong.pattern import PatternData
 from zundamahjong.mahjong.scoring import Scorer
 from zundamahjong.mahjong.win import Win
 
@@ -200,14 +199,12 @@ class ScoringTest(unittest.TestCase):
             sub_round=0,
         )
         scoring = Scorer.score(win, GameOptions(calculate_fu=True, base_fu=20))
-        self.assertDictEqual(
-            scoring.patterns,
-            {
-                "ORPHAN_CLOSED_TRIPLET": PatternData(
-                    display_name="Orphan Closed Triplet", han=0, fu=8
-                ),
-            },
+        self.assertSetEqual(
+            set(scoring.patterns.keys()),
+            { "ORPHAN_CLOSED_TRIPLET" }
         )
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].han, 0)
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].fu, 8)
         self.assertEqual(scoring.han, 0)
         self.assertEqual(scoring.fu, 28)
         self.assertSequenceEqual(scoring.player_scores, [672.0, -672.0, 0.0, 0.0])
@@ -232,12 +229,12 @@ class ScoringTest(unittest.TestCase):
                 seven_pairs_use_fixed_fu=True,
             ),
         )
-        self.assertDictEqual(
-            scoring.patterns,
-            {
-                "SEVEN_PAIRS": PatternData(display_name="Seven Pairs", han=3, fu=0),
-            },
+        self.assertSetEqual(
+            set(scoring.patterns.keys()),
+            { "SEVEN_PAIRS" }
         )
+        self.assertEqual(scoring.patterns["SEVEN_PAIRS"].han, 3)
+        self.assertEqual(scoring.patterns["SEVEN_PAIRS"].fu, 0)
         self.assertEqual(scoring.han, 3)
         self.assertEqual(scoring.fu, 25)
         self.assertSequenceEqual(scoring.player_scores, [4800.0, -4800.0, 0.0, 0.0])
@@ -263,14 +260,12 @@ class ScoringTest(unittest.TestCase):
         scoring = Scorer.score(
             win, GameOptions(calculate_fu=True, base_fu=20, round_up_fu=True)
         )
-        self.assertDictEqual(
-            scoring.patterns,
-            {
-                "ORPHAN_CLOSED_TRIPLET": PatternData(
-                    display_name="Orphan Closed Triplet", han=0, fu=8
-                ),
-            },
+        self.assertSetEqual(
+            set(scoring.patterns.keys()),
+            { "ORPHAN_CLOSED_TRIPLET" }
         )
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].han, 0)
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].fu, 8)
         self.assertEqual(scoring.han, 0)
         self.assertEqual(scoring.fu, 30)
         self.assertSequenceEqual(scoring.player_scores, [720.0, -720.0, 0.0, 0.0])
@@ -296,14 +291,12 @@ class ScoringTest(unittest.TestCase):
         scoring = Scorer.score(
             win, GameOptions(calculate_fu=True, base_fu=20, round_up_points=True)
         )
-        self.assertDictEqual(
-            scoring.patterns,
-            {
-                "ORPHAN_CLOSED_TRIPLET": PatternData(
-                    display_name="Orphan Closed Triplet", han=0, fu=8
-                ),
-            },
+        self.assertSetEqual(
+            set(scoring.patterns.keys()),
+            { "ORPHAN_CLOSED_TRIPLET" }
         )
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].han, 0)
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].fu, 8)
         self.assertEqual(scoring.han, 0)
         self.assertEqual(scoring.fu, 28)
         self.assertSequenceEqual(scoring.player_scores, [700.0, -700.0, 0.0, 0.0])

@@ -90,7 +90,6 @@ class GameOptions(BaseModel):
             self.start_dora_count,
         )
 
-
     start_score: float = 0.0
     "The score each player starts with at the start of the game."
     score_dealer_ron_multiplier: float = 6.0

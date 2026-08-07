@@ -145,6 +145,7 @@ class Scorer:
                     display_name=pattern_data.display_name,
                     han=pattern_data.han * pattern_mults[pattern],
                     fu=pattern_data.fu * pattern_mults[pattern],
+                    description=pattern_data.description,
                 ),
             )
             for pattern, pattern_data in self._pattern_data.items()

@@ -256,6 +256,16 @@ const default_pattern_data = {
     han: 2,
     fu: 0,
   },
+  DORA: {
+    display_name: "Dora",
+    han: 1,
+    fu: 0,
+  },
+  URA_DORA: {
+    display_name: "Ura Dora",
+    han: 1,
+    fu: 0,
+  },
   NO_FLOWERS: {
     display_name: "No Flowers",
     han: 1,
@@ -686,6 +696,16 @@ const riichi_pattern_data = {
   },
   AFTER_A_KAN: {
     display_name: "After a Kan",
+    han: 1,
+    fu: 0,
+  },
+  DORA: {
+    display_name: "Dora",
+    han: 1,
+    fu: 0,
+  },
+  URA_DORA: {
+    display_name: "Ura Dora",
     han: 1,
     fu: 0,
   },
