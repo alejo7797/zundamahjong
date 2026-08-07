@@ -743,14 +743,14 @@ class Round:
         if win is None:
             return False
         scoring = Scorer.score(win, self._options)
-        return scoring.han >= self._options.min_han
+        return scoring is not None
 
     def _is_thirteen_orphans_win(self, win: Win | None) -> bool:
         # only checks if it's a thirteen orphans with a one-sided wait
         if win is None:
             return False
         scoring = Scorer.score(win, self._options)
-        return "THIRTEEN_ORPHANS" in scoring.patterns
+        return scoring is not None and "THIRTEEN_ORPHANS" in scoring.patterns
 
     def _can_ron(self, player: int) -> bool:
         if self.is_furiten(player):

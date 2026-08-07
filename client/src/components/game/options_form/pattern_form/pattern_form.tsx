@@ -22,7 +22,8 @@ export function PatternForm({
       <summary>Patterns</summary>
       <div class="table_header">
         <div>Pattern</div>
-        <div>Han</div>
+        <div>Yaku</div>
+        <div>Dora</div>
         <div>Fu</div>
       </div>
       {patterns.map((pattern) => (
@@ -47,7 +48,8 @@ export function getPatternDataDict(patternFormId: string): PatternDataDict {
     patterns.map((pattern) => [
       pattern,
       {
-        han: Number(patternFormData.get(`${pattern}___han`)),
+        yaku: Number(patternFormData.get(`${pattern}___yaku`)),
+        dora: Number(patternFormData.get(`${pattern}___dora`)),
         fu: Number(patternFormData.get(`${pattern}___fu`)),
       },
     ]),

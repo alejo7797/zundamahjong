@@ -4,8 +4,7 @@ from .pattern_calculator import PatternCalculator, register_pattern
 @register_pattern(
     "BLESSING_OF_HEAVEN",
     display_name="Blessing of Heaven",
-    han=20,
-    fu=0,
+    yaku=20,
 )
 def blessing_of_heaven(self: PatternCalculator) -> int:
     "Win on the dealer's first draw."
@@ -15,8 +14,7 @@ def blessing_of_heaven(self: PatternCalculator) -> int:
 @register_pattern(
     "BLESSING_OF_EARTH",
     display_name="Blessing of Earth",
-    han=19,
-    fu=0,
+    yaku=19,
 )
 def blessing_of_earth(self: PatternCalculator) -> int:
     "Win on a nondealer's first draw."
@@ -26,8 +24,7 @@ def blessing_of_earth(self: PatternCalculator) -> int:
 @register_pattern(
     "RIICHI",
     display_name="Riichi",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def riichi(self: PatternCalculator) -> int:
     "Win after calling riichi."
@@ -37,8 +34,7 @@ def riichi(self: PatternCalculator) -> int:
 @register_pattern(
     "DOUBLE_RIICHI",
     display_name="Double Riichi",
-    han=2,
-    fu=0,
+    yaku=2,
 )
 def double_riichi(self: PatternCalculator) -> int:
     "Win after calling riichi on the first turn."
@@ -48,8 +44,7 @@ def double_riichi(self: PatternCalculator) -> int:
 @register_pattern(
     "IPPATSU",
     display_name="Ippatsu",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def ippatsu(self: PatternCalculator) -> int:
     "Win immediately after calling riichi."
@@ -59,8 +54,7 @@ def ippatsu(self: PatternCalculator) -> int:
 @register_pattern(
     "ROBBING_A_KAN",
     display_name="Robbing a Kan",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def robbing_a_kan(self: PatternCalculator) -> int:
     "Win by stealing from another player's kan."
@@ -70,8 +64,7 @@ def robbing_a_kan(self: PatternCalculator) -> int:
 @register_pattern(
     "UNDER_THE_SEA",
     display_name="Under the Sea",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def under_the_sea(self: PatternCalculator) -> int:
     "Win on the last draw."
@@ -81,8 +74,7 @@ def under_the_sea(self: PatternCalculator) -> int:
 @register_pattern(
     "UNDER_THE_RIVER",
     display_name="Under the River",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def under_the_river(self: PatternCalculator) -> int:
     "Win on the last discard."
@@ -92,8 +84,7 @@ def under_the_river(self: PatternCalculator) -> int:
 @register_pattern(
     "AFTER_A_FLOWER",
     display_name="After a Flower",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def after_a_flower(self: PatternCalculator) -> int:
     "Win on a tile drawn after replacing a flower."
@@ -103,8 +94,7 @@ def after_a_flower(self: PatternCalculator) -> int:
 @register_pattern(
     "AFTER_A_KAN",
     display_name="After a Kan",
-    han=2,
-    fu=0,
+    yaku=2,
 )
 def after_a_kan(self: PatternCalculator) -> int:
     "Win on a tile drawn after calling a kan."
@@ -114,8 +104,7 @@ def after_a_kan(self: PatternCalculator) -> int:
 @register_pattern(
     "DRAW",
     display_name="Draw",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def draw(self: PatternCalculator) -> int:
     "Win after a draw in the previous round."

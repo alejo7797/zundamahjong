@@ -32,8 +32,10 @@ class Scoring(BaseModel):
     Patterns are indexed by the internal names of the patterns
     (in SCREAMING_SNAKE_CASE).
     """
-    han: int
-    "The total han value of the hand."
+    yaku: int
+    "The total yaku-type han value of the hand."
+    dora: int
+    "The total dora-type han value of the hand."
     fu: int
     "The total fu value of the hand."
     player_scores: list[float]
@@ -142,14 +144,16 @@ class Scorer:
             (
                 pattern,
                 PatternData(
-                    han=pattern_data.han * pattern_mults[pattern],
+                    yaku=pattern_data.yaku * pattern_mults[pattern],
+                    dora=pattern_data.dora * pattern_mults[pattern],
                     fu=pattern_data.fu * pattern_mults[pattern],
                 ),
             )
             for pattern, pattern_data in self._pattern_data.items()
             if pattern in pattern_mults
         ]
-        han = sum(pattern_data.han for (_, pattern_data) in patterns)
+        yaku = sum(pattern_data.yaku for (_, pattern_data) in patterns)
+        dora = sum(pattern_data.dora for (_, pattern_data) in patterns)
         if self._options.calculate_fu:
             fu = self._options.base_fu + sum(
                 pattern_data.fu for (_, pattern_data) in patterns
@@ -163,18 +167,18 @@ class Scorer:
                 fu = self._options.seven_pairs_fixed_fu
         else:
             fu = self._options.base_fu
-        player_scores = self._get_player_scores(han, fu)
+        player_scores = self._get_player_scores(yaku + dora, fu)
         if self._options.calculate_fu:
             patterns_dict = dict(
                 (pattern, pattern_data)
                 for (pattern, pattern_data) in patterns
-                if pattern_data.han != 0 or pattern_data.fu != 0
+                if pattern_data.yaku != 0 or pattern_data.dora != 0 or pattern_data.fu != 0
             )
         else:
             patterns_dict = dict(
                 (pattern, pattern_data)
                 for (pattern, pattern_data) in patterns
-                if pattern_data.han != 0
+                if pattern_data.yaku != 0 or pattern_data.dora != 0
             )
         return Scoring(
             win_player=self._win.win_player,
@@ -182,12 +186,14 @@ class Scorer:
             dora_tiles=dora_tiles,
             ura_dora_tiles=ura_dora_tiles,
             patterns=patterns_dict,
-            han=han,
+            yaku=yaku,
+            dora=dora,
             fu=fu,
             player_scores=player_scores,
         )
 
-    def _get_scoring(self) -> Scoring:
+    def _get_scoring(self) -> Scoring | None:
+        min_yaku = self._options.min_yaku
         max_dora_count = self._options.true_max_dora_count
         dora_tiles = [
             *self._win.dora,
@@ -205,14 +211,14 @@ class Scorer:
         def key(scoring: Scoring) -> tuple[float, int, int]:
             return (
                 scoring.player_scores[self._win.win_player],
-                scoring.han,
+                scoring.yaku + scoring.dora,
                 scoring.fu,
             )
 
-        return max(scorings, key=key)
+        return max((scoring for scoring in scorings if scoring.yaku >= min_yaku), default=None, key=key)
 
     @classmethod
-    def score(cls, win: Win, options: GameOptions) -> Scoring:
+    def score(cls, win: Win, options: GameOptions) -> Scoring | None:
         """
         Calculate the score a winning hand should get.
 

@@ -45,8 +45,7 @@ def count_dora_matches(self: PatternCalculator, dora_tiles: list[TileId]) -> int
 @register_pattern(
     "DORA",
     display_name="Dora",
-    han=1,
-    fu=0,
+    dora=1,
 )
 def dora(self: PatternCalculator) -> int:
     """
@@ -58,8 +57,7 @@ def dora(self: PatternCalculator) -> int:
 @register_pattern(
     "URA_DORA",
     display_name="Ura Dora",
-    han=1,
-    fu=0,
+    dora=1,
 )
 def ura_dora(self: PatternCalculator) -> int:
     """

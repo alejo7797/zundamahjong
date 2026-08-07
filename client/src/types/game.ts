@@ -69,7 +69,8 @@ export type Scoring = {
   patterns: { [pattern: string]: PatternData };
   dora_tiles: (TileId | null)[];
   ura_dora_tiles: (TileId | null)[];
-  han: number;
+  yaku: number;
+  dora: number;
   fu: number;
   player_scores: number[];
 };

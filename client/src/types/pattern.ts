@@ -1,5 +1,6 @@
 export type PatternData = {
-  han: number;
+  yaku: number;
+  dora: number;
   fu: number;
 };
 

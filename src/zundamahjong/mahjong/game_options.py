@@ -25,8 +25,8 @@ class GameOptions(BaseModel):
     "Whether to use flower tiles."
     auto_replace_flowers: bool = True
     "Whether to automatically replace flowers."
-    min_han: int = 0
-    "The minimum number of han needed in a winning hand."
+    min_yaku: int = 0
+    "The minimum number of han needed in a winning hand (not counting dora)."
 
     allow_riichi: bool = True
     "Whether to allow riichi."

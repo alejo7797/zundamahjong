@@ -437,16 +437,18 @@ class RoundTest(unittest.TestCase):
         )
         self.assertCountEqual(win_info.calls, [])
 
-    def test_min_han_enough_han(self) -> None:
-        round = Round(tiles=test_deck2, options=GameOptions(min_han=8))
+    def test_min_yaku_enough_yaku(self) -> None:
+        round = Round(tiles=test_deck2, options=GameOptions(min_yaku=7))
         round.do_action(0, HandTileAction(action_type=ActionType.DISCARD, tile=130))
+        # ronning here gives 7 yaku 1 dora
         self.assertIn(
             SimpleAction(action_type=ActionType.RON), round.allowed_actions[2].actions
         )
 
-    def test_min_han_not_enough_han(self) -> None:
-        round = Round(tiles=test_deck2, options=GameOptions(min_han=9))
+    def test_min_yaku_not_enough_yaku(self) -> None:
+        round = Round(tiles=test_deck2, options=GameOptions(min_yaku=8))
         round.do_action(0, HandTileAction(action_type=ActionType.DISCARD, tile=130))
+        # ronning here gives 7 yaku 1 dora
         self.assertNotIn(
             SimpleAction(action_type=ActionType.RON), round.allowed_actions[2].actions
         )

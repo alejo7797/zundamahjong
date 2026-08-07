@@ -6,7 +6,7 @@ export type GameOptions = {
   game_length_sub_rounds: number;
   use_flowers: boolean;
   auto_replace_flowers: boolean;
-  min_han: number;
+  min_yaku: number;
 
   allow_riichi: boolean;
 

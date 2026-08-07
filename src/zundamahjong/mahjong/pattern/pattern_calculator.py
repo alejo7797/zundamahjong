@@ -22,8 +22,10 @@ class PatternData(BaseModel):
     Represents a pattern and its han and fu values.
     """
 
-    han: int
-    "The han value of the pattern."
+    yaku: int
+    "The han value of the pattern. Counts towards the minimum yaku limit."
+    dora: int
+    "The han value of the pattern. Does not count toward the minimum yaku limit."
     fu: int
     "The fu value of the pattern."
 
@@ -63,7 +65,7 @@ Patterns are indexed by the internal names of the patterns
 
 
 def register_pattern(
-    name: str, display_name: str, han: int, fu: int
+    name: str, display_name: str, yaku: int = 0, dora: int = 0, fu: int = 0
 ) -> Callable[[Callable[[PatternCalculator], int]], Callable[[PatternCalculator], int]]:
     """
     Decorator to register a :py:class:`PatternCalculator` method as a method
@@ -80,7 +82,8 @@ def register_pattern(
         func: Callable[[PatternCalculator], int],
     ) -> Callable[[PatternCalculator], int]:
         default_pattern_data[name] = PatternData(
-            han=han,
+            yaku=yaku,
+            dora=dora,
             fu=fu,
         )
         pattern_descs[name] = PatternDesc(

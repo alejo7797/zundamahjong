@@ -88,9 +88,9 @@ export const inputPropsList: OptionsInputProps<GameOptions>[] = [
         type: "checkbox",
       },
       {
-        name: "min_han",
+        name: "min_yaku",
         labelText: "Minimum han to win",
-        description: `The minimum number of han in a winning hand for a player
+        description: `The minimum number of han (not including dora) in a winning hand for a player
           to be able to win.`,
         type: "number",
         min: 0,

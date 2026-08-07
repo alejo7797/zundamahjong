@@ -15,8 +15,7 @@ def _yakuhai(self: PatternCalculator, pattern_tile: TileValue) -> int:
 @register_pattern(
     "SEAT_WIND",
     display_name="Seat Wind",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def seat_wind(self: PatternCalculator) -> int:
     """
@@ -28,8 +27,7 @@ def seat_wind(self: PatternCalculator) -> int:
 @register_pattern(
     "PREVALENT_WIND",
     display_name="Prevalent Wind",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def prevalent_wind(self: PatternCalculator) -> int:
     """
@@ -41,8 +39,7 @@ def prevalent_wind(self: PatternCalculator) -> int:
 @register_pattern(
     "NORTH_WIND",
     display_name="North Wind",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def north_wind(self: PatternCalculator) -> int:
     """
@@ -54,8 +51,7 @@ def north_wind(self: PatternCalculator) -> int:
 @register_pattern(
     "WHITE_DRAGON",
     display_name="White Dragon",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def white_dragon(self: PatternCalculator) -> int:
     """
@@ -67,8 +63,7 @@ def white_dragon(self: PatternCalculator) -> int:
 @register_pattern(
     "GREEN_DRAGON",
     display_name="Green Dragon",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def green_dragon(self: PatternCalculator) -> int:
     """
@@ -80,8 +75,7 @@ def green_dragon(self: PatternCalculator) -> int:
 @register_pattern(
     "RED_DRAGON",
     display_name="Red Dragon",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def red_dragon(self: PatternCalculator) -> int:
     """
@@ -93,7 +87,6 @@ def red_dragon(self: PatternCalculator) -> int:
 @register_pattern(
     "YAKUHAI_PAIR",
     display_name="Yakuhai Pair",
-    han=0,
     fu=2,
 )
 def yakuhaipair(self: PatternCalculator) -> int:

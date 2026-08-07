@@ -4,8 +4,9 @@ import "./pattern_info.css";
 
 export function PatternInfo({ pattern, data }: { pattern: Pattern, data: PatternData }) {
   const children: JSX.Element[] = [];
-  if (data.han != 0) {
-    children.push(<span class="han">{`${data.han} han`}</span>);
+  const han = data.yaku + data.dora;
+  if (han != 0) {
+    children.push(<span class="han">{`${han} han`}</span>);
   }
   if (data.fu != 0) {
     children.push(<span class="fu">{`${data.fu} fu`}</span>);

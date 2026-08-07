@@ -8,9 +8,11 @@ from zundamahjong.mahjong.win import Win
 
 class ScoringTest(unittest.TestCase):
     def get_player_scores(self, win: Win) -> list[float]:
-        return Scorer.score(
+        scoring = Scorer.score(
             win, GameOptions(player_count=win.player_count)
-        ).player_scores
+        )
+        assert scoring is not None
+        return scoring.player_scores
 
     def test_dealer_ron(self) -> None:
         win = Win(
@@ -199,13 +201,16 @@ class ScoringTest(unittest.TestCase):
             sub_round=0,
         )
         scoring = Scorer.score(win, GameOptions(calculate_fu=True, base_fu=20))
+        assert scoring is not None
         self.assertSetEqual(
             set(scoring.patterns.keys()),
             { "ORPHAN_CLOSED_TRIPLET" }
         )
-        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].han, 0)
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].yaku, 0)
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].dora, 0)
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].fu, 8)
-        self.assertEqual(scoring.han, 0)
+        self.assertEqual(scoring.yaku, 0)
+        self.assertEqual(scoring.dora, 0)
         self.assertEqual(scoring.fu, 28)
         self.assertSequenceEqual(scoring.player_scores, [672.0, -672.0, 0.0, 0.0])
 
@@ -229,13 +234,16 @@ class ScoringTest(unittest.TestCase):
                 seven_pairs_use_fixed_fu=True,
             ),
         )
+        assert scoring is not None
         self.assertSetEqual(
             set(scoring.patterns.keys()),
             { "SEVEN_PAIRS" }
         )
-        self.assertEqual(scoring.patterns["SEVEN_PAIRS"].han, 3)
+        self.assertEqual(scoring.patterns["SEVEN_PAIRS"].yaku, 3)
+        self.assertEqual(scoring.patterns["SEVEN_PAIRS"].dora, 0)
         self.assertEqual(scoring.patterns["SEVEN_PAIRS"].fu, 0)
-        self.assertEqual(scoring.han, 3)
+        self.assertEqual(scoring.yaku, 3)
+        self.assertEqual(scoring.dora, 0)
         self.assertEqual(scoring.fu, 25)
         self.assertSequenceEqual(scoring.player_scores, [4800.0, -4800.0, 0.0, 0.0])
 
@@ -260,13 +268,16 @@ class ScoringTest(unittest.TestCase):
         scoring = Scorer.score(
             win, GameOptions(calculate_fu=True, base_fu=20, round_up_fu=True)
         )
+        assert scoring is not None
         self.assertSetEqual(
             set(scoring.patterns.keys()),
             { "ORPHAN_CLOSED_TRIPLET" }
         )
-        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].han, 0)
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].yaku, 0)
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].dora, 0)
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].fu, 8)
-        self.assertEqual(scoring.han, 0)
+        self.assertEqual(scoring.yaku, 0)
+        self.assertEqual(scoring.dora, 0)
         self.assertEqual(scoring.fu, 30)
         self.assertSequenceEqual(scoring.player_scores, [720.0, -720.0, 0.0, 0.0])
 
@@ -291,13 +302,16 @@ class ScoringTest(unittest.TestCase):
         scoring = Scorer.score(
             win, GameOptions(calculate_fu=True, base_fu=20, round_up_points=True)
         )
+        assert scoring is not None
         self.assertSetEqual(
             set(scoring.patterns.keys()),
             { "ORPHAN_CLOSED_TRIPLET" }
         )
-        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].han, 0)
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].yaku, 0)
+        self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].dora, 0)
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].fu, 8)
-        self.assertEqual(scoring.han, 0)
+        self.assertEqual(scoring.yaku, 0)
+        self.assertEqual(scoring.dora, 0)
         self.assertEqual(scoring.fu, 28)
         self.assertSequenceEqual(scoring.player_scores, [700.0, -700.0, 0.0, 0.0])
 
@@ -328,7 +342,8 @@ class ScoringTest(unittest.TestCase):
                 ]
             ),
         )
-        self.assertEqual(scoring.han, 0)
+        assert scoring is not None
+        self.assertEqual(scoring.yaku, 0)
         self.assertSequenceEqual(scoring.player_scores, [30.0, -30.0, 0.0, 0.0])
 
     def test_han_equal_score_limit(self) -> None:
@@ -352,7 +367,8 @@ class ScoringTest(unittest.TestCase):
         scoring = Scorer.score(
             win, GameOptions(base_score_limits=[ScoreLimit(han=1, score=5000.0)])
         )
-        self.assertEqual(scoring.han, 1)
+        assert scoring is not None
+        self.assertEqual(scoring.yaku, 1)
         self.assertSequenceEqual(scoring.player_scores, [30000.0, -30000.0, 0.0, 0.0])
 
     def test_han_more_than_score_limit(self) -> None:
@@ -376,7 +392,8 @@ class ScoringTest(unittest.TestCase):
         scoring = Scorer.score(
             win, GameOptions(base_score_limits=[ScoreLimit(han=1, score=5000.0)])
         )
-        self.assertEqual(scoring.han, 2)
+        assert scoring is not None
+        self.assertEqual(scoring.yaku, 2)
         self.assertSequenceEqual(scoring.player_scores, [30000.0, -30000.0, 0.0, 0.0])
 
     def test_han_between_score_limits(self) -> None:
@@ -406,5 +423,6 @@ class ScoringTest(unittest.TestCase):
                 ]
             ),
         )
-        self.assertEqual(scoring.han, 2)
+        assert scoring is not None
+        self.assertEqual(scoring.yaku, 2)
         self.assertSequenceEqual(scoring.player_scores, [30000.0, -30000.0, 0.0, 0.0])

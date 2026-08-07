@@ -267,7 +267,7 @@ class Game:
         if self._win is None:
             self._scoring = None
         else:
-            scoring = Scorer.score(self._win, self._options)
-            self._scoring = scoring
+            self._scoring = Scorer.score(self._win, self._options)
+        if self._scoring is not None:
             for player in range(self._player_count):
-                self._player_scores[player] += scoring.player_scores[player]
+                self._player_scores[player] += self._scoring.player_scores[player]
