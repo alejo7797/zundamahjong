@@ -10,7 +10,7 @@
   padding: 4cqw;
   display: grid;
   grid-template-columns: auto auto;
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto auto auto auto;
   background-color: rgba(180, 180, 180, 80%);
 
   * {
@@ -21,7 +21,7 @@
 
   .avatar {
     grid-column: 1/2;
-    grid-row: 2/4;
+    grid-row: 2/5;
     box-sizing: border-box;
     width: 25cqw;
     height: 40cqw;
@@ -34,12 +34,33 @@
     grid-row: 1/2;
   }
 
-  #patterns {
+  .win_dora {
     grid-column: 2/3;
     grid-row: 2/3;
-    width: 54cqw;
-    height: 25cqw;
-    margin: 2.5cqw;
+    width: 56cqw;
+    height: 5cqw;
+    margin: 1cqw;
+    display: flex;
+    justify-content: space-around;
+    column-gap: 1cqw;
+
+    .dora_tiles {
+      display: flex;
+      align-items: center;
+      --tile-width: 3cqw;
+
+      .dora_label {
+        margin: 0cqw 1cqw;
+      }
+    }
+  }
+
+  #patterns {
+    grid-column: 2/3;
+    grid-row: 3/4;
+    width: 56cqw;
+    height: 22cqw;
+    margin: 1.5cqw;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -47,6 +68,6 @@
 
   #win_totals {
     grid-column: 2/3;
-    grid-row: 3/4;
+    grid-row: 4/5;
   }
 }

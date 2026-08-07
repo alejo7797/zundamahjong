@@ -2,6 +2,7 @@ import { avatars, type AvatarIdDict } from "../../../types/avatars";
 import type { Player } from "../../../types/player";
 import type { AllGameInfo } from "../../../types/game";
 
+import { Tile2D, Tile2DBack } from "../tile_2d/tile_2d";
 import { WinHand } from "../win_hand/win_hand";
 import { PatternInfo } from "../pattern_info/pattern_info";
 import { WinTotalScore } from "../win_total_score/win_total_score";
@@ -23,6 +24,8 @@ export function WinInfo({
   if (info.scoring_info) {
     const winnerAvatar =
       avatars[playerAvatarIds[players[info.scoring_info.win_player].id]];
+    const dora_tiles = info.scoring_info.dora_tiles.map((tile) => tile ? <Tile2D tile={tile} /> : <Tile2DBack />);
+    const ura_dora_tiles = info.scoring_info.ura_dora_tiles.map((tile) => tile ? <Tile2D tile={tile} /> : <Tile2DBack />);
     winInfoInner = (
       <>
         <img
@@ -30,6 +33,16 @@ export function WinInfo({
           src={winnerAvatar.imageURL}
           alt={winnerAvatar.name}
         />
+        <div class="win_dora">
+          <div class="dora_tiles">
+            <span class="dora_label">Dora</span>
+            {dora_tiles}
+          </div>
+          <div class="dora_tiles">
+            <span class="dora_label">Ura</span>
+            {ura_dora_tiles}
+          </div>
+        </div>
         <div id="patterns">
           {Object.entries(info.scoring_info.patterns).map(([pattern, data]) => (
             <PatternInfo key={pattern} data={data} />

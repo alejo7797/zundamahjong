@@ -67,6 +67,8 @@ export type Scoring = {
   win_player: number;
   lose_player: number | null;
   patterns: { [pattern: string]: PatternData };
+  dora_tiles: (TileId | null)[];
+  ura_dora_tiles: (TileId | null)[];
   han: number;
   fu: number;
   player_scores: number[];

@@ -7,6 +7,7 @@ from .form_hand import formed_hand_possibilities
 from .game_options import GameOptions
 from .meld import Meld
 from .pattern import PatternData, default_pattern_data, get_pattern_mults
+from .tile import TileId
 from .win import Win
 
 
@@ -19,6 +20,10 @@ class Scoring(BaseModel):
     "The index of the winning player."
     lose_player: int | None
     "The index of the player who dealt in, or ``None`` if the win was tsumo."
+    dora_tiles: list[TileId | None]
+    "The TileIds of the dora tile indicators. Unrevealed dora indicators are represented by None."
+    ura_dora_tiles: list[TileId | None]
+    "The TileIds of the ura dora tile indicators. Unrevealed dora indicators are represented by None."
     patterns: dict[str, PatternData]
     """
     A dictionary containing the :py:class:`PatternData` for the patterns
@@ -126,7 +131,12 @@ class Scorer:
             player_scores[lose_player] = -player_pay_in_amount
         return player_scores
 
-    def _get_formed_hand_scoring(self, formed_hand: list[Meld]) -> Scoring:
+    def _get_formed_hand_scoring(
+        self,
+        formed_hand: list[Meld],
+        dora_tiles: list[TileId | None],
+        ura_dora_tiles: list[TileId | None],
+    ) -> Scoring:
         pattern_mults = get_pattern_mults(self._win, formed_hand)
         patterns = [
             (
@@ -170,6 +180,8 @@ class Scorer:
         return Scoring(
             win_player=self._win.win_player,
             lose_player=self._win.lose_player,
+            dora_tiles=dora_tiles,
+            ura_dora_tiles=ura_dora_tiles,
             patterns=patterns_dict,
             han=han,
             fu=fu,
@@ -177,8 +189,17 @@ class Scorer:
         )
 
     def _get_scoring(self) -> Scoring:
+        max_dora_count = self._options.max_dora_count
+        dora_tiles = [
+            *self._win.dora,
+            *(None for _ in range(max_dora_count - len(self._win.dora))),
+        ]
+        ura_dora_tiles = [
+            *self._win.ura_dora,
+            *(None for _ in range(max_dora_count - len(self._win.ura_dora))),
+        ]
         scorings = [
-            self._get_formed_hand_scoring(formed_hand)
+            self._get_formed_hand_scoring(formed_hand, dora_tiles, ura_dora_tiles)
             for formed_hand in formed_hand_possibilities(self._win.hand)
         ]
 
