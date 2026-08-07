@@ -24,6 +24,10 @@ lint-client:
 test-client:
     npm --prefix=client run test
 
+[doc("Build client")]
+build-client:
+    npm --prefix=client run build
+
 [doc("Run all client checks")]
 check-client: lint-client test-client
 
