@@ -1,6 +1,5 @@
 import {
   type PatternDataDict,
-  patternDescs,
   patterns,
 } from "../../../../types/pattern";
 import { GameOptionsPatternInput } from "./pattern_input";
@@ -48,7 +47,6 @@ export function getPatternDataDict(patternFormId: string): PatternDataDict {
     patterns.map((pattern) => [
       pattern,
       {
-        display_name: patternDescs[pattern].displayName,
         han: Number(patternFormData.get(`${pattern}___han`)),
         fu: Number(patternFormData.get(`${pattern}___fu`)),
       },

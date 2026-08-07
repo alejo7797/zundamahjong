@@ -1,4 +1,6 @@
-from zundamahjong.mahjong.pattern import default_pattern_data
+# import to register patterns
+import zundamahjong.mahjong.pattern  # pyright: ignore[reportUnusedImport]
+from zundamahjong.mahjong.pattern.pattern_calculator import pattern_descs
 
 typesBefore = """export type PatternData = {
   display_name: string;
@@ -24,7 +26,7 @@ if __name__ == "__main__":
     print(typesBefore)
     print(
         f"export const patterns = [",
-        "\n".join(f'  "{key}",' for key in default_pattern_data),
+        "\n".join(f'  "{key}",' for key in pattern_descs),
         "] as const;\n",
         sep="\n",
     )
@@ -34,7 +36,7 @@ if __name__ == "__main__":
         "} = {",
         "\n".join(
             f'  {key}: {{\n    displayName: "{value.display_name}",\n    description: "{value.description}"\n  }},'
-            for key, value in default_pattern_data.items()
+            for key, value in pattern_descs.items()
         ),
         "} as const;\n",
         sep="\n",

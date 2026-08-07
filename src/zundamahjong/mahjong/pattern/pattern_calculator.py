@@ -22,17 +22,24 @@ class PatternData(BaseModel):
     Represents a pattern and its han and fu values.
     """
 
-    display_name: str
-    "The name of the pattern."
     han: int
     "The han value of the pattern."
     fu: int
     "The fu value of the pattern."
+
+class PatternDesc(BaseModel):
+    """
+    Represents a pattern's display information.
+    """
+
+    display_name: str
+    "The name of the pattern."
     description: str
     "A description of the pattern."
 
 
 default_pattern_data: dict[str, PatternData] = {}
+pattern_descs: dict[str, PatternDesc] = {}
 """
 A dictionary containing :py:class:`PatternData` objects
 with all the default han and fu values.
@@ -73,9 +80,11 @@ def register_pattern(
         func: Callable[[PatternCalculator], int],
     ) -> Callable[[PatternCalculator], int]:
         default_pattern_data[name] = PatternData(
-            display_name=display_name,
             han=han,
             fu=fu,
+        )
+        pattern_descs[name] = PatternDesc(
+            display_name=display_name,
             description=(func.__doc__ or "").strip().replace("\n", " "),
         )
         pattern_mult_funcs[name] = func

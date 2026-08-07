@@ -1,5 +1,6 @@
 import { avatars, type AvatarIdDict } from "../../../types/avatars";
 import type { Player } from "../../../types/player";
+import type { Pattern } from "../../../types/pattern";
 import type { AllGameInfo } from "../../../types/game";
 
 import { Tile2D, Tile2DBack } from "../tile_2d/tile_2d";
@@ -47,7 +48,7 @@ export function WinInfo({
           ) : (<></>) }
         <div id="patterns">
           {Object.entries(info.scoring_info.patterns).map(([pattern, data]) => (
-            <PatternInfo key={pattern} data={data} />
+            <PatternInfo key={pattern} pattern={pattern as Pattern} data={data} />
           ))}
         </div>
       </>

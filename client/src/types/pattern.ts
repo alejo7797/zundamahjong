@@ -1,5 +1,4 @@
 export type PatternData = {
-  display_name: string;
   han: number;
   fu: number;
 };

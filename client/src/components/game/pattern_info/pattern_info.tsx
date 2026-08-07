@@ -1,8 +1,8 @@
 import type { JSX } from "preact/jsx-runtime";
-import type { PatternData } from "../../../types/pattern";
+import { patternDescs, type Pattern, type PatternData } from "../../../types/pattern";
 import "./pattern_info.css";
 
-export function PatternInfo({ data }: { data: PatternData }) {
+export function PatternInfo({ pattern, data }: { pattern: Pattern, data: PatternData }) {
   const children: JSX.Element[] = [];
   if (data.han != 0) {
     children.push(<span class="han">{`${data.han} han`}</span>);
@@ -12,7 +12,7 @@ export function PatternInfo({ data }: { data: PatternData }) {
   }
   return (
     <div class="pattern">
-      <span class="display_name">{data.display_name}</span>
+      <span class="display_name">{patternDescs[pattern].displayName}</span>
       <span class="values">{children}</span>
     </div>
   );
