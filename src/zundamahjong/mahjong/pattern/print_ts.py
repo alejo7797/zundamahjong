@@ -1,5 +1,4 @@
 # import to register patterns
-import zundamahjong.mahjong.pattern  # pyright: ignore[reportUnusedImport]
 from zundamahjong.mahjong.pattern.pattern_calculator import pattern_descs
 
 typesBefore = """export type PatternData = {
@@ -25,7 +24,7 @@ export type PatternDataDict = {
 if __name__ == "__main__":
     print(typesBefore)
     print(
-        f"export const patterns = [",
+        "export const patterns = [",
         "\n".join(f'  "{key}",' for key in pattern_descs),
         "] as const;\n",
         sep="\n",
