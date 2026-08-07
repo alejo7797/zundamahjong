@@ -3,7 +3,6 @@ import zundamahjong.mahjong.pattern  # pyright: ignore[reportUnusedImport]
 from zundamahjong.mahjong.pattern.pattern_calculator import pattern_descs
 
 typesBefore = """export type PatternData = {
-  display_name: string;
   han: number;
   fu: number;
 };
