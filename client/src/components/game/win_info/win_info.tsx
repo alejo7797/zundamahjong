@@ -33,16 +33,18 @@ export function WinInfo({
           src={winnerAvatar.imageURL}
           alt={winnerAvatar.name}
         />
-        <div class="win_dora">
-          <div class="dora_tiles">
-            <span class="dora_label">Dora</span>
-            {dora_tiles}
+        { dora_tiles.length > 0 ? (
+          <div class="win_dora">
+            <div class="dora_tiles">
+              <span class="dora_label">Dora</span>
+              {dora_tiles}
+            </div>
+            <div class="dora_tiles">
+              <span class="dora_label">Ura</span>
+              {ura_dora_tiles}
+            </div>
           </div>
-          <div class="dora_tiles">
-            <span class="dora_label">Ura</span>
-            {ura_dora_tiles}
-          </div>
-        </div>
+          ) : (<></>) }
         <div id="patterns">
           {Object.entries(info.scoring_info.patterns).map(([pattern, data]) => (
             <PatternInfo key={pattern} data={data} />

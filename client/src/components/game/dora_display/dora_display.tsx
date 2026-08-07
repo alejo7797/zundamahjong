@@ -10,6 +10,9 @@ export function DoraDisplay({
   dora: TileId[];
   max_dora_count: number;
 }) {
+  if (max_dora_count == 0) {
+    return <></>;
+  }
   const tiles = dora.map((tile) => <Tile2D tile={tile} />);
   while (tiles.length < max_dora_count) {
     tiles.push(<Tile2DBack />);
