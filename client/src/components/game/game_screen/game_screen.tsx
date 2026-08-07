@@ -37,6 +37,7 @@ import { CutinCollection } from "../cutin/cutin";
 import { OptionsBar } from "../options_bar/options_bar";
 import { OptionsContext } from "../../options_context/options_context";
 import { TileHighlightContext } from "../tile_highlight_context/tile_highlight_context";
+import { DoraContext, getDoraValues } from "../dora_context/dora_context.tsx";
 
 export function GameScreen({
   playerAvatarIds,
@@ -171,6 +172,7 @@ export function GameScreen({
 
   return (
     <EmitAction.Provider value={emit_action}>
+      <DoraContext value={getDoraValues(info.round_info.dora, info.player_count == 3)}>
       <TileHighlightContext value={tileHighlight}>
         <div
           class={`screen game_screen me_player_${info.player_index} status_${info.round_info.status} show_tile_names_${options.client_options.show_tile_numbers ? "true" : "false"}`}
@@ -228,6 +230,7 @@ export function GameScreen({
           <OptionsBar />
         </div>
       </TileHighlightContext>
+      </DoraContext>
     </EmitAction.Provider>
   );
 }

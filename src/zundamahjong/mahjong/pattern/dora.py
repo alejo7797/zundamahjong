@@ -15,18 +15,12 @@ def get_dora_value(tile: TileId, is_3player: bool) -> TileValue:
     return value + 1
 
 
-def get_dora_flower_values(tile: TileId, is_3player: bool) -> list[TileValue]:
+def get_dora_flower_values(tile: TileId) -> list[TileValue]:
     value = get_tile_value(tile)
-    if is_3player:
-        if value <= 43:
-            return [41, 42, 43]
-        else:
-            return [44, 45, 46]
+    if value <= 44:
+        return [41, 42, 43, 44]
     else:
-        if value <= 44:
-            return [41, 42, 43, 44]
-        else:
-            return [45, 46, 47, 48]
+        return [45, 46, 47, 48]
 
 
 def count_dora_matches(self: PatternCalculator, dora_tiles: list[TileId]) -> int:
@@ -37,7 +31,7 @@ def count_dora_matches(self: PatternCalculator, dora_tiles: list[TileId]) -> int
                 1
                 for tile_value in self.flowers
                 if tile_value
-                in get_dora_flower_values(dora_tile, self.win.player_count == 3)
+                in get_dora_flower_values(dora_tile)
             )
         else:
             total += sum(

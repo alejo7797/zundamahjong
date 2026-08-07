@@ -40,6 +40,10 @@
   }
 
   &.tile_2d_front {
+    &.is_dora {
+      --tile-front-color: rgb(255, 255, 120);
+    }
+
     .tile_back_layer {
       bottom: calc(var(--tile-height) * 1 / 8);
       background-color: color-mix(
