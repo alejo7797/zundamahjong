@@ -160,6 +160,15 @@ export function GameScreen({
     hoverTileValue: hoverTile ? getTileValue(hoverTile) : 0,
   };
 
+  const max_dora_count = Math.max(
+    Math.min(
+      options.game_options.max_dora_count,
+      options.game_options.max_kan_count + options.game_options.start_dora_count,
+    ),
+    options.game_options.start_dora_count,
+  );
+
+
   return (
     <EmitAction.Provider value={emit_action}>
       <TileHighlightContext value={tileHighlight}>
@@ -186,7 +195,7 @@ export function GameScreen({
           />
           <DoraDisplay
             dora={info.round_info.dora}
-            max_dora_count={options.game_options.max_dora_count}
+            max_dora_count={max_dora_count}
           />
           {actionSubmitted ? (
             <></>

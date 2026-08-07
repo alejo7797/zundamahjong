@@ -79,6 +79,18 @@ class GameOptions(BaseModel):
     indicators and tiles needed for kan/flowers.
     """
 
+    @property
+    def true_max_dora_count(self) -> int:
+        "The calculated maximum number of dora indicators to reveal in a round."
+        return max(
+            min(
+                self.max_dora_count,
+                self.max_kan_count + self.start_dora_count,
+            ),
+            self.start_dora_count,
+        )
+
+
     start_score: float = 0.0
     "The score each player starts with at the start of the game."
     score_dealer_ron_multiplier: float = 6.0

@@ -189,7 +189,7 @@ class Scorer:
         )
 
     def _get_scoring(self) -> Scoring:
-        max_dora_count = self._options.max_dora_count
+        max_dora_count = self._options.true_max_dora_count
         dora_tiles = [
             *self._win.dora,
             *(None for _ in range(max_dora_count - len(self._win.dora))),

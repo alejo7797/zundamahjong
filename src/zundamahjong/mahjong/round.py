@@ -122,8 +122,8 @@ class Round:
         self._max_back_draw = self._options.max_kan_count
         if self._options.use_flowers:
             self._max_back_draw += 2 * self._player_count
-        max_dora_count = self._options.max_dora_count
         self.kan_count = 0
+        max_dora_count = self._options.true_max_dora_count
         if tiles is not None:
             self._deck = Deck(tiles, self._max_back_draw, max_dora_count)
         else:
