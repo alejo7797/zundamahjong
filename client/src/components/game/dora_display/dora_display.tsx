@@ -13,9 +13,9 @@ export function DoraDisplay({
   if (max_dora_count == 0) {
     return <></>;
   }
-  const tiles = dora.map((tile) => <Tile2D tile={tile} />);
+  const tiles = dora.map((tile) => <Tile2D tile={tile} key={tile}/>);
   while (tiles.length < max_dora_count) {
-    tiles.push(<Tile2DBack />);
+    tiles.push(<Tile2DBack key={-tiles.length}/>);
   }
   return (
     <div class="dora_display">

@@ -24,8 +24,8 @@ export function WinInfo({
   if (info.scoring_info) {
     const winnerAvatar =
       avatars[playerAvatarIds[players[info.scoring_info.win_player].id]];
-    const dora_tiles = info.scoring_info.dora_tiles.map((tile) => tile ? <Tile2D tile={tile} /> : <Tile2DBack />);
-    const ura_dora_tiles = info.scoring_info.ura_dora_tiles.map((tile) => tile ? <Tile2D tile={tile} /> : <Tile2DBack />);
+    const dora_tiles = info.scoring_info.dora_tiles.map((tile, index) => tile ? <Tile2D tile={tile} key={tile}/> : <Tile2DBack key={-index}/>);
+    const ura_dora_tiles = info.scoring_info.ura_dora_tiles.map((tile, index) => tile ? <Tile2D tile={tile} key={tile}/> : <Tile2DBack key={-index}/>);
     winInfoInner = (
       <>
         <img
