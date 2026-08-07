@@ -42,6 +42,9 @@ def calculate_bot_action(info: AllGameInfo) -> Action:
 def unseen_frequencies(info: AllGameInfo) -> dict[TileValue, int]:
     freqs = {tile_value: 4 for tile_value in all_tiles}
 
+    for tile in info.round_info.dora:
+        if not tile_id_is_flower(tile):
+            freqs[get_tile_value(tile)] -= 1
     for tile in info.player_info.hand:
         freqs[get_tile_value(tile)] -= 1
     for player_calls in info.round_info.calls:
