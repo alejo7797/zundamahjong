@@ -1,5 +1,3 @@
-from unittest import TestCase
-
 from zundamahjong.mahjong.call import (
     AddKanCall,
     CallType,
@@ -12,7 +10,7 @@ from zundamahjong.mahjong.meld import Meld, MeldType
 from .get_pattern_mults import get_pattern_mults
 
 
-class SetsTest(TestCase):
+class TestSets:
     def test_all_triplets(self) -> None:
         pattern_mults = get_pattern_mults(
             win_player=0,

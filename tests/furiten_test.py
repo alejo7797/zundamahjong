@@ -1,7 +1,5 @@
 # pyright: reportPrivateUsage=false
 
-import unittest
-
 from tests.decks import test_deck_furiten
 from zundamahjong.mahjong.action import (
     ActionType,
@@ -19,7 +17,7 @@ from zundamahjong.mahjong.game_options import GameOptions
 from zundamahjong.mahjong.round import Round
 
 
-class TemporaryFuritenTest(unittest.TestCase):
+class TestTemporaryFuriten:
     def test_furiten_deck_hands(self) -> None:
         round = Round(tiles=test_deck_furiten)
         assert round.get_hand(0) == [
@@ -183,7 +181,7 @@ class TemporaryFuritenTest(unittest.TestCase):
         assert round._hands[2].is_temporary_furiten
 
 
-class RiichiFuritenTest(unittest.TestCase):
+class TestRiichiFuriten:
     def start_round_and_riichi(self) -> Round:
         round = Round(tiles=test_deck_furiten, options=GameOptions(allow_riichi=True))
         round.do_action(0, HandTileAction(action_type=ActionType.DISCARD, tile=191))
@@ -282,7 +280,7 @@ class RiichiFuritenTest(unittest.TestCase):
         assert round._hands[2].is_riichi_furiten
 
 
-class OwnDiscardFuritenTest(unittest.TestCase):
+class TestOwnDiscardFuriten:
     def test_own_discard_no_furiten_on_discard(self) -> None:
         round = Round(tiles=test_deck_furiten)
         round.do_action(0, HandTileAction(action_type=ActionType.DISCARD, tile=70))

@@ -1,5 +1,3 @@
-import unittest
-
 from tests.decks import test_deck2, test_deck4, test_deck6
 from zundamahjong.mahjong.action import ActionType, HandTileAction, SimpleAction
 from zundamahjong.mahjong.exceptions import InvalidOperationException
@@ -9,7 +7,7 @@ from zundamahjong.mahjong.round import RoundStatus
 import pytest
 
 
-class GameTest(unittest.TestCase):
+class TestGame:
     def test_first_round(self) -> None:
         game = Game(first_deck_tiles=test_deck2)
         assert game.wind_round == 0

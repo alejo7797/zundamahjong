@@ -1,5 +1,3 @@
-import unittest
-
 from tests.decks import test_deck1
 from zundamahjong.mahjong.action import (
     ActionType,
@@ -13,7 +11,7 @@ from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.game import Game
 
 
-class BotTest(unittest.TestCase):
+class TestBot:
     def test_unseen_freqs(self) -> None:
         game = Game(first_deck_tiles=test_deck1)
         round = game.round

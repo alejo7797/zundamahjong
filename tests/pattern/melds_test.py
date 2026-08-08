@@ -1,12 +1,10 @@
-from unittest import TestCase
-
 from zundamahjong.mahjong.call import CallType, ClosedKanCall, OpenCall, OpenKanCall
 from zundamahjong.mahjong.meld import Meld, MeldType
 
 from .get_pattern_mults import get_pattern_mults
 
 
-class MeldsTest(TestCase):
+class TestMelds:
     def test_simple_open_triplet(self) -> None:
         pattern_mults = get_pattern_mults(
             win_player=0,

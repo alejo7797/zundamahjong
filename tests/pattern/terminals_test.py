@@ -1,12 +1,10 @@
-from unittest import TestCase
-
 from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.meld import Meld, MeldType
 
 from .get_pattern_mults import get_pattern_mults
 
 
-class TerminalsTest(TestCase):
+class TestTerminals:
     def test_all_simples(self) -> None:
         pattern_mults = get_pattern_mults(
             win_player=0,

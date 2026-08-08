@@ -1,5 +1,3 @@
-import unittest
-
 from zundamahjong.mahjong.shanten import (
     calculate_shanten,
     honours_shanten_data,
@@ -7,7 +5,7 @@ from zundamahjong.mahjong.shanten import (
 )
 
 
-class ShantenTest(unittest.TestCase):
+class TestShanten:
     def test_honours_shanten_1(self) -> None:
         data = honours_shanten_data([1, 0, 0, 0, 0, 0, 0])
         assert data == [

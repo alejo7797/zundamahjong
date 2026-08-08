@@ -1,5 +1,3 @@
-import unittest
-
 from tests.decks import (
     test_deck1,
     test_deck2,
@@ -32,7 +30,7 @@ from zundamahjong.mahjong.game_options import GameOptions
 from zundamahjong.mahjong.round import Round, RoundStatus
 
 
-class RoundTest(unittest.TestCase):
+class TestRound:
     def test_start(self) -> None:
         round = Round(tiles=test_deck1)
         assert round.current_player == 0

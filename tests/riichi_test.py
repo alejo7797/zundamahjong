@@ -1,5 +1,3 @@
-import unittest
-
 from tests.decks import test_deck_riichi
 from zundamahjong.mahjong.action import (
     ActionType,
@@ -17,7 +15,7 @@ def get_round() -> Round:
     return Round(tiles=test_deck_riichi, options=GameOptions(allow_riichi=True))
 
 
-class RiichiTest(unittest.TestCase):
+class TestRiichi:
     def test_riichi_actions(self) -> None:
         round = get_round()
         assert round.allowed_actions[0].actions == [

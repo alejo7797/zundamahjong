@@ -1,5 +1,3 @@
-import unittest
-
 from tests.decks import test_deck4, test_deck_one_discard_option
 from zundamahjong.mahjong.action import (
     ActionType,
@@ -12,7 +10,7 @@ from zundamahjong.mahjong.action_selector import ActionSelector
 from zundamahjong.mahjong.round import Round, RoundStatus
 
 
-class ActionSelectorTest(unittest.TestCase):
+class TestActionSelector:
     def test_submit_only_action(self) -> None:
         round = Round(tiles=test_deck4)
         action_selector = ActionSelector(round)

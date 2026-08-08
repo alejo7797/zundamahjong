@@ -1,5 +1,3 @@
-import unittest
-
 from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.game_options import GameOptions, ScoreLimit
 from zundamahjong.mahjong.pattern.pattern_calculator import PatternData
@@ -7,7 +5,7 @@ from zundamahjong.mahjong.scoring import Scorer
 from zundamahjong.mahjong.win import Win
 
 
-class ScoringTest(unittest.TestCase):
+class TestScoring:
     def get_player_scores(self, win: Win) -> list[float]:
         scoring = Scorer.score(win, GameOptions(player_count=win.player_count))
         assert scoring is not None

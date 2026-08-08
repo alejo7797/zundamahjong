@@ -1,9 +1,7 @@
-import unittest
-
 from zundamahjong.mahjong.form_hand import formed_hand_possibilities, is_winning
 
 
-class FormHandTest(unittest.TestCase):
+class TestFormHand:
     def test_wrong_size_hand(self) -> None:
         tiles = [10, 11, 12, 13]
         assert not is_winning(tiles)

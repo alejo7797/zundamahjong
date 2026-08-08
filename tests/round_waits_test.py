@@ -1,7 +1,5 @@
 # pyright: reportPrivateUsage=false
 
-import unittest
-
 from tests.decks import test_deck1, test_deck2, test_deck3
 from zundamahjong.mahjong.action import (
     ActionType,
@@ -25,7 +23,7 @@ from zundamahjong.mahjong.round import Round
 from zundamahjong.mahjong.tile import N, all_tiles
 
 
-class RoundWaitsTest(unittest.TestCase):
+class TestRoundWaits:
     def test_waits_wrong_hand_size(self) -> None:
         round = Round(tiles=test_deck1)
         assert round._hands[0].waits == set()
@@ -42,7 +40,7 @@ class RoundWaitsTest(unittest.TestCase):
         assert hand.waits == {1, 2, 3, 4, 5, 6, 8, 9}
 
 
-class RoundActionsWaitsCheckTest(unittest.TestCase):
+class TestRoundActionsWaitsCheck:
     def check_waits(self, round: Round) -> None:
         for hand in round._hands:
             assert hand.waits == {

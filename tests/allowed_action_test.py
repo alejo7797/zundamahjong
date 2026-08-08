@@ -1,7 +1,3 @@
-# pyright: reportPrivateUsage=false
-
-import unittest
-
 from tests.decks import test_deck1, test_deck2, test_deck3, test_deck_chankan
 from zundamahjong.mahjong.action import (
     ActionType,
@@ -17,7 +13,7 @@ from zundamahjong.mahjong.game_options import GameOptions
 from zundamahjong.mahjong.round import Round
 
 
-class AllowedActionTest(unittest.TestCase):
+class TestAllowedAction:
     def test_play_default_actions(self) -> None:
         round = Round(tiles=test_deck1)
         assert round.allowed_actions[0].default.action_type == ActionType.DISCARD
@@ -118,7 +114,6 @@ class AllowedActionTest(unittest.TestCase):
     def test_can_chi_abc(self) -> None:
         round = Round(tiles=test_deck1)
         round.do_action(0, HandTileAction(action_type=ActionType.DISCARD, tile=50))
-        print(round._hands[1].tile_values)
         assert round.allowed_actions[1].actions == [
             SimpleAction(action_type=ActionType.DRAW),
             OpenCallAction(action_type=ActionType.CHII, other_tiles=(31, 41)),

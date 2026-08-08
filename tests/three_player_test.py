@@ -1,10 +1,8 @@
-import unittest
-
 from zundamahjong.mahjong.game import Game
 from zundamahjong.mahjong.game_options import GameOptions
 
 
-class ThreePlayerTest(unittest.TestCase):
+class TestThreePlayer:
     def test_3_player_game(self) -> None:
         game = Game(options=GameOptions(player_count=3))
         assert game.player_count == 3

@@ -1,10 +1,8 @@
-import unittest
-
 from zundamahjong.mahjong.form_hand import get_waits
 from zundamahjong.mahjong.tile import N, TileValue
 
 
-class TenpaiTest(unittest.TestCase):
+class TestTenpai:
     def get_values_waits(self, values: list[TileValue]) -> frozenset[TileValue]:
         return get_waits([value * N for value in values])
 
