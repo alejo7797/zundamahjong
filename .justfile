@@ -13,6 +13,18 @@ debug-server:
 debug-client:
     npm --prefix=client run dev
 
+# Formatting code
+
+[doc("Format client source code")]
+format-client:
+    npm --prefix=client run lint:format
+
+[doc("Format server source code")]
+format-server:
+    ruff format
+
+[doc("Format all code")]
+format-all: format-client format-server
 
 # Running checks on code
 
@@ -48,9 +60,11 @@ check-server: lint-server test-server
 check-all: check-client check-server
 
 # Generating client pattern data
+
 [doc("Generate client pattern data")]
 gen-pattern:
     python src/zundamahjong/mahjong/pattern/print_ts.py > client/src/types/pattern.ts
+    npx --prefix=client prettier --write client/src/types/pattern.ts
 
 # Working with the Sphinx docs
 

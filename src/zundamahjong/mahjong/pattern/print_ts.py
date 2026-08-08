@@ -34,7 +34,7 @@ if __name__ == "__main__":
         "  [pattern in Pattern]: PatternDesc;",
         "} = {",
         "\n".join(
-            f'  {key}: {{\n    displayName: "{value.display_name}",\n    description: "{value.description}"\n  }},'
+            f'  {key}: {{\n    displayName: "{value.display_name}",\n    description: "{value.description}",\n  }},'
             for key, value in pattern_descs.items()
         ),
         "} as const;\n",
