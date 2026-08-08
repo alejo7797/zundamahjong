@@ -139,7 +139,7 @@
                   name = "zundamahjong-client";
                   src = ./client;
 
-                  npmDepsHash = "sha256-nAUdwnayf0CtYmXfKEfudBztMq7LLBUi3eFudHAO+Ak=";
+                  npmDepsHash = "sha256-UPCCc32jxotuDJ1XiJ7cy42S42mvy/pGKBSpiFCOUmU=";
                   npmPackFlags = [ "--ignore-scripts" ];
 
                   installPhase = ''
