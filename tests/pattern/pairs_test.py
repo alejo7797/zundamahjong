@@ -23,7 +23,7 @@ class PairsTest(TestCase):
             calls=[],
             flowers=[420],
         )
-        self.assertDictEqual(pattern_mults, {"SEVEN_PAIRS": 1})
+        assert pattern_mults == {"SEVEN_PAIRS": 1}
 
     def test_eyes(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -57,12 +57,9 @@ class PairsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "DUAL_PON_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "EYES": 1,
-            },
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "EYES": 1,
+        }

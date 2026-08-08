@@ -27,10 +27,11 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"OPEN_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_closed_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -52,10 +53,11 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"CLOSED_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "CLOSED_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_low_edge_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -77,10 +79,11 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"EDGE_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "EDGE_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_high_edge_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -102,10 +105,11 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"EDGE_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "EDGE_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_dual_pon_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -129,10 +133,11 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"DUAL_PON_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_pair_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -154,7 +159,8 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"PAIR_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "PAIR_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }

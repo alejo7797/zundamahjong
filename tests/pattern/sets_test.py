@@ -33,17 +33,14 @@ class SetsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "DUAL_PON_WAIT": 1,
-                "SIMPLE_OPEN_TRIPLET": 1,
-                "ORPHAN_OPEN_TRIPLET": 1,
-                "SIMPLE_CLOSED_TRIPLET": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "ALL_TRIPLETS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "SIMPLE_OPEN_TRIPLET": 1,
+            "ORPHAN_OPEN_TRIPLET": 1,
+            "SIMPLE_CLOSED_TRIPLET": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "ALL_TRIPLETS": 1,
+        }
 
     def test_triple_triplets(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -65,16 +62,13 @@ class SetsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "DUAL_PON_WAIT": 1,
-                "ORPHAN_OPEN_TRIPLET": 1,
-                "ORPHAN_CLOSED_TRIPLET": 2,
-                "NON_PINFU_TSUMO": 1,
-                "TRIPLE_TRIPLETS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "ORPHAN_OPEN_TRIPLET": 1,
+            "ORPHAN_CLOSED_TRIPLET": 2,
+            "NON_PINFU_TSUMO": 1,
+            "TRIPLE_TRIPLETS": 1,
+        }
 
     def test_three_concealed_triplets(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -96,15 +90,12 @@ class SetsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "PAIR_WAIT": 1,
-                "SIMPLE_CLOSED_TRIPLET": 1,
-                "ORPHAN_CLOSED_TRIPLET": 2,
-                "THREE_CONCEALED_TRIPLETS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "PAIR_WAIT": 1,
+            "SIMPLE_CLOSED_TRIPLET": 1,
+            "ORPHAN_CLOSED_TRIPLET": 2,
+            "THREE_CONCEALED_TRIPLETS": 1,
+        }
 
     def test_four_concealed_triplets(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -123,20 +114,17 @@ class SetsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "DUAL_PON_WAIT": 1,
-                "SIMPLE_CLOSED_TRIPLET": 2,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "ORPHAN_CLOSED_QUAD": 1,
-                "NON_PINFU_TSUMO": 1,
-                "NO_CALLS": 1,
-                "NO_CALLS_TSUMO": 1,
-                "ALL_TRIPLETS": 1,
-                "FOUR_CONCEALED_TRIPLETS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "SIMPLE_CLOSED_TRIPLET": 2,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "ORPHAN_CLOSED_QUAD": 1,
+            "NON_PINFU_TSUMO": 1,
+            "NO_CALLS": 1,
+            "NO_CALLS_TSUMO": 1,
+            "ALL_TRIPLETS": 1,
+            "FOUR_CONCEALED_TRIPLETS": 1,
+        }
 
     def test_one_open_triplet(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -155,19 +143,16 @@ class SetsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "DUAL_PON_WAIT": 1,
-                "ORPHAN_OPEN_TRIPLET": 1,
-                "SIMPLE_CLOSED_TRIPLET": 2,
-                "ORPHAN_CLOSED_QUAD": 1,
-                "NO_CALLS_RON": 1,
-                "NO_CALLS": 1,
-                "ALL_TRIPLETS": 1,
-                "THREE_CONCEALED_TRIPLETS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "ORPHAN_OPEN_TRIPLET": 1,
+            "SIMPLE_CLOSED_TRIPLET": 2,
+            "ORPHAN_CLOSED_QUAD": 1,
+            "NO_CALLS_RON": 1,
+            "NO_CALLS": 1,
+            "ALL_TRIPLETS": 1,
+            "THREE_CONCEALED_TRIPLETS": 1,
+        }
 
     def test_four_concealed_triplets_1_sided_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -186,19 +171,16 @@ class SetsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "PAIR_WAIT": 1,
-                "SIMPLE_CLOSED_TRIPLET": 2,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "ORPHAN_CLOSED_QUAD": 1,
-                "NO_CALLS_RON": 1,
-                "NO_CALLS": 1,
-                "ALL_TRIPLETS": 1,
-                "FOUR_CONCEALED_TRIPLETS_1_SIDED_WAIT": 1,
-            },
-        )
+        assert pattern_mults == {
+            "PAIR_WAIT": 1,
+            "SIMPLE_CLOSED_TRIPLET": 2,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "ORPHAN_CLOSED_QUAD": 1,
+            "NO_CALLS_RON": 1,
+            "NO_CALLS": 1,
+            "ALL_TRIPLETS": 1,
+            "FOUR_CONCEALED_TRIPLETS_1_SIDED_WAIT": 1,
+        }
 
     def test_three_quads(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -224,17 +206,14 @@ class SetsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "SIMPLE_OPEN_QUAD": 1,
-                "ORPHAN_OPEN_QUAD": 1,
-                "ORPHAN_CLOSED_QUAD": 1,
-                "NON_PINFU_TSUMO": 1,
-                "THREE_QUADS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "SIMPLE_OPEN_QUAD": 1,
+            "ORPHAN_OPEN_QUAD": 1,
+            "ORPHAN_CLOSED_QUAD": 1,
+            "NON_PINFU_TSUMO": 1,
+            "THREE_QUADS": 1,
+        }
 
     def test_four_quads(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -263,15 +242,12 @@ class SetsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "PAIR_WAIT": 1,
-                "SIMPLE_OPEN_QUAD": 2,
-                "ORPHAN_OPEN_QUAD": 1,
-                "ORPHAN_CLOSED_QUAD": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ALL_TRIPLETS": 1,
-                "FOUR_QUADS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "PAIR_WAIT": 1,
+            "SIMPLE_OPEN_QUAD": 2,
+            "ORPHAN_OPEN_QUAD": 1,
+            "ORPHAN_CLOSED_QUAD": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ALL_TRIPLETS": 1,
+            "FOUR_QUADS": 1,
+        }

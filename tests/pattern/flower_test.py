@@ -27,15 +27,12 @@ class FlowerTest(TestCase):
             ],
             flowers=[],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NO_FLOWERS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NO_FLOWERS": 1,
+        }
 
     def test_seat_flower(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -57,15 +54,12 @@ class FlowerTest(TestCase):
             ],
             flowers=[410],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "SEAT_FLOWER": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "SEAT_FLOWER": 1,
+        }
 
     def test_sub_round_seat_flower(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -88,15 +82,12 @@ class FlowerTest(TestCase):
             flowers=[440],
             sub_round=1,
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "SEAT_FLOWER": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "SEAT_FLOWER": 1,
+        }
 
     def test_two_seat_flowers(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -118,15 +109,12 @@ class FlowerTest(TestCase):
             ],
             flowers=[410, 450],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "SEAT_FLOWER": 2,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "SEAT_FLOWER": 2,
+        }
 
     def test_set_of_flowers(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -148,16 +136,13 @@ class FlowerTest(TestCase):
             ],
             flowers=[410, 420, 430, 440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "SEAT_FLOWER": 1,
-                "SET_OF_FLOWERS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "SEAT_FLOWER": 1,
+            "SET_OF_FLOWERS": 1,
+        }
 
     def test_three_player_set_of_flowers(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -182,16 +167,13 @@ class FlowerTest(TestCase):
             flowers=[410, 420, 430],
             player_count=3,
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "SEAT_FLOWER": 1,
-                "SET_OF_FLOWERS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "SEAT_FLOWER": 1,
+            "SET_OF_FLOWERS": 1,
+        }
 
     def test_three_player_five_flowers(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -216,17 +198,14 @@ class FlowerTest(TestCase):
             flowers=[410, 420, 430, 460, 470],
             player_count=3,
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "SEAT_FLOWER": 1,
-                "SET_OF_FLOWERS": 1,
-                "FIVE_FLOWERS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "SEAT_FLOWER": 1,
+            "SET_OF_FLOWERS": 1,
+            "FIVE_FLOWERS": 1,
+        }
 
     def test_seven_flowers(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -248,17 +227,14 @@ class FlowerTest(TestCase):
             ],
             flowers=[410, 420, 430, 440, 460, 470, 480],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "SEAT_FLOWER": 1,
-                "SET_OF_FLOWERS": 1,
-                "SEVEN_FLOWERS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "SEAT_FLOWER": 1,
+            "SET_OF_FLOWERS": 1,
+            "SEVEN_FLOWERS": 1,
+        }
 
     def test_two_sets_of_flowers(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -280,16 +256,13 @@ class FlowerTest(TestCase):
             ],
             flowers=[410, 420, 430, 440, 450, 460, 470, 480],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "SEAT_FLOWER": 2,
-                "TWO_SETS_OF_FLOWERS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "SEAT_FLOWER": 2,
+            "TWO_SETS_OF_FLOWERS": 1,
+        }
 
     def test_three_player_two_sets_of_flowers(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -314,13 +287,10 @@ class FlowerTest(TestCase):
             flowers=[410, 420, 430, 450, 460, 470],
             player_count=3,
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "SEAT_FLOWER": 2,
-                "TWO_SETS_OF_FLOWERS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "SEAT_FLOWER": 2,
+            "TWO_SETS_OF_FLOWERS": 1,
+        }

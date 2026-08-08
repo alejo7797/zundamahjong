@@ -27,15 +27,12 @@ class YakuhaiTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "SEAT_WIND": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "SEAT_WIND": 1,
+        }
 
     def test_sub_round_seat_wind(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -58,15 +55,12 @@ class YakuhaiTest(TestCase):
             flowers=[440],
             sub_round=1,
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "SEAT_WIND": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "SEAT_WIND": 1,
+        }
 
     def test_prevalent_wind(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -88,15 +82,12 @@ class YakuhaiTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "PREVALENT_WIND": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "PREVALENT_WIND": 1,
+        }
 
     def test_north_wind(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -121,15 +112,12 @@ class YakuhaiTest(TestCase):
             flowers=[430],
             player_count=3,
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "NORTH_WIND": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "NORTH_WIND": 1,
+        }
 
     def test_white_dragon(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -151,15 +139,12 @@ class YakuhaiTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "WHITE_DRAGON": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "WHITE_DRAGON": 1,
+        }
 
     def test_green_dragon(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -181,15 +166,12 @@ class YakuhaiTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "GREEN_DRAGON": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "GREEN_DRAGON": 1,
+        }
 
     def test_red_dragon(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -211,15 +193,12 @@ class YakuhaiTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "RED_DRAGON": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "RED_DRAGON": 1,
+        }
 
     def test_seat_wind_pair(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -241,15 +220,12 @@ class YakuhaiTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "YAKUHAI_PAIR": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "YAKUHAI_PAIR": 1,
+        }
 
     def test_sub_round_seat_wind_pair(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -272,15 +248,12 @@ class YakuhaiTest(TestCase):
             flowers=[440],
             sub_round=1,
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "YAKUHAI_PAIR": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "YAKUHAI_PAIR": 1,
+        }
 
     def test_prevalent_wind_pair(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -302,15 +275,12 @@ class YakuhaiTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "YAKUHAI_PAIR": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "YAKUHAI_PAIR": 1,
+        }
 
     def test_north_wind_pair(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -333,15 +303,12 @@ class YakuhaiTest(TestCase):
             flowers=[430],
             player_count=3,
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "YAKUHAI_PAIR": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "YAKUHAI_PAIR": 1,
+        }
 
     def test_white_dragon_pair(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -363,15 +330,12 @@ class YakuhaiTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "YAKUHAI_PAIR": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "YAKUHAI_PAIR": 1,
+        }
 
     def test_green_dragon_pair(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -393,15 +357,12 @@ class YakuhaiTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "YAKUHAI_PAIR": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "YAKUHAI_PAIR": 1,
+        }
 
     def test_red_dragon_pair(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -423,12 +384,9 @@ class YakuhaiTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "YAKUHAI_PAIR": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "YAKUHAI_PAIR": 1,
+        }

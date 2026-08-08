@@ -21,16 +21,13 @@ class NoCallsTest(TestCase):
             calls=[],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "NO_CALLS": 1,
-                "NO_CALLS_TSUMO": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "NO_CALLS": 1,
+            "NO_CALLS_TSUMO": 1,
+        }
 
     def test_no_calls_tsumo_closed_kan(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -47,16 +44,13 @@ class NoCallsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_QUAD": 1,
-                "NON_PINFU_TSUMO": 1,
-                "NO_CALLS": 1,
-                "NO_CALLS_TSUMO": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_QUAD": 1,
+            "NON_PINFU_TSUMO": 1,
+            "NO_CALLS": 1,
+            "NO_CALLS_TSUMO": 1,
+        }
 
     def test_no_calls_ron(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -72,15 +66,12 @@ class NoCallsTest(TestCase):
             calls=[],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NO_CALLS_RON": 1,
-                "NO_CALLS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NO_CALLS_RON": 1,
+            "NO_CALLS": 1,
+        }
 
     def test_no_calls_ron_closed_kan(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -97,12 +88,9 @@ class NoCallsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_QUAD": 1,
-                "NO_CALLS_RON": 1,
-                "NO_CALLS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_QUAD": 1,
+            "NO_CALLS_RON": 1,
+            "NO_CALLS": 1,
+        }

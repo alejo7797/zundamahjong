@@ -32,10 +32,11 @@ class MeldsTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"OPEN_WAIT": 1, "NON_PINFU_TSUMO": 1, "SIMPLE_OPEN_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "SIMPLE_OPEN_TRIPLET": 1,
+        }
 
     def test_orphan_open_triplet(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -62,10 +63,11 @@ class MeldsTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"OPEN_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_OPEN_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_OPEN_TRIPLET": 1,
+        }
 
     def test_simple_closed_triplet(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -87,10 +89,11 @@ class MeldsTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"OPEN_WAIT": 1, "NON_PINFU_TSUMO": 1, "SIMPLE_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "SIMPLE_CLOSED_TRIPLET": 1,
+        }
 
     def test_orphan_closed_triplet(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -112,10 +115,11 @@ class MeldsTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"OPEN_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_simple_open_quad(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -141,10 +145,11 @@ class MeldsTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"OPEN_WAIT": 1, "NON_PINFU_TSUMO": 1, "SIMPLE_OPEN_QUAD": 1},
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "SIMPLE_OPEN_QUAD": 1,
+        }
 
     def test_orphan_open_quad(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -170,10 +175,11 @@ class MeldsTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"OPEN_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_OPEN_QUAD": 1},
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_OPEN_QUAD": 1,
+        }
 
     def test_simple_closed_quad(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -197,10 +203,11 @@ class MeldsTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"OPEN_WAIT": 1, "NON_PINFU_TSUMO": 1, "SIMPLE_CLOSED_QUAD": 1},
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "SIMPLE_CLOSED_QUAD": 1,
+        }
 
     def test_orphan_closed_quad(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -224,7 +231,8 @@ class MeldsTest(TestCase):
             ],
             flowers=[440],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"OPEN_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_QUAD": 1},
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_QUAD": 1,
+        }
