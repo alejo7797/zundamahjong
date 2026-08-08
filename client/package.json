@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:check": "tsc -b --noEmit",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:format": "eslint . && prettier --write .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest run",
     "test:debug": "vitest --test-timeout=0"
   },

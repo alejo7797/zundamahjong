@@ -30,7 +30,12 @@ format-all: format-client format-server
 
 [doc("Lint client source code")]
 lint-client:
+    npm --prefix=client run build:check
     npm --prefix=client run lint
+
+[doc("Check client source code formatting")]
+check-format-client:
+    npm --prefix=client run format:check
 
 [doc("Run client tests")]
 test-client:
@@ -41,20 +46,24 @@ build-client:
     npm --prefix=client run build
 
 [doc("Run all client checks")]
-check-client: lint-client test-client
+check-client: lint-client check-format-client test-client
 
 [doc("Lint server source code")]
 lint-server:
-    ruff check --select I
-    mypy
     basedpyright
+    mypy
+    ruff check
+
+[doc("Check server source code formatting")]
+check-format-server:
+    ruff format --check
 
 [doc("Run server tests")]
 test-server:
     pytest
 
 [doc("Run all server checks")]
-check-server: lint-server test-server
+check-server: lint-server check-format-server test-server
 
 [doc("Run all checks")]
 check-all: check-client check-server
