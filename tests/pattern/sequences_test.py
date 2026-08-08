@@ -1,12 +1,10 @@
-from unittest import TestCase
-
 from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.meld import Meld, MeldType
 
 from .get_pattern_mults import get_pattern_mults
 
 
-class SequencesTest(TestCase):
+class TestSequences:
     def test_all_sequences(self) -> None:
         pattern_mults = get_pattern_mults(
             win_player=0,
@@ -42,9 +40,11 @@ class SequencesTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults, {"PAIR_WAIT": 1, "NON_PINFU_TSUMO": 1, "ALL_SEQUENCES": 1}
-        )
+        assert pattern_mults == {
+            "PAIR_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ALL_SEQUENCES": 1,
+        }
 
     def test_pure_double_sequence(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -66,15 +66,12 @@ class SequencesTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "PURE_DOUBLE_SEQUENCE": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "PURE_DOUBLE_SEQUENCE": 1,
+        }
 
     def test_twice_pure_double_sequence(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -96,15 +93,12 @@ class SequencesTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "OPEN_PINFU": 1,
-                "ALL_SEQUENCES": 1,
-                "TWICE_PURE_DOUBLE_SEQUENCE": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "OPEN_PINFU": 1,
+            "ALL_SEQUENCES": 1,
+            "TWICE_PURE_DOUBLE_SEQUENCE": 1,
+        }
 
     def test_pure_triple_sequence(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -126,15 +120,12 @@ class SequencesTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "PURE_TRIPLE_SEQUENCE": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "PURE_TRIPLE_SEQUENCE": 1,
+        }
 
     def test_pure_quadruple_sequence(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -156,15 +147,12 @@ class SequencesTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "OPEN_PINFU": 1,
-                "ALL_SEQUENCES": 1,
-                "PURE_QUADRUPLE_SEQUENCE": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "OPEN_PINFU": 1,
+            "ALL_SEQUENCES": 1,
+            "PURE_QUADRUPLE_SEQUENCE": 1,
+        }
 
     def test_pure_straight(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -188,15 +176,12 @@ class SequencesTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "PURE_STRAIGHT": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "PURE_STRAIGHT": 1,
+        }
 
     def test_mixed_triple_sequence(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -218,12 +203,9 @@ class SequencesTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "MIXED_TRIPLE_SEQUENCE": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "MIXED_TRIPLE_SEQUENCE": 1,
+        }

@@ -1,12 +1,10 @@
-from unittest import TestCase
-
 from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.meld import Meld, MeldType
 
 from .get_pattern_mults import get_pattern_mults
 
 
-class TerminalsTest(TestCase):
+class TestTerminals:
     def test_all_simples(self) -> None:
         pattern_mults = get_pattern_mults(
             win_player=0,
@@ -32,16 +30,13 @@ class TerminalsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "DUAL_PON_WAIT": 1,
-                "SIMPLE_OPEN_TRIPLET": 1,
-                "SIMPLE_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ALL_SIMPLES": 1,
-            },
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "SIMPLE_OPEN_TRIPLET": 1,
+            "SIMPLE_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ALL_SIMPLES": 1,
+        }
 
     def test_half_outside_hand(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -63,15 +58,12 @@ class TerminalsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "HALF_OUTSIDE_HAND": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "HALF_OUTSIDE_HAND": 1,
+        }
 
     def test_fully_outside_hand(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -93,15 +85,12 @@ class TerminalsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "FULLY_OUTSIDE_HAND": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "FULLY_OUTSIDE_HAND": 1,
+        }
 
     def test_all_terminals_and_honours(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -123,17 +112,14 @@ class TerminalsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "DUAL_PON_WAIT": 1,
-                "ORPHAN_OPEN_TRIPLET": 2,
-                "ORPHAN_CLOSED_TRIPLET": 2,
-                "HALF_OUTSIDE_HAND": 1,
-                "ALL_TRIPLETS": 1,
-                "ALL_TERMINALS_AND_HONOURS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "ORPHAN_OPEN_TRIPLET": 2,
+            "ORPHAN_CLOSED_TRIPLET": 2,
+            "HALF_OUTSIDE_HAND": 1,
+            "ALL_TRIPLETS": 1,
+            "ALL_TERMINALS_AND_HONOURS": 1,
+        }
 
     def test_all_terminals(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -155,17 +141,14 @@ class TerminalsTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "DUAL_PON_WAIT": 1,
-                "ORPHAN_OPEN_TRIPLET": 2,
-                "ORPHAN_CLOSED_TRIPLET": 2,
-                "ALL_TRIPLETS": 1,
-                "FULLY_OUTSIDE_HAND": 1,
-                "ALL_TERMINALS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "ORPHAN_OPEN_TRIPLET": 2,
+            "ORPHAN_CLOSED_TRIPLET": 2,
+            "ALL_TRIPLETS": 1,
+            "FULLY_OUTSIDE_HAND": 1,
+            "ALL_TERMINALS": 1,
+        }
 
     def test_thirteen_orphans(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -196,7 +179,7 @@ class TerminalsTest(TestCase):
             calls=[],
             flowers=[420],
         )
-        self.assertDictEqual(pattern_mults, {"NO_CALLS_RON": 1, "THIRTEEN_ORPHANS": 1})
+        assert pattern_mults == {"NO_CALLS_RON": 1, "THIRTEEN_ORPHANS": 1}
 
     def test_thirteen_orphans_13_sided_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -227,6 +210,4 @@ class TerminalsTest(TestCase):
             calls=[],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults, {"NO_CALLS_RON": 1, "THIRTEEN_ORPHANS_13_SIDED_WAIT": 1}
-        )
+        assert pattern_mults == {"NO_CALLS_RON": 1, "THIRTEEN_ORPHANS_13_SIDED_WAIT": 1}

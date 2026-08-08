@@ -1,12 +1,10 @@
-from unittest import TestCase
-
 from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.meld import Meld, MeldType
 
 from .get_pattern_mults import get_pattern_mults
 
 
-class DoraTest(TestCase):
+class TestDora:
     def test_dora(self) -> None:
         pattern_mults = get_pattern_mults(
             win_player=0,
@@ -28,15 +26,12 @@ class DoraTest(TestCase):
             flowers=[420],
             dora=[11],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "DORA": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "DORA": 1,
+        }
 
     def test_dora_multiple_hand_tiles(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -59,15 +54,12 @@ class DoraTest(TestCase):
             flowers=[420],
             dora=[320],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "DORA": 2,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "DORA": 2,
+        }
 
     def test_dora_multiple_indicators(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -90,15 +82,12 @@ class DoraTest(TestCase):
             flowers=[420],
             dora=[320, 321],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "DORA": 4,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "DORA": 4,
+        }
 
     def test_ura_dora(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -122,16 +111,13 @@ class DoraTest(TestCase):
             ura_dora=[11],
             is_riichi=True,
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "RIICHI": 1,
-                "URA_DORA": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "RIICHI": 1,
+            "URA_DORA": 1,
+        }
 
     def test_no_ura_dora_if_no_riichi(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -155,14 +141,11 @@ class DoraTest(TestCase):
             ura_dora=[11],
             is_riichi=False,
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_dora_9_to_1(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -185,15 +168,12 @@ class DoraTest(TestCase):
             flowers=[420],
             dora=[90],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "DORA": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "DORA": 1,
+        }
 
     def test_dora_flowers(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -216,15 +196,12 @@ class DoraTest(TestCase):
             flowers=[420, 430],
             dora=[410],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "DORA": 2,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "DORA": 2,
+        }
 
     def test_dora_wrong_set_of_flowers(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -247,11 +224,8 @@ class DoraTest(TestCase):
             flowers=[420, 430],
             dora=[450],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }

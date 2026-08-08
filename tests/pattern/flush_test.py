@@ -1,12 +1,10 @@
-from unittest import TestCase
-
 from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.meld import Meld, MeldType
 
 from .get_pattern_mults import get_pattern_mults
 
 
-class FlushTest(TestCase):
+class TestFlush:
     def test_half_flush(self) -> None:
         pattern_mults = get_pattern_mults(
             win_player=0,
@@ -27,15 +25,12 @@ class FlushTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "HALF_FLUSH": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "HALF_FLUSH": 1,
+        }
 
     def test_full_flush(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -57,15 +52,12 @@ class FlushTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NON_PINFU_TSUMO": 1,
-                "FULL_FLUSH": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NON_PINFU_TSUMO": 1,
+            "FULL_FLUSH": 1,
+        }
 
     def test_nine_gates(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -81,17 +73,14 @@ class FlushTest(TestCase):
             calls=[],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "DUAL_PON_WAIT": 1,
-                "ORPHAN_OPEN_TRIPLET": 1,
-                "NO_CALLS_RON": 1,
-                "NO_CALLS": 1,
-                "FULL_FLUSH": 1,
-                "NINE_GATES": 1,
-            },
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "ORPHAN_OPEN_TRIPLET": 1,
+            "NO_CALLS_RON": 1,
+            "NO_CALLS": 1,
+            "FULL_FLUSH": 1,
+            "NINE_GATES": 1,
+        }
 
     def test_true_nine_gates(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -107,17 +96,14 @@ class FlushTest(TestCase):
             calls=[],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NO_CALLS_RON": 1,
-                "NO_CALLS": 1,
-                "FULL_FLUSH": 1,
-                "TRUE_NINE_GATES": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NO_CALLS_RON": 1,
+            "NO_CALLS": 1,
+            "FULL_FLUSH": 1,
+            "TRUE_NINE_GATES": 1,
+        }
 
     def test_full_flush_not_nine_gates(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -133,16 +119,13 @@ class FlushTest(TestCase):
             calls=[],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-                "NO_CALLS_RON": 1,
-                "NO_CALLS": 1,
-                "FULL_FLUSH": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+            "NO_CALLS_RON": 1,
+            "NO_CALLS": 1,
+            "FULL_FLUSH": 1,
+        }
 
     def test_all_greens(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -166,15 +149,12 @@ class FlushTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "SIMPLE_OPEN_TRIPLET": 1,
-                "SIMPLE_CLOSED_TRIPLET": 1,
-                "YAKUHAI_PAIR": 1,
-                "NON_PINFU_TSUMO": 1,
-                "HALF_FLUSH": 1,
-                "ALL_GREENS": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "SIMPLE_OPEN_TRIPLET": 1,
+            "SIMPLE_CLOSED_TRIPLET": 1,
+            "YAKUHAI_PAIR": 1,
+            "NON_PINFU_TSUMO": 1,
+            "HALF_FLUSH": 1,
+            "ALL_GREENS": 1,
+        }

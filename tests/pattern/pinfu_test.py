@@ -1,12 +1,10 @@
-from unittest import TestCase
-
 from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.meld import Meld, MeldType
 
 from .get_pattern_mults import get_pattern_mults
 
 
-class PinfuTest(TestCase):
+class TestPinfu:
     def test_closed_pinfu(self) -> None:
         pattern_mults = get_pattern_mults(
             win_player=0,
@@ -21,16 +19,13 @@ class PinfuTest(TestCase):
             calls=[],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NO_CALLS": 1,
-                "NO_CALLS_TSUMO": 1,
-                "CLOSED_PINFU": 1,
-                "ALL_SEQUENCES": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NO_CALLS": 1,
+            "NO_CALLS_TSUMO": 1,
+            "CLOSED_PINFU": 1,
+            "ALL_SEQUENCES": 1,
+        }
 
     def test_open_pinfu(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -62,14 +57,7 @@ class PinfuTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "OPEN_PINFU": 1,
-                "ALL_SEQUENCES": 1,
-            },
-        )
+        assert pattern_mults == {"OPEN_WAIT": 1, "OPEN_PINFU": 1, "ALL_SEQUENCES": 1}
 
     def test_non_pinfu_tsumo(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -91,11 +79,8 @@ class PinfuTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {
-                "OPEN_WAIT": 1,
-                "NON_PINFU_TSUMO": 1,
-                "ORPHAN_CLOSED_TRIPLET": 1,
-            },
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
