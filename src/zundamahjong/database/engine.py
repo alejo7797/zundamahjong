@@ -1,6 +1,6 @@
 import os
 
-from sqlalchemy import Engine, create_engine
+from sqlalchemy import Engine, URL, create_engine
 
 from .models import Base
 
@@ -14,13 +14,14 @@ on-disk database or to a database in a PostgreSQL server."""
 
 
 if db_host:
-    db_name = os.getenv("DB_NAME", "zundamahjong")
-    db_user = os.getenv("DB_USER", "zundamahjong")
-    db_password = os.getenv("DB_PASSWORD")
-
-    engine = create_engine(
-        f"postgresql+psycopg://{db_user}:{db_password}@{db_host}/{db_name}?sslmode=require"
+    db_url = URL.create(
+        "postgresql+psycopg",
+        username=os.getenv("DB_USER", "zundamahjong"),
+        password=os.getenv("DB_PASSWORD"),
+        host=db_host,
+        database=os.getenv("DB_NAME", "zundamahjong"),
     )
+    engine = create_engine(db_url)
 
 else:
     db_file = os.getenv("DB_FILE", "debug.db")
