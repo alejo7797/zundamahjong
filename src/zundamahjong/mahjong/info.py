@@ -46,6 +46,7 @@ class RoundInfo(BaseModel):
     riichi_discard_indexes: list[int | None]
     calls: list[Sequence[Call]]
     flowers: list[Sequence[TileId]]
+    dora: list[TileId]
 
 
 class PlayerInfo(BaseModel):

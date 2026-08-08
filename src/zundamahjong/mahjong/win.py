@@ -35,6 +35,10 @@ class Win(BaseModel):
     "The number of flowers replaced immediately before drawing the winning tile."
     after_kan_count: int = 0
     "The number of kan bonus tiles drawn immediately before drawing the winning tile."
+    dora: list[TileId] = []
+    "The TileIds of the revealed dora indicators."
+    ura_dora: list[TileId] = []
+    "The TileIds of the revealed ura dora indicators."
     is_riichi: bool = False
     "Whether the hand was in riichi."
     is_double_riichi: bool = False

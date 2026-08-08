@@ -6,8 +6,7 @@ export type GameOptions = {
   game_length_sub_rounds: number;
   use_flowers: boolean;
   auto_replace_flowers: boolean;
-  end_wall_count: number;
-  min_han: number;
+  min_yaku: number;
 
   allow_riichi: boolean;
 
@@ -21,6 +20,11 @@ export type GameOptions = {
 
   show_waits: boolean;
   show_shanten_info: boolean;
+
+  max_kan_count: number;
+  max_dora_count: number;
+  start_dora_count: number;
+  dead_wall_additional_tiles: number;
 
   start_score: number;
   score_dealer_ron_multiplier: number;

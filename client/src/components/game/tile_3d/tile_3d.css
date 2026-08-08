@@ -38,6 +38,10 @@
     }
   }
 
+  &.is_dora {
+    --tile-front-color: rgb(255, 255, 120);
+  }
+
   &.is_hover_highlight {
     --tile-front-color: rgb(197, 197, 197);
   }

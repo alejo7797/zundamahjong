@@ -88,18 +88,9 @@ export const inputPropsList: OptionsInputProps<GameOptions>[] = [
         type: "checkbox",
       },
       {
-        name: "end_wall_count",
-        labelText: "Number of tiles in dead wall",
-        description: `The number of tiles to leave in the dead wall.`,
-        subDescription: `The round of mahjong ends in a draw if there are no
-          tiles left to draw except for those in the dead wall.`,
-        type: "number",
-        min: 0,
-      },
-      {
-        name: "min_han",
+        name: "min_yaku",
         labelText: "Minimum han to win",
-        description: `The minimum number of han in a winning hand for a player
+        description: `The minimum number of han (not including dora) in a winning hand for a player
           to be able to win.`,
         type: "number",
         min: 0,
@@ -200,6 +191,44 @@ export const inputPropsList: OptionsInputProps<GameOptions>[] = [
           need to replace in their hand to reach tenpai (one tile away from
           winning).`,
         type: "checkbox",
+      },
+    ],
+  },
+  {
+    type: "collection",
+    name: "Dead wall/dora options",
+    children: [
+      {
+        name: "max_kan_count",
+        labelText: "Maximum kan count",
+        description: "The maximum number of kans allowed in a round.",
+        type: "number",
+        min: 0,
+        max: 16,
+      },
+      {
+        name: "max_dora_count",
+        labelText: "Maximum dora count",
+        description: "The maximum number of dora indicators to reveal in a round.",
+        type: "number",
+        min: 0,
+        max: 20,
+      },
+      {
+        name: "start_dora_count",
+        labelText: "Starting dora count",
+        description: "The number of dora indicators revealed at the start of a round.",
+        type: "number",
+        min: 0,
+        max: 20,
+      },
+      {
+        name: "dead_wall_additional_tiles",
+        labelText: "Number of extra tiles in dead wall",
+        description: "The number of extra tiles in the dead wall, in addition to the dora indicators and tiles needed for kan/flowers.",
+        type: "number",
+        min: 0,
+        max: 20,
       },
     ],
   },

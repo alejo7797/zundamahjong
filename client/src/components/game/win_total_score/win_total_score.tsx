@@ -31,7 +31,7 @@ export function WinTotalScore({
   return (
     <div class="win_totals">
       <div class="win_player">{`${win_player_name} wins!`}</div>
-      <div class="scoring_values">{`${scoring_info.han} han, ${scoring_info.fu} fu`}</div>
+      <div class="scoring_values">{`${scoring_info.yaku + scoring_info.dora} han, ${scoring_info.fu} fu`}</div>
       <div class="tsumo_or_ron">
         {scoring_info.lose_player == null ? "Tsumo" : "Ron"}
       </div>

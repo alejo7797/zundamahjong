@@ -5,8 +5,7 @@ from .wait_pattern import WaitPattern
 @register_pattern(
     "ALL_TRIPLETS",
     display_name="All Triplets",
-    han=3,
-    fu=0,
+    yaku=3,
 )
 def all_triplets(self: PatternCalculator) -> int:
     """
@@ -18,8 +17,7 @@ def all_triplets(self: PatternCalculator) -> int:
 @register_pattern(
     "TRIPLE_TRIPLETS",
     display_name="Triple Triplets",
-    han=4,
-    fu=0,
+    yaku=4,
 )
 def triple_triplets(self: PatternCalculator) -> int:
     """
@@ -37,8 +35,7 @@ def triple_triplets(self: PatternCalculator) -> int:
 @register_pattern(
     "THREE_CONCEALED_TRIPLETS",
     display_name="Three Concealed Triplets",
-    han=3,
-    fu=0,
+    yaku=3,
 )
 def three_concealed_triplets(self: PatternCalculator) -> int:
     """
@@ -50,8 +47,7 @@ def three_concealed_triplets(self: PatternCalculator) -> int:
 @register_pattern(
     "FOUR_CONCEALED_TRIPLETS",
     display_name="Four Concealed Triplets",
-    han=12,
-    fu=0,
+    yaku=12,
 )
 def four_concealed_triplets(self: PatternCalculator) -> int:
     """
@@ -66,8 +62,7 @@ def four_concealed_triplets(self: PatternCalculator) -> int:
 @register_pattern(
     "FOUR_CONCEALED_TRIPLETS_1_SIDED_WAIT",
     display_name="Four Concealed Triplets 1-sided Wait",
-    han=12,
-    fu=0,
+    yaku=12,
 )
 def four_concealed_triplets_1_sided_wait(self: PatternCalculator) -> int:
     """
@@ -80,8 +75,7 @@ def four_concealed_triplets_1_sided_wait(self: PatternCalculator) -> int:
 @register_pattern(
     "THREE_QUADS",
     display_name="Three Quads",
-    han=4,
-    fu=0,
+    yaku=4,
 )
 def three_quads(self: PatternCalculator) -> int:
     """
@@ -93,8 +87,7 @@ def three_quads(self: PatternCalculator) -> int:
 @register_pattern(
     "FOUR_QUADS",
     display_name="Four Quads",
-    han=18,
-    fu=0,
+    yaku=18,
 )
 def four_quads(self: PatternCalculator) -> int:
     """

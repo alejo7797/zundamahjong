@@ -46,6 +46,7 @@ export type RoundInfo = {
   riichi_discard_indexes: (number | null)[];
   calls: Call[][];
   flowers: TileId[][];
+  dora: TileId[];
 };
 
 export type PlayerInfo = {
@@ -66,7 +67,10 @@ export type Scoring = {
   win_player: number;
   lose_player: number | null;
   patterns: { [pattern: string]: PatternData };
-  han: number;
+  dora_tiles: (TileId | null)[];
+  ura_dora_tiles: (TileId | null)[];
+  yaku: number;
+  dora: number;
   fu: number;
   player_scores: number[];
 };

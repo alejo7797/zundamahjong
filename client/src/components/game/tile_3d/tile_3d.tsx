@@ -1,10 +1,11 @@
 import { useContext } from "preact/hooks";
 import { getTileValue, type TileId } from "../../../types/tile";
+import { TileHighlightContext } from "../tile_highlight_context/tile_highlight_context";
+import { DoraContext, isDora } from "../dora_context/dora_context.tsx";
 
 import { TileImage } from "../tile_image/tile_image";
 
 import "./tile_3d.css";
-import { TileHighlightContext } from "../tile_highlight_context/tile_highlight_context";
 
 export function Tile3D({
   tile,
@@ -22,6 +23,7 @@ export function Tile3D({
   isFirstRiichi?: boolean;
 }) {
   const tileHighlight = useContext(TileHighlightContext);
+  const dora = useContext(DoraContext);
   return (
     <div
       class={`tile_3d tile_id_${tile} ${is_new ? "is_new " : ""}${
@@ -32,6 +34,7 @@ export function Tile3D({
         tile && getTileValue(tile) == tileHighlight.hoverTileValue
           ? "is_hover_highlight "
           : ""
+      }${isDora(tile, dora) ? "is_dora " : ""
       }`}
     >
       <div class={`tile_3d_extra_transform`}>

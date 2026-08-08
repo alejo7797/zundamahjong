@@ -14,8 +14,6 @@ def _pinfu(self: PatternCalculator) -> bool:
 @register_pattern(
     "CLOSED_PINFU",
     display_name="Pinfu",
-    han=0,
-    fu=0,
 )
 def closed_pinfu(self: PatternCalculator) -> int:
     """
@@ -28,7 +26,6 @@ def closed_pinfu(self: PatternCalculator) -> int:
 @register_pattern(
     "OPEN_PINFU",
     display_name="Open Pinfu",
-    han=0,
     fu=2,
 )
 def open_pinfu(self: PatternCalculator) -> int:
@@ -42,7 +39,6 @@ def open_pinfu(self: PatternCalculator) -> int:
 @register_pattern(
     "NON_PINFU_TSUMO",
     display_name="Non Pinfu Tsumo",
-    han=0,
     fu=2,
 )
 def non_pinfu_tsumo(self: PatternCalculator) -> int:

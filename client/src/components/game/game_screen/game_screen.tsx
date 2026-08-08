@@ -18,6 +18,7 @@ import { EmitAction } from "../emit_action/emit_action";
 
 import { PlayerIcons } from "../player_icon/player_icon";
 import { Hand } from "../hand/hand";
+import { DoraDisplay } from "../dora_display/dora_display.tsx";
 import { ActionMenu } from "../action_menu/action_menu";
 import { Table } from "../table/table";
 import { WinInfo } from "../win_info/win_info";
@@ -36,6 +37,7 @@ import { CutinCollection } from "../cutin/cutin";
 import { OptionsBar } from "../options_bar/options_bar";
 import { OptionsContext } from "../../options_context/options_context";
 import { TileHighlightContext } from "../tile_highlight_context/tile_highlight_context";
+import { DoraContext, getDoraValues } from "../dora_context/dora_context.tsx";
 
 export function GameScreen({
   playerAvatarIds,
@@ -159,8 +161,18 @@ export function GameScreen({
     hoverTileValue: hoverTile ? getTileValue(hoverTile) : 0,
   };
 
+  const max_dora_count = Math.max(
+    Math.min(
+      options.game_options.max_dora_count,
+      options.game_options.max_kan_count + options.game_options.start_dora_count,
+    ),
+    options.game_options.start_dora_count,
+  );
+
+
   return (
     <EmitAction.Provider value={emit_action}>
+      <DoraContext value={getDoraValues(info.round_info.dora, info.player_count == 3)}>
       <TileHighlightContext value={tileHighlight}>
         <div
           class={`screen game_screen me_player_${info.player_index} status_${info.round_info.status} show_tile_names_${options.client_options.show_tile_numbers ? "true" : "false"}`}
@@ -182,6 +194,10 @@ export function GameScreen({
             actionSubmitted={actionSubmitted}
             isFuriten={info.player_info.is_furiten}
             setHoverTile={setHoverTile}
+          />
+          <DoraDisplay
+            dora={info.round_info.dora}
+            max_dora_count={max_dora_count}
           />
           {actionSubmitted ? (
             <></>
@@ -214,6 +230,7 @@ export function GameScreen({
           <OptionsBar />
         </div>
       </TileHighlightContext>
+      </DoraContext>
     </EmitAction.Provider>
   );
 }

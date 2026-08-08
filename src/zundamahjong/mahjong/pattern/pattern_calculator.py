@@ -22,15 +22,26 @@ class PatternData(BaseModel):
     Represents a pattern and its han and fu values.
     """
 
-    display_name: str
-    "The name of the pattern."
-    han: int
-    "The han value of the pattern."
+    yaku: int
+    "The han value of the pattern. Counts towards the minimum yaku limit."
+    dora: int
+    "The han value of the pattern. Does not count toward the minimum yaku limit."
     fu: int
     "The fu value of the pattern."
 
+class PatternDesc(BaseModel):
+    """
+    Represents a pattern's display information.
+    """
+
+    display_name: str
+    "The name of the pattern."
+    description: str
+    "A description of the pattern."
+
 
 default_pattern_data: dict[str, PatternData] = {}
+pattern_descs: dict[str, PatternDesc] = {}
 """
 A dictionary containing :py:class:`PatternData` objects
 with all the default han and fu values.
@@ -54,9 +65,8 @@ Patterns are indexed by the internal names of the patterns
 
 
 def register_pattern(
-    name: str, display_name: str, han: int, fu: int
+    name: str, display_name: str, yaku: int = 0, dora: int = 0, fu: int = 0
 ) -> Callable[[Callable[[PatternCalculator], int]], Callable[[PatternCalculator], int]]:
-    default_pattern_data[name] = PatternData(display_name=display_name, han=han, fu=fu)
     """
     Decorator to register a :py:class:`PatternCalculator` method as a method
     that calculates a pattern's multiplicity.
@@ -71,6 +81,15 @@ def register_pattern(
     def _register_pattern_inner(
         func: Callable[[PatternCalculator], int],
     ) -> Callable[[PatternCalculator], int]:
+        default_pattern_data[name] = PatternData(
+            yaku=yaku,
+            dora=dora,
+            fu=fu,
+        )
+        pattern_descs[name] = PatternDesc(
+            display_name=display_name,
+            description=(func.__doc__ or "").strip().replace("\n", " "),
+        )
         pattern_mult_funcs[name] = func
         return func
 

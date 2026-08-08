@@ -58,9 +58,16 @@ export function GameOptionsPatternInput({
       <PatternInputLabel {...patternDescs[name]} />
       <input
         form={formId}
-        name={`${name}___han`}
+        name={`${name}___yaku`}
         type="number"
-        value={data.han}
+        value={data.yaku}
+        {...editableProps}
+      />
+      <input
+        form={formId}
+        name={`${name}___dora`}
+        type="number"
+        value={data.dora}
         {...editableProps}
       />
       <input

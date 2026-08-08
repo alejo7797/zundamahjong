@@ -1,7 +1,6 @@
 .win_totals {
-  width: 54cqw;
+  width: 59cqw;
   height: 5cqw;
-  margin: 2.5cqw;
   display: grid;
   grid-template-columns: auto 12cqw 8cqw 10cqw 3cqw 10cqw;
 

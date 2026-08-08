@@ -30,6 +30,7 @@ export function processInfo(info: AllGameInfo): EnhancedGameInfo {
   }
 
   const visibleTiles = [
+    ...info.round_info.dora,
     ...info.round_info.discards
       .filter(
         (discard) =>

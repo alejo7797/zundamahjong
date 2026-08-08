@@ -5,8 +5,7 @@ from .pattern_calculator import PatternCalculator, register_pattern
 @register_pattern(
     "SEVEN_PAIRS",
     display_name="Seven Pairs",
-    han=3,
-    fu=0,
+    yaku=3,
 )
 def sevenpairs(self: PatternCalculator) -> int:
     """
@@ -18,8 +17,7 @@ def sevenpairs(self: PatternCalculator) -> int:
 @register_pattern(
     "EYES",
     display_name="Eyes",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def eyes(self: PatternCalculator) -> int:
     """

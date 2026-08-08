@@ -7,8 +7,7 @@ from .pattern_calculator import PatternCalculator, register_pattern
 @register_pattern(
     "HALF_FLUSH",
     display_name="Half Flush",
-    han=3,
-    fu=0,
+    yaku=3,
 )
 def half_flush(self: PatternCalculator) -> int:
     """
@@ -20,8 +19,7 @@ def half_flush(self: PatternCalculator) -> int:
 @register_pattern(
     "FULL_FLUSH",
     display_name="Full Flush",
-    han=7,
-    fu=0,
+    yaku=7,
 )
 def full_flush(self: PatternCalculator) -> int:
     """
@@ -61,8 +59,7 @@ def _get_nine_gates_last_tile(self: PatternCalculator) -> TileValue | None:
 @register_pattern(
     "NINE_GATES",
     display_name="Nine Gates",
-    han=11,
-    fu=0,
+    yaku=11,
 )
 def nine_gates(self: PatternCalculator) -> int:
     """
@@ -78,8 +75,7 @@ def nine_gates(self: PatternCalculator) -> int:
 @register_pattern(
     "TRUE_NINE_GATES",
     display_name="True Nine Gates",
-    han=19,
-    fu=0,
+    yaku=19,
 )
 def true_nine_gates(self: PatternCalculator) -> int:
     """
@@ -93,8 +89,7 @@ def true_nine_gates(self: PatternCalculator) -> int:
 @register_pattern(
     "ALL_GREENS",
     display_name="All Greens",
-    han=16,
-    fu=0,
+    yaku=16,
 )
 def all_greens(self: PatternCalculator) -> int:
     """

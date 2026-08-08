@@ -4,8 +4,7 @@ from .pattern_calculator import PatternCalculator, register_pattern
 @register_pattern(
     "NO_FLOWERS",
     display_name="No Flowers",
-    han=1,
-    fu=0,
+    dora=1,
 )
 def no_flowers(self: PatternCalculator) -> int:
     """
@@ -17,8 +16,7 @@ def no_flowers(self: PatternCalculator) -> int:
 @register_pattern(
     "SEAT_FLOWER",
     display_name="Seat Flower",
-    han=1,
-    fu=0,
+    dora=1,
 )
 def player_flower(self: PatternCalculator) -> int:
     """
@@ -30,8 +28,7 @@ def player_flower(self: PatternCalculator) -> int:
 @register_pattern(
     "SET_OF_FLOWERS",
     display_name="Set of Flowers",
-    han=2,
-    fu=0,
+    dora=2,
 )
 def set_of_flowers(self: PatternCalculator) -> int:
     """
@@ -51,8 +48,7 @@ def set_of_flowers(self: PatternCalculator) -> int:
 @register_pattern(
     "FIVE_FLOWERS",
     display_name="Five Flowers",
-    han=2,
-    fu=0,
+    dora=2,
 )
 def five_flowers(self: PatternCalculator) -> int:
     """
@@ -64,8 +60,7 @@ def five_flowers(self: PatternCalculator) -> int:
 @register_pattern(
     "SEVEN_FLOWERS",
     display_name="Seven Flowers",
-    han=2,
-    fu=0,
+    dora=2,
 )
 def seven_flowers(self: PatternCalculator) -> int:
     """
@@ -77,8 +72,7 @@ def seven_flowers(self: PatternCalculator) -> int:
 @register_pattern(
     "TWO_SETS_OF_FLOWERS",
     display_name="Two Sets of Flowers",
-    han=8,
-    fu=0,
+    dora=8,
 )
 def two_sets_of_flowers(self: PatternCalculator) -> int:
     """
