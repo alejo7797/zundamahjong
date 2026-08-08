@@ -4,6 +4,7 @@ from .action import Action
 from .action_selector import ActionSelector
 from .exceptions import InvalidOperationException
 from .game_options import GameOptions
+from .info import AllGameInfo, GameInfo, HistoryItem, PlayerInfo, RoundInfo
 from .round import Round, RoundStatus
 from .scoring import Scorer, Scoring
 from .tile import TileId
@@ -124,6 +125,23 @@ class Game:
             and self._next_round() >= self._options.game_length
         )
 
+    def info(self, player_index: int) -> AllGameInfo:
+        """
+        Returns all the game-related info a player should have in the current game and round.
+
+        :param player_index: The index of the player to get the info for.
+        """
+        return AllGameInfo(
+            player_count=self.player_count,
+            player_index=player_index,
+            is_game_end=self.is_game_end,
+            game_info=self._game_info(),
+            round_info=self._round_info(),
+            player_info=self._player_info(player_index),
+            win_info=self.win if self.win else None,
+            scoring_info=(self.scoring if self.scoring else None),
+        )
+
     def submit_action(
         self, player_index: int, action: Action, history_index: int
     ) -> list[tuple[int, Action]] | None:
@@ -164,6 +182,60 @@ class Game:
             self._draw_count = 0
         self._create_round(deck_tiles)
 
+    def _game_info(self) -> GameInfo:
+        return GameInfo(
+            wind_round=self.wind_round,
+            sub_round=self.sub_round,
+            draw_count=self.draw_count,
+            player_scores=self.player_scores,
+        )
+
+    def _round_info(self) -> RoundInfo:
+        discards = self.round.discards
+        history = [
+            HistoryItem(player_index=action[0], action=action[1])
+            for action in self.round.history
+        ]
+        hand_counts = [
+            len(self.round.get_hand(player)) for player in range(self.player_count)
+        ]
+        riichi_discard_indexes = [
+            self.round.get_riichi_discard_index(player)
+            for player in range(self.player_count)
+        ]
+        calls = [self.round.get_calls(player) for player in range(self.player_count)]
+        flowers = [
+            self.round.get_flowers(player) for player in range(self.player_count)
+        ]
+        return RoundInfo(
+            tiles_left=self.round.tiles_left,
+            current_player=self.round.current_player,
+            status=self.round.status,
+            discards=list(discards),
+            history=history,
+            hand_counts=hand_counts,
+            riichi_discard_indexes=riichi_discard_indexes,
+            calls=calls,
+            flowers=flowers,
+            dora=self.round.dora,
+        )
+
+    def _player_info(self, player_index: int) -> PlayerInfo:
+        hand = list(self.round.get_hand(player_index))
+        if self.round.status == RoundStatus.END:
+            actions = []
+        else:
+            actions = self.round.allowed_actions[player_index].actions
+        is_furiten = self.round.is_furiten(player_index)
+
+        action_selected = False
+        return PlayerInfo(
+            hand=hand,
+            actions=actions,
+            action_selected=action_selected,
+            is_furiten=is_furiten,
+        )
+
     def _next_round(self) -> tuple[int, int]:
         if self.is_dealer_repeat:
             return self._wind_round, self._sub_round
@@ -195,7 +267,7 @@ class Game:
         if self._win is None:
             self._scoring = None
         else:
-            scoring = Scorer.score(self._win, self._options)
-            self._scoring = scoring
+            self._scoring = Scorer.score(self._win, self._options)
+        if self._scoring is not None:
             for player in range(self._player_count):
-                self._player_scores[player] += scoring.player_scores[player]
+                self._player_scores[player] += self._scoring.player_scores[player]

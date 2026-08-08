@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections import deque
-from collections.abc import Iterable
 from random import shuffle
 from typing import final
 
@@ -54,28 +53,56 @@ class Deck:
 
     :param tiles: List of :py:class:`TileId` s that the :py:class:`Deck`
                   will contain.
+    :param max_back_draw: The maximum number of times a player will draw
+                          a tile from the back.
+                          Used to determine the location of the dora indicator.
+    :param max_dora_count: The maximum number of dora indicators revealed.
     """
 
-    def __init__(self, tiles: Iterable[TileId]) -> None:
-        self._tiles = deque(tiles)
+    def __init__(
+        self, tiles: list[TileId], max_back_draw: int, max_dora_count: int
+    ) -> None:
+        dead_wall_count = max_back_draw + 2 * max_dora_count
+        dead_wall_start = len(tiles) - dead_wall_count
+        back_draw_start = len(tiles) - max_back_draw
+        self._tiles = deque(tiles[:dead_wall_start] + tiles[back_draw_start:])
+        dora_tiles = tiles[dead_wall_start:back_draw_start]
+        self._dora = tuple(dora_tiles[-2::-2])
+        self._ura_dora = tuple(dora_tiles[-1::-2])
 
     @classmethod
-    def shuffled_deck(cls, tiles: list[TileId]) -> Deck:
+    def shuffled_deck(
+        cls, tiles: list[TileId], max_back_draw: int, max_dora_count: int
+    ) -> Deck:
         """
         Creates a new :py:class:`Deck` containing the given list of
         :py:class:`TileId` s, shuffled.
 
         :param tiles: A list of the :py:class:`TileId` s the new
                       :py:class:`Deck` will contain.
+        :param max_back_draw: The maximum number of times a player will draw
+                              a tile from the back.
+                              Used to determine the location of the dora indicator.
+        :param max_dora_count: The maximum number of dora indicators revealed.
         """
         new_deck = tiles.copy()
         shuffle(new_deck)
-        return cls(new_deck)
+        return cls(new_deck, max_back_draw, max_dora_count)
 
     @property
     def tiles(self) -> tuple[TileId, ...]:
         "Returns the list of :py:class:`TileId` s remaining in the deck."
         return tuple(self._tiles)
+
+    @property
+    def dora(self) -> tuple[TileId, ...]:
+        "Returns the TileIds of all the dora indicator tiles of this deck."
+        return self._dora
+
+    @property
+    def ura_dora(self) -> tuple[TileId, ...]:
+        "Returns the TileIds of all the ura dora indicator tiles of this deck."
+        return self._ura_dora
 
     def pop(self) -> TileId:
         """

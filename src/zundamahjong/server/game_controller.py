@@ -1,87 +1,27 @@
-from collections.abc import Sequence
 from random import sample
 from threading import Lock
+from time import sleep
 from typing import final
 
 from pydantic import BaseModel
 
-from ..mahjong.action import Action
-from ..mahjong.call import Call
-from ..mahjong.discard_pool import Discard
+from ..mahjong.action import Action, animation_length
+from ..mahjong.bot import calculate_bot_action
 from ..mahjong.game import Game
 from ..mahjong.game_options import GameOptions
-from ..mahjong.round import RoundStatus
-from ..mahjong.scoring import Scoring
-from ..mahjong.tile import TileId
-from ..mahjong.win import Win
-from ..types.player import Player
+from ..mahjong.info import AllGameInfo, HistoryItem
+from ..types.player import BotPlayer, Player
 from .sio import sio
-
-
-class GameInfo(BaseModel):
-    """
-    Represents the information about a game of mahjong that is retained
-    across rounds.
-    """
-
-    players: list[Player]
-    wind_round: int
-    sub_round: int
-    draw_count: int
-    player_scores: tuple[float, ...]
-
-
-class HistoryItem(BaseModel):
-    """
-    Represents an action taken and the player who performed it in a round of Mahjong.
-    """
-
-    player_index: int
-    action: Action
-
-
-class RoundInfo(BaseModel):
-    """
-    Represents the public information at a given moment in a round of mahjong.
-    """
-
-    tiles_left: int
-    current_player: int
-    status: RoundStatus
-    discards: list[Discard]
-    history: list[HistoryItem]
-    hand_counts: list[int]
-    riichi_discard_indexes: list[int | None]
-    calls: list[Sequence[Call]]
-    flowers: list[Sequence[TileId]]
-
-
-class PlayerInfo(BaseModel):
-    """
-    Represents the information specific to a player during a round of mahjong.
-    """
-
-    hand: list[TileId]
-    actions: list[Action]
-    action_selected: bool
-    is_furiten: bool
 
 
 class AllInfo(BaseModel):
     """
-    Represents all the info a player should have at a given moment in a round
-    of mahjong.
+    Represents all the info a player should have, including avatars of players.
     """
 
-    player_count: int
-    player_index: int
-    is_game_end: bool
-    game_info: GameInfo
-    round_info: RoundInfo
+    all_game_info: AllGameInfo
     history_updates: list[HistoryItem]
-    player_info: PlayerInfo
-    win_info: Win | None
-    scoring_info: Scoring | None
+    players: list[Player]
 
 
 @final
@@ -99,6 +39,12 @@ class GameController:
         self._lock = Lock()
         with self._lock:
             self._emit_info_all_inner(self._game.round.history)
+        delay = sum(
+            animation_length(history_item[1])
+            for history_item in self._game.round.history
+        )
+        sleep(delay)
+        self.perform_bot_actions()
 
     @property
     def game(self) -> Game:
@@ -115,7 +61,9 @@ class GameController:
             index = self._get_player_index(player)
             sio.emit("info", self._info(index, []).model_dump(), to=player.id)
 
-    def submit_action(self, player: Player, action: Action, history_index: int) -> None:
+    def submit_action(
+        self, player: Player, action: Action, history_index: int, is_user: bool = True
+    ) -> list[tuple[int, Action]] | None:
         """
         Submit a player's action to the game.
 
@@ -132,6 +80,15 @@ class GameController:
             )
             if history_updates is not None and len(history_updates) > 0:
                 self._emit_info_all_inner(history_updates)
+        if is_user:
+            if history_updates is not None:
+                delay = sum(
+                    animation_length(history_item[1])
+                    for history_item in history_updates
+                )
+                sleep(delay)
+            self.perform_bot_actions()
+        return history_updates
 
     def start_next_round(self, player: Player) -> None:
         """
@@ -147,6 +104,64 @@ class GameController:
                 raise Exception("Cannot start next round!")
             self._game.start_next_round()
             self._emit_info_all_inner(self._game.round.history)
+        delay = sum(
+            animation_length(history_item[1])
+            for history_item in self._game.round.history
+        )
+        sleep(delay)
+        self.perform_bot_actions()
+
+    def perform_bot_actions(self) -> None:
+        """
+        Perform actions for bot players until the game state no longer advances.
+        """
+        player_index = 0
+        # repeatedly perform bot actions,
+        # in order of players
+        while player_index < len(self._players):
+            player = self._players[player_index]
+            is_bot = isinstance(player, BotPlayer)
+            if not is_bot:
+                player_index += 1
+                continue
+
+            # make sure to only lock when getting info
+            # in order to avoid deadlocks
+            with self._lock:
+                info = self._game.info(player_index)
+
+            history_index = len(info.round_info.history)
+            action_selected = info.player_info.action_selected
+            if action_selected:
+                player_index += 1
+                continue
+
+            if len(info.player_info.actions) == 0:
+                # no possible actions (this implies the round has ended)
+                player_index += 1
+                continue
+
+            # calculate bot action, this could take a while
+            action = calculate_bot_action(info)
+
+            history_updates = self.submit_action(
+                player, action, history_index, is_user=False
+            )
+            if history_updates is None:
+                # submit_action failed, restart loop
+                player_index = 0
+                continue
+            if len(history_updates) > 0:
+                # submit_action changed the game state, restart loop
+                player_index = 0
+                delay = sum(
+                    animation_length(history_item[1])
+                    for history_item in history_updates
+                )
+                sleep(delay)
+            else:
+                # submit_action did not change the game state
+                player_index += 1
 
     def _get_player_index(self, player: Player) -> int:
         try:
@@ -154,79 +169,14 @@ class GameController:
         except ValueError:
             raise Exception(f"Player {player.id} not found in this game!")
 
-    def _game_info(self) -> GameInfo:
-        return GameInfo(
-            players=self._players,
-            wind_round=self._game.wind_round,
-            sub_round=self._game.sub_round,
-            draw_count=self._game.draw_count,
-            player_scores=self._game.player_scores,
-        )
-
-    def _round_info(self) -> RoundInfo:
-        discards = self._game.round.discards
-        history = [
-            HistoryItem(player_index=action[0], action=action[1])
-            for action in self._game.round.history
-        ]
-        hand_counts = [
-            len(self._game.round.get_hand(player))
-            for player in range(self._game.player_count)
-        ]
-        riichi_discard_indexes = [
-            self._game.round.get_riichi_discard_index(player)
-            for player in range(self._game.player_count)
-        ]
-        calls = [
-            self._game.round.get_calls(player)
-            for player in range(self._game.player_count)
-        ]
-        flowers = [
-            self._game.round.get_flowers(player)
-            for player in range(self._game.player_count)
-        ]
-        return RoundInfo(
-            tiles_left=self._game.round.tiles_left,
-            current_player=self._game.round.current_player,
-            status=self._game.round.status,
-            discards=list(discards),
-            history=history,
-            hand_counts=hand_counts,
-            riichi_discard_indexes=riichi_discard_indexes,
-            calls=calls,
-            flowers=flowers,
-        )
-
-    def _player_info(self, index: int) -> PlayerInfo:
-        hand = list(self._game.round.get_hand(index))
-        if self._game.round.status == RoundStatus.END:
-            actions = []
-        else:
-            actions = self._game.round.allowed_actions[index].actions
-        is_furiten = self._game.round.is_furiten(index)
-
-        action_selected = False
-        return PlayerInfo(
-            hand=hand,
-            actions=actions,
-            action_selected=action_selected,
-            is_furiten=is_furiten,
-        )
-
     def _info(self, index: int, history_updates: list[tuple[int, Action]]) -> AllInfo:
         return AllInfo(
-            player_count=self._game.player_count,
-            player_index=index,
-            is_game_end=self._game.is_game_end,
-            game_info=self._game_info(),
-            round_info=self._round_info(),
+            all_game_info=self._game.info(index),
+            players=self._players,
             history_updates=[
                 HistoryItem(player_index=history_item[0], action=history_item[1])
                 for history_item in history_updates
             ],
-            player_info=self._player_info(index),
-            win_info=self._game.win if self._game.win else None,
-            scoring_info=(self._game.scoring if self._game.scoring else None),
         )
 
     def _emit_info_all_inner(self, history_updates: list[tuple[int, Action]]) -> None:

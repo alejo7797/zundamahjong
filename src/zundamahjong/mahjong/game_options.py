@@ -25,12 +25,10 @@ class GameOptions(BaseModel):
     "Whether to use flower tiles."
     auto_replace_flowers: bool = True
     "Whether to automatically replace flowers."
-    end_wall_count: int = 14
-    "The number of tiles left in the wall for an exhaustive draw."
-    min_han: int = 0
-    "The minimum number of han needed in a winning hand."
+    min_yaku: int = 0
+    "The minimum number of han needed in a winning hand (not counting dora)."
 
-    allow_riichi: bool = False
+    allow_riichi: bool = True
     "Whether to allow riichi."
 
     allow_rob_added_kan: bool = True
@@ -69,6 +67,29 @@ class GameOptions(BaseModel):
     show_shanten_info: bool = False
     "Whether to show the shanten and useful tiles in the client UI."
 
+    max_kan_count: int = 4
+    "The maximum number of kans allowed in a round."
+    max_dora_count: int = 5
+    "The maximum number of dora indicators to reveal in a round."
+    start_dora_count: int = 1
+    "The number of dora indicators revealed at the start of a round."
+    dead_wall_additional_tiles: int = 0
+    """
+    The number of extra tiles in the dead wall, in addition to the dora
+    indicators and tiles needed for kan/flowers.
+    """
+
+    @property
+    def true_max_dora_count(self) -> int:
+        "The calculated maximum number of dora indicators to reveal in a round."
+        return max(
+            min(
+                self.max_dora_count,
+                self.max_kan_count + self.start_dora_count,
+            ),
+            self.start_dora_count,
+        )
+
     start_score: float = 0.0
     "The score each player starts with at the start of the game."
     score_dealer_ron_multiplier: float = 6.0
@@ -97,14 +118,14 @@ class GameOptions(BaseModel):
     if a nondealer wins by tsumo.
     """
 
-    calculate_fu: bool = False
+    calculate_fu: bool = True
     """
     Whether to calculate fu in score calculation.
 
     If this is set to ``False``, all winning hands will use the
     :py:attr:`base_fu` as the total fu in the score calculation.
     """
-    base_fu: int = 25
+    base_fu: int = 20
     """
     The base amount of fu that any winning hand starts with.
     """
@@ -112,13 +133,25 @@ class GameOptions(BaseModel):
     """
     Whether to round up the total fu to the next multiple of 10.
     """
+    seven_pairs_use_fixed_fu: bool = True
+    """
+    Whether a seven-pairs hand should score a fixed amount of fu.
+    """
+    seven_pairs_fixed_fu: int = 25
+    """
+    The amount of fu a seven-pairs hand will score, if the option to score
+    a fixed amount of fu for a seven-pairs hand is enabled.
+    """
     round_up_points: bool = False
     """
     Whether to round up the total points each losing player plays to the next
     multiple of 100.
     """
 
-    base_score_limits: list[ScoreLimit] = [ScoreLimit(han=6, score=6400.0)]
+    base_score_limits: list[ScoreLimit] = [
+        ScoreLimit(han=6, score=6400.0),
+        ScoreLimit(han=10, score=12800.0),
+    ]
     """
     A list of limit hans and their corresponding base scores.
 

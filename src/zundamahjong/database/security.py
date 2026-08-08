@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from ..types.player import Player
+from ..types.player import UserPlayer
 from . import db
 from .models import User
 from .users import get_user, try_get_user
@@ -17,7 +17,7 @@ class WrongPasswordException(Exception):
     """Thrown when the client types in an incorrect password."""
 
 
-def login(name: str, password: str) -> Player:
+def login(name: str, password: str) -> UserPlayer:
     """Verify password and log in/register a user.
 
     - If an account with username :py:obj:`name` already exists, check the
@@ -29,7 +29,7 @@ def login(name: str, password: str) -> Player:
     - If no such account exists but no password is given, log the client
       into a temporary account.
 
-    :returns: a :py:obj:`.Player` object with information for later use.
+    :returns: a :py:obj:`.UserPlayer` object with information for later use.
     :raises: :py:exc:`.UserLimitException`, :py:exc:`.WrongPasswordException`.
     """
 
@@ -41,7 +41,7 @@ def login(name: str, password: str) -> Player:
                 raise WrongPasswordException()
 
             else:
-                return Player(name=name, has_account=True)
+                return UserPlayer(name=name, has_account=True)
 
         elif password:
             num_users = db.session.scalar(sa.select(sa.func.count(User.id)))
@@ -54,15 +54,15 @@ def login(name: str, password: str) -> Player:
                     User(name=name, password=generate_password_hash(password))
                 )
 
-                return Player(name=name, has_account=True, new_user=True)
+                return UserPlayer(name=name, has_account=True, new_user=True)
 
-        return Player(name=name)
+        return UserPlayer(name=name)
 
 
-def change_password(player: Player, cur_password: str, new_password: str) -> None:
+def change_password(player: UserPlayer, cur_password: str, new_password: str) -> None:
     """Change the given player's login password.
 
-    :param player: :py:class:`Player` object whose associated account we want
+    :param player: :py:class:`UserPlayer` object whose associated account we want
                    to change the password of. If no such account exists in the
                    database :py:func:`change_password` throws an exception.
 

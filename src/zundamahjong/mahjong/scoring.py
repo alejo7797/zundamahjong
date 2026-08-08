@@ -7,6 +7,7 @@ from .form_hand import formed_hand_possibilities
 from .game_options import GameOptions
 from .meld import Meld
 from .pattern import PatternData, default_pattern_data, get_pattern_mults
+from .tile import TileId
 from .win import Win
 
 
@@ -19,6 +20,10 @@ class Scoring(BaseModel):
     "The index of the winning player."
     lose_player: int | None
     "The index of the player who dealt in, or ``None`` if the win was tsumo."
+    dora_tiles: list[TileId | None]
+    "The TileIds of the dora tile indicators. Unrevealed dora indicators are represented by None."
+    ura_dora_tiles: list[TileId | None]
+    "The TileIds of the ura dora tile indicators. Unrevealed dora indicators are represented by None."
     patterns: dict[str, PatternData]
     """
     A dictionary containing the :py:class:`PatternData` for the patterns
@@ -27,8 +32,10 @@ class Scoring(BaseModel):
     Patterns are indexed by the internal names of the patterns
     (in SCREAMING_SNAKE_CASE).
     """
-    han: int
-    "The total han value of the hand."
+    yaku: int
+    "The total yaku-type han value of the hand."
+    dora: int
+    "The total dora-type han value of the hand."
     fu: int
     "The total fu value of the hand."
     player_scores: list[float]
@@ -126,68 +133,98 @@ class Scorer:
             player_scores[lose_player] = -player_pay_in_amount
         return player_scores
 
-    def _get_formed_hand_scoring(self, formed_hand: list[Meld]) -> Scoring:
+    def _get_formed_hand_scoring(
+        self,
+        formed_hand: list[Meld],
+        dora_tiles: list[TileId | None],
+        ura_dora_tiles: list[TileId | None],
+    ) -> Scoring:
         pattern_mults = get_pattern_mults(self._win, formed_hand)
         patterns = [
             (
                 pattern,
                 PatternData(
-                    display_name=pattern_data.display_name,
-                    han=pattern_data.han * pattern_mults[pattern],
+                    yaku=pattern_data.yaku * pattern_mults[pattern],
+                    dora=pattern_data.dora * pattern_mults[pattern],
                     fu=pattern_data.fu * pattern_mults[pattern],
                 ),
             )
             for pattern, pattern_data in self._pattern_data.items()
             if pattern in pattern_mults
         ]
-        han = sum(pattern_data.han for (_, pattern_data) in patterns)
+        yaku = sum(pattern_data.yaku for (_, pattern_data) in patterns)
+        dora = sum(pattern_data.dora for (_, pattern_data) in patterns)
         if self._options.calculate_fu:
             fu = self._options.base_fu + sum(
                 pattern_data.fu for (_, pattern_data) in patterns
             )
+            if self._options.round_up_fu:
+                fu = _round_up_int(fu, 10)
+            if (
+                "SEVEN_PAIRS" in pattern_mults
+                and self._options.seven_pairs_use_fixed_fu
+            ):
+                fu = self._options.seven_pairs_fixed_fu
         else:
             fu = self._options.base_fu
-        if self._options.round_up_fu:
-            fu = _round_up_int(fu, 10)
-        player_scores = self._get_player_scores(han, fu)
+        player_scores = self._get_player_scores(yaku + dora, fu)
         if self._options.calculate_fu:
             patterns_dict = dict(
                 (pattern, pattern_data)
                 for (pattern, pattern_data) in patterns
-                if pattern_data.han != 0 or pattern_data.fu != 0
+                if pattern_data.yaku != 0
+                or pattern_data.dora != 0
+                or pattern_data.fu != 0
             )
         else:
             patterns_dict = dict(
                 (pattern, pattern_data)
                 for (pattern, pattern_data) in patterns
-                if pattern_data.han != 0
+                if pattern_data.yaku != 0 or pattern_data.dora != 0
             )
         return Scoring(
             win_player=self._win.win_player,
             lose_player=self._win.lose_player,
+            dora_tiles=dora_tiles,
+            ura_dora_tiles=ura_dora_tiles,
             patterns=patterns_dict,
-            han=han,
+            yaku=yaku,
+            dora=dora,
             fu=fu,
             player_scores=player_scores,
         )
 
-    def _get_scoring(self) -> Scoring:
+    def _get_scoring(self) -> Scoring | None:
+        min_yaku = self._options.min_yaku
+        max_dora_count = self._options.true_max_dora_count
+        dora_tiles = [
+            *self._win.dora,
+            *(None for _ in range(max_dora_count - len(self._win.dora))),
+        ]
+        ura_dora_tiles = [
+            *self._win.ura_dora,
+            *(None for _ in range(max_dora_count - len(self._win.ura_dora))),
+        ]
         scorings = [
-            self._get_formed_hand_scoring(formed_hand)
+            self._get_formed_hand_scoring(formed_hand, dora_tiles, ura_dora_tiles)
             for formed_hand in formed_hand_possibilities(self._win.hand)
         ]
 
         def key(scoring: Scoring) -> tuple[float, int, int]:
             return (
                 scoring.player_scores[self._win.win_player],
-                scoring.han,
+                scoring.yaku + scoring.dora,
                 scoring.fu,
             )
 
-        return max(scorings, key=key)
+        return max(
+            (scoring for scoring in scorings if scoring.yaku >= min_yaku),
+            default=None,
+            key=key,
+        )
 
     @classmethod
-    def score(cls, win: Win, options: GameOptions) -> Scoring:
+    def score(cls, win: Win, options: GameOptions) -> Scoring | None:
         """
         Calculate the score a winning hand should get.
 

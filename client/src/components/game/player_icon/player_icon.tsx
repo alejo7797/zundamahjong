@@ -36,7 +36,7 @@ export function PlayerIcons({
         <PlayerIcon
           key={index}
           player_index={index}
-          player_name={player.name}
+          player_name={player.display_name}
           playerAvatarId={playerAvatarIds[player.id]}
         />
       ))}

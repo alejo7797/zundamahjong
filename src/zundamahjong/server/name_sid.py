@@ -2,9 +2,9 @@ from threading import Lock
 
 from flask_socketio import close_room, join_room
 
-from ..types.player import Player
+from ..types.player import UserPlayer
 
-sid_to_player: dict[str, Player] = {}
+sid_to_player: dict[str, UserPlayer] = {}
 id_to_sid: dict[str, str] = {}
 player_sid_lock = Lock()
 
@@ -21,9 +21,9 @@ def verify_name(name: str) -> None:
         raise Exception("Name cannot be empty!")
 
 
-def get_player(sid: str) -> Player:
+def get_player(sid: str) -> UserPlayer:
     """
-    Get the :py:class:`Player` object corresponding to a
+    Get the :py:class:`UserPlayer` object corresponding to a
     Socket.IO session id.
 
     :param sid: The Socket.IO session id to look up.
@@ -34,23 +34,23 @@ def get_player(sid: str) -> Player:
     return player
 
 
-def try_get_player(sid: str) -> Player | None:
+def try_get_player(sid: str) -> UserPlayer | None:
     """
-    Get the :py:class:`Player` object corresponding to a
+    Get the :py:class:`UserPlayer` object corresponding to a
     Socket.IO session id, or ``None`` if the session id has no associated
-    :py:classs:`Player`.
+    :py:classs:`UserPlayer`.
 
     :param sid: The Socket.IO session id to look up.
     """
     return sid_to_player.get(sid)
 
 
-def set_player(sid: str, player: Player) -> None:
+def set_player(sid: str, player: UserPlayer) -> None:
     """
-    Set the :py:class:`Player` of a Socket.IO session id.
+    Set the :py:class:`UserPlayer` of a Socket.IO session id.
 
     :param sid: The Socket.IO session id to set the player for.
-    :param player: The :py:class:`Player` to set.
+    :param player: The :py:class:`UserPlayer` to set.
     """
     with player_sid_lock:
         if id_to_sid.get(player.id, sid) != sid:
@@ -66,7 +66,7 @@ def set_player(sid: str, player: Player) -> None:
 
 def unset_player(sid: str) -> None:
     """
-    Remove the associated :py:class:`Player` from a Socket.IO session id.
+    Remove the associated :py:class:`UserPlayer` from a Socket.IO session id.
 
     :param sid: The Socket.IO session id to remove the player for.
     """

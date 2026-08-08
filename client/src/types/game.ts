@@ -1,8 +1,8 @@
-import type { TileId } from "./tile.ts";
+import type { TileId, TileValue } from "./tile.ts";
 import type { Call } from "./call.ts";
 import type { Action } from "./action.ts";
 import type { Player } from "./player.ts";
-import type { PatternData } from "./game_options.ts";
+import type { PatternData } from "./pattern.ts";
 
 export type Discard = {
   player: number;
@@ -30,7 +30,6 @@ export const enum RoundStatus {
 }
 
 export type GameInfo = {
-  players: Player[];
   wind_round: number;
   sub_round: number;
   draw_count: number;
@@ -47,6 +46,7 @@ export type RoundInfo = {
   riichi_discard_indexes: (number | null)[];
   calls: Call[][];
   flowers: TileId[][];
+  dora: TileId[];
 };
 
 export type PlayerInfo = {
@@ -67,19 +67,41 @@ export type Scoring = {
   win_player: number;
   lose_player: number | null;
   patterns: { [pattern: string]: PatternData };
-  han: number;
+  dora_tiles: (TileId | null)[];
+  ura_dora_tiles: (TileId | null)[];
+  yaku: number;
+  dora: number;
   fu: number;
   player_scores: number[];
 };
 
-export type AllServerInfo = {
+export type AllGameInfo = {
   player_count: number;
   player_index: number;
   is_game_end: boolean;
   game_info: GameInfo;
   round_info: RoundInfo;
-  history_updates: HistoryItem[];
   player_info: PlayerInfo;
   win_info: Win | null;
   scoring_info: Scoring | null;
+};
+
+export type EnhancedGameInfo = AllGameInfo & {
+  player_info: {
+    shanten_info?: [number, Set<TileValue>];
+    discard_shanten_info?: {
+      [tile in TileId]?: [number, Set<TileValue>];
+    };
+    remaining_tile_counts: number[];
+  };
+};
+
+export type AllServerInfo = {
+  all_game_info: AllGameInfo;
+  players: Player[];
+  history_updates: HistoryItem[];
+};
+
+export type EnhancedInfo = AllServerInfo & {
+  all_game_info: EnhancedGameInfo;
 };

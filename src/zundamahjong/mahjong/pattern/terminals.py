@@ -6,8 +6,7 @@ from .wait_pattern import WaitPattern
 @register_pattern(
     "ALL_SIMPLES",
     display_name="All Simples",
-    han=1,
-    fu=0,
+    yaku=1,
 )
 def all_simples(self: PatternCalculator) -> int:
     """
@@ -21,8 +20,7 @@ def all_simples(self: PatternCalculator) -> int:
 @register_pattern(
     "HALF_OUTSIDE_HAND",
     display_name="Half Outside Hand",
-    han=2,
-    fu=0,
+    yaku=2,
 )
 def half_outside_hand(self: PatternCalculator) -> int:
     """
@@ -35,8 +33,7 @@ def half_outside_hand(self: PatternCalculator) -> int:
 @register_pattern(
     "FULLY_OUTSIDE_HAND",
     display_name="Fully Outside Hand",
-    han=4,
-    fu=0,
+    yaku=4,
 )
 def fully_outside_hand(self: PatternCalculator) -> int:
     """
@@ -48,8 +45,7 @@ def fully_outside_hand(self: PatternCalculator) -> int:
 @register_pattern(
     "ALL_TERMINALS_AND_HONOURS",
     display_name="All Terminals and Honours",
-    han=3,
-    fu=0,
+    yaku=3,
 )
 def all_terminals_and_honours(self: PatternCalculator) -> int:
     """
@@ -66,8 +62,7 @@ def all_terminals_and_honours(self: PatternCalculator) -> int:
 @register_pattern(
     "ALL_TERMINALS",
     display_name="All Terminals",
-    han=13,
-    fu=0,
+    yaku=13,
 )
 def all_terminals(self: PatternCalculator) -> int:
     """
@@ -79,8 +74,7 @@ def all_terminals(self: PatternCalculator) -> int:
 @register_pattern(
     "THIRTEEN_ORPHANS",
     display_name="Thirteen Orphans",
-    han=13,
-    fu=0,
+    yaku=13,
 )
 def thirteen_orphans(self: PatternCalculator) -> int:
     """
@@ -94,8 +88,7 @@ def thirteen_orphans(self: PatternCalculator) -> int:
 @register_pattern(
     "THIRTEEN_ORPHANS_13_SIDED_WAIT",
     display_name="Thirteen Orphans 13-sided Wait",
-    han=13,
-    fu=0,
+    yaku=13,
 )
 def thirteen_orphans_13_sided_wait(self: PatternCalculator) -> int:
     """

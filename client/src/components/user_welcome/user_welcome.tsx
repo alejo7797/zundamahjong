@@ -1,4 +1,4 @@
-import type { Player } from "../../types/player";
+import type { UserPlayer } from "../../types/player";
 
 import "./user_welcome.css";
 
@@ -6,7 +6,7 @@ export function UserWelcome({
   myPlayer,
   goToSettings,
 }: {
-  myPlayer: Player;
+  myPlayer: UserPlayer;
   goToSettings: () => void;
 }) {
   const onGoToSettingsClick = (e: Event) => {
@@ -28,8 +28,8 @@ export function UserWelcome({
 
   const welcome_message =
     myPlayer.has_account && !myPlayer.new_user
-      ? `Welcome back, ${myPlayer.name}`
-      : `Welcome, ${myPlayer.name}`;
+      ? `Welcome back, ${myPlayer.display_name}`
+      : `Welcome, ${myPlayer.display_name}`;
 
   if (myPlayer.has_account) {
     return (

@@ -14,6 +14,7 @@ from . import (
     yakuhai,  # noqa: F401
     melds,  # noqa: F401
     no_calls,  # noqa: F401
+    dora,  # noqa: F401
     flower,  # noqa: F401
     wait,  # noqa: F401
 )

@@ -2,10 +2,14 @@ import { useRef, useEffect, useState } from "preact/hooks";
 import { io, Socket } from "socket.io-client";
 
 import type { ServerMessage, Severity } from "./types/server_message";
-import type { Player } from "./types/player";
+import type { UserPlayer } from "./types/player";
 import type { DetailedRoom, BasicRoom } from "./types/room";
-import { RoundStatus, type AllServerInfo } from "./types/game";
-import { processInfo, type AllInfo } from "./process_info";
+import {
+  RoundStatus,
+  type AllServerInfo,
+  type EnhancedInfo,
+} from "./types/game";
+import { processInfo } from "./process_info";
 import type { EmitFunc } from "./types/emit_func";
 
 import { Emitter } from "./components/emitter/emitter";
@@ -37,11 +41,11 @@ export function App() {
     list: ServerMessage[];
   }>({ currentIndex: 0, list: [] });
 
-  const [myPlayer, setMyPlayer] = useState<Player>();
+  const [myPlayer, setMyPlayer] = useState<UserPlayer>();
   const [rooms, setRooms] = useState<BasicRoom[]>([]);
   const [myRoom, setMyRoom] = useState<DetailedRoom>();
 
-  const [info, setInfo] = useState<AllInfo>();
+  const [info, setInfo] = useState<EnhancedInfo>();
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [actionSubmitted, setActionSubmitted] = useState<boolean>(false);
   const [seeResults, setSeeResults] = useState<boolean>(false);
@@ -70,7 +74,7 @@ export function App() {
         });
       },
     );
-    socket.current.on("player_info", (player: Player) => {
+    socket.current.on("player_info", (player: UserPlayer) => {
       setMyPlayer(player);
     });
     socket.current.on("rooms_info", (rooms: Array<BasicRoom>) => {
@@ -81,12 +85,15 @@ export function App() {
     });
     socket.current.on("info", (info: AllServerInfo | undefined) => {
       if (info) {
-        setInfo(processInfo(info));
+        setInfo({
+          ...info,
+          all_game_info: processInfo(info.all_game_info),
+        });
       } else {
         setInfo(undefined);
       }
       setActionSubmitted(false);
-      if (info && info.round_info.status != RoundStatus.END) {
+      if (info && info.all_game_info.round_info.status != RoundStatus.END) {
         setSeeResults(false);
       }
     });
@@ -128,10 +135,10 @@ export function App() {
 }
 
 function getScreen(
-  myPlayer: Player | undefined,
+  myPlayer: UserPlayer | undefined,
   rooms: BasicRoom[],
   myRoom: DetailedRoom | undefined,
-  info: AllInfo | undefined,
+  info: EnhancedInfo | undefined,
   actionSubmitted: boolean,
   setActionSubmitted: (value: boolean) => void,
   seeResults: boolean,
@@ -164,6 +171,9 @@ function getScreen(
     );
   }
   if (!info) {
+    const isCaptain =
+      myRoom.joined_players.filter((player) => !player.id.startsWith("bot:"))[0]
+        .id == myPlayer.id;
     return (
       <div id="room_screen" class="screen">
         <RoomInfo room={myRoom} />
@@ -174,7 +184,7 @@ function getScreen(
         />
         <GameOptionsForm
           gameOptions={myRoom.game_options}
-          isEditable={myRoom.joined_players[0].id == myPlayer.id}
+          isEditable={isCaptain}
           can_start={myRoom.joined_players.length == myRoom.player_count}
         />
       </div>
@@ -189,7 +199,9 @@ function getScreen(
     <OptionsContext.Provider value={options}>
       <GameScreen
         playerAvatarIds={myRoom.avatars}
-        info={info}
+        players={info.players}
+        info={info.all_game_info}
+        historyUpdates={info.history_updates}
         actionSubmitted={actionSubmitted}
         setActionSubmitted={() => setActionSubmitted(true)}
         seeResults={seeResults}

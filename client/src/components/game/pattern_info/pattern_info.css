@@ -1,6 +1,6 @@
 .pattern {
   width: 27cqw;
-  height: 5cqw;
+  height: 3cqw;
   position: relative;
 
   .display_name,
@@ -10,14 +10,12 @@
 
   .display_name {
     width: 22cqw;
-    height: 5cqw;
     position: absolute;
     left: 0;
     font-size: 1.5cqw;
   }
 
   .values {
-    height: 5cqw;
     position: absolute;
     right: 0;
     font-size: 2cqw;

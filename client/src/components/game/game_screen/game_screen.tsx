@@ -6,14 +6,19 @@ import {
   type Action,
   type HandTileActionType,
 } from "../../../types/action";
-import { RoundStatus } from "../../../types/game";
-import { type AllInfo } from "../../../process_info";
+import {
+  RoundStatus,
+  type HistoryItem,
+  type EnhancedGameInfo,
+} from "../../../types/game";
+import { type Player } from "../../../types/player";
 
 import { Emitter } from "../../emitter/emitter";
 import { EmitAction } from "../emit_action/emit_action";
 
 import { PlayerIcons } from "../player_icon/player_icon";
 import { Hand } from "../hand/hand";
+import { DoraDisplay } from "../dora_display/dora_display.tsx";
 import { ActionMenu } from "../action_menu/action_menu";
 import { Table } from "../table/table";
 import { WinInfo } from "../win_info/win_info";
@@ -26,22 +31,28 @@ import {
   ShantenDisplay,
   ShantenDisplayButton,
 } from "../shanten_display/shanten_display";
-import { type TileId } from "../../../types/tile";
+import { getTileValue, type TileId } from "../../../types/tile";
 import { VoiceCollection } from "../../audio_collection/audio_collection";
 import { CutinCollection } from "../cutin/cutin";
 import { OptionsBar } from "../options_bar/options_bar";
 import { OptionsContext } from "../../options_context/options_context";
+import { TileHighlightContext } from "../tile_highlight_context/tile_highlight_context";
+import { DoraContext, getDoraValues } from "../dora_context/dora_context.tsx";
 
 export function GameScreen({
   playerAvatarIds,
+  players,
   info,
+  historyUpdates,
   actionSubmitted,
   setActionSubmitted,
   seeResults,
   goToResults,
 }: {
   playerAvatarIds: AvatarIdDict;
-  info: AllInfo;
+  players: Player[];
+  info: EnhancedGameInfo;
+  historyUpdates: HistoryItem[];
   actionSubmitted: boolean;
   setActionSubmitted: () => void;
   seeResults: boolean;
@@ -75,15 +86,11 @@ export function GameScreen({
   useLayoutEffect(() => {
     // calculate this inside to avoid triggering this effect every time
     // this component is rerendered
-    const avatarIds = info.game_info.players.map(
-      (player) => playerAvatarIds[player.id],
-    );
-    setAnimations(info.history_updates, avatarIds);
-  }, [info, playerAvatarIds]);
+    const avatarIds = players.map((player) => playerAvatarIds[player.id]);
+    setAnimations(historyUpdates, avatarIds);
+  }, [players, historyUpdates, playerAvatarIds]);
 
-  const avatarIds = info.game_info.players.map(
-    (player) => playerAvatarIds[player.id],
-  );
+  const avatarIds = players.map((player) => playerAvatarIds[player.id]);
   const voiceCollections = [...new Set(Object.values(playerAvatarIds))].map(
     (avatarId) => <VoiceCollection key={avatarId} avatarId={avatarId} />,
   );
@@ -93,21 +100,20 @@ export function GameScreen({
       <></>
     ) : !seeResults ? (
       <WinInfo
-        players={info.game_info.players}
+        players={players}
         playerAvatarIds={playerAvatarIds}
         info={info}
         goToResults={goToResults}
       />
     ) : (
       <Results
-        players={info.game_info.players}
+        players={players}
         playerAvatarIds={playerAvatarIds}
         info={info}
       />
     );
 
-  function didDrawTile(info: AllInfo) {
-    console.log(info.round_info.history);
+  function didDrawTile(info: EnhancedGameInfo) {
     if (info.round_info.current_player != info.player_index) {
       return false;
     }
@@ -147,59 +153,79 @@ export function GameScreen({
     hoverTile &&
     info.player_info.discard_shanten_info[hoverTile];
 
+  const tileHighlight = {
+    hoverTileValue: hoverTile ? getTileValue(hoverTile) : 0,
+  };
+
+  const max_dora_count = Math.max(
+    Math.min(
+      options.game_options.max_dora_count,
+      options.game_options.max_kan_count +
+        options.game_options.start_dora_count,
+    ),
+    options.game_options.start_dora_count,
+  );
+
   return (
     <EmitAction.Provider value={emit_action}>
-      <div
-        class={`screen game_screen me_player_${info.player_index} status_${info.round_info.status} show_tile_names_${options.client_options.show_tile_numbers ? "true" : "false"}`}
+      <DoraContext
+        value={getDoraValues(info.round_info.dora, info.player_count == 3)}
       >
-        {voiceCollections}
-        <CutinCollection
-          historyUpdates={info.history_updates}
-          avatarIds={avatarIds}
-        />
-        <PlayerIcons
-          players={info.game_info.players}
-          playerAvatarIds={playerAvatarIds}
-        />
-        <Hand
-          handActionType={handActionType}
-          tiles={info.player_info.hand}
-          didDrawTile={didDrawTile(info)}
-          actions={info.player_info.actions}
-          actionSubmitted={actionSubmitted}
-          isFuriten={info.player_info.is_furiten}
-          setHoverTile={setHoverTile}
-        />
-        {actionSubmitted ? (
-          <></>
-        ) : (
-          <ActionMenu
-            actions={info.player_info.actions}
-            handActionType={handActionType}
-            setHandActionType={setHandActionType}
-          />
-        )}
-        {info.player_info.shanten_info ? (
-          <ShantenDisplayButton
-            shantenInfo={info.player_info.shanten_info}
-            remainingTileCounts={info.player_info.remaining_tile_counts}
-          />
-        ) : (
-          <></>
-        )}
-        {discard_shanten_info ? (
-          <ShantenDisplay
-            shantenInfo={discard_shanten_info}
-            remainingTileCounts={info.player_info.remaining_tile_counts}
-            visible
-          />
-        ) : (
-          <></>
-        )}
-        <Table info={info} />
-        {winOverlay}
-        <OptionsBar />
-      </div>
+        <TileHighlightContext value={tileHighlight}>
+          <div
+            class={`screen game_screen me_player_${info.player_index} status_${info.round_info.status} show_tile_names_${options.client_options.show_tile_numbers ? "true" : "false"}`}
+          >
+            {voiceCollections}
+            <CutinCollection
+              historyUpdates={historyUpdates}
+              avatarIds={avatarIds}
+            />
+            <PlayerIcons players={players} playerAvatarIds={playerAvatarIds} />
+            <Hand
+              handActionType={handActionType}
+              tiles={info.player_info.hand}
+              didDrawTile={didDrawTile(info)}
+              actions={info.player_info.actions}
+              actionSubmitted={actionSubmitted}
+              isFuriten={info.player_info.is_furiten}
+              setHoverTile={setHoverTile}
+            />
+            <DoraDisplay
+              dora={info.round_info.dora}
+              max_dora_count={max_dora_count}
+            />
+            {actionSubmitted ? (
+              <></>
+            ) : (
+              <ActionMenu
+                actions={info.player_info.actions}
+                handActionType={handActionType}
+                setHandActionType={setHandActionType}
+              />
+            )}
+            {info.player_info.shanten_info ? (
+              <ShantenDisplayButton
+                shantenInfo={info.player_info.shanten_info}
+                remainingTileCounts={info.player_info.remaining_tile_counts}
+              />
+            ) : (
+              <></>
+            )}
+            {discard_shanten_info ? (
+              <ShantenDisplay
+                shantenInfo={discard_shanten_info}
+                remainingTileCounts={info.player_info.remaining_tile_counts}
+                visible
+              />
+            ) : (
+              <></>
+            )}
+            <Table info={info} />
+            {winOverlay}
+            <OptionsBar />
+          </div>
+        </TileHighlightContext>
+      </DoraContext>
     </EmitAction.Provider>
   );
 }

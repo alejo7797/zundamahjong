@@ -1,4 +1,39 @@
-import type { Pattern, PatternData } from "../../../../types/game_options";
+import { useState } from "preact/hooks";
+import {
+  patternDescs,
+  type Pattern,
+  type PatternData,
+} from "../../../../types/pattern";
+
+function PatternInputLabel({
+  displayName,
+  description,
+}: {
+  displayName: string;
+  description: string;
+}) {
+  const [isHover, setIsHover] = useState<boolean>(false);
+  const onHoverStart = (e: MouseEvent) => {
+    e.preventDefault();
+    setIsHover(true);
+  };
+  const onHoverEnd = (e: MouseEvent) => {
+    e.preventDefault();
+    setIsHover(false);
+  };
+  return (
+    <label onMouseOver={onHoverStart} onMouseOut={onHoverEnd}>
+      {displayName}
+      {isHover ? (
+        <div class="description">
+          <p>{description}</p>
+        </div>
+      ) : (
+        <></>
+      )}
+    </label>
+  );
+}
 
 export function GameOptionsPatternInput({
   isEditable,
@@ -20,12 +55,19 @@ export function GameOptionsPatternInput({
   const editableProps = isEditable ? { onChange } : { readonly: true };
   return (
     <>
-      <label>{data.display_name}</label>
+      <PatternInputLabel {...patternDescs[name]} />
       <input
         form={formId}
-        name={`${name}___han`}
+        name={`${name}___yaku`}
         type="number"
-        value={data.han}
+        value={data.yaku}
+        {...editableProps}
+      />
+      <input
+        form={formId}
+        name={`${name}___dora`}
+        type="number"
+        value={data.dora}
         {...editableProps}
       />
       <input

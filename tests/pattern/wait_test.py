@@ -1,12 +1,10 @@
-from unittest import TestCase
-
 from zundamahjong.mahjong.call import CallType, OpenCall
 from zundamahjong.mahjong.meld import Meld, MeldType
 
 from .get_pattern_mults import get_pattern_mults
 
 
-class WaitTest(TestCase):
+class TestWait:
     def test_open_wait(self) -> None:
         pattern_mults = get_pattern_mults(
             win_player=0,
@@ -27,10 +25,11 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"OPEN_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "OPEN_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_closed_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -52,10 +51,11 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"CLOSED_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "CLOSED_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_low_edge_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -77,10 +77,11 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"EDGE_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "EDGE_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_high_edge_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -102,10 +103,11 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"EDGE_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "EDGE_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_dual_pon_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -129,10 +131,11 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"DUAL_PON_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "DUAL_PON_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }
 
     def test_pair_wait(self) -> None:
         pattern_mults = get_pattern_mults(
@@ -154,7 +157,8 @@ class WaitTest(TestCase):
             ],
             flowers=[420],
         )
-        self.assertDictEqual(
-            pattern_mults,
-            {"PAIR_WAIT": 1, "NON_PINFU_TSUMO": 1, "ORPHAN_CLOSED_TRIPLET": 1},
-        )
+        assert pattern_mults == {
+            "PAIR_WAIT": 1,
+            "NON_PINFU_TSUMO": 1,
+            "ORPHAN_CLOSED_TRIPLET": 1,
+        }

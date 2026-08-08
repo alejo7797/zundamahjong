@@ -1,7 +1,5 @@
 # pyright: reportPrivateUsage=false
 
-import unittest
-
 from tests.decks import test_deck1, test_deck2, test_deck3
 from zundamahjong.mahjong.action import (
     ActionType,
@@ -25,33 +23,32 @@ from zundamahjong.mahjong.round import Round
 from zundamahjong.mahjong.tile import N, all_tiles
 
 
-class RoundWaitsTest(unittest.TestCase):
+class TestRoundWaits:
     def test_waits_wrong_hand_size(self) -> None:
         round = Round(tiles=test_deck1)
-        self.assertSetEqual(round._hands[0].waits, frozenset())
+        assert round._hands[0].waits == set()
 
     def test_waits(self) -> None:
         round = Round(tiles=test_deck2)
-        self.assertSetEqual(round._hands[2].waits, frozenset({13, 16}))
+        assert round._hands[2].waits == {13, 16}
 
     def test_8_tile_wait(self) -> None:
-        hand = Hand(0, Deck(tiles=test_deck1), DiscardPool())
+        hand = Hand(
+            0, Deck(tiles=test_deck1, max_back_draw=0, max_dora_count=0), DiscardPool()
+        )
         hand._tiles = [20, 21, 22, 30, 40, 50, 60, 61, 70, 71, 72, 73, 80]
-        self.assertSetEqual(hand.waits, frozenset({1, 2, 3, 4, 5, 6, 8, 9}))
+        assert hand.waits == {1, 2, 3, 4, 5, 6, 8, 9}
 
 
-class RoundActionsWaitsCheckTest(unittest.TestCase):
+class TestRoundActionsWaitsCheck:
     def check_waits(self, round: Round) -> None:
         for hand in round._hands:
-            self.assertSetEqual(
-                hand.waits,
-                {
-                    tile_value
-                    for tile_value in all_tiles
-                    if hand.tile_values.count(tile_value) < 4
-                    and is_winning(hand._tiles + [tile_value * N])
-                },
-            )
+            assert hand.waits == {
+                tile_value
+                for tile_value in all_tiles
+                if hand.tile_values.count(tile_value) < 4
+                and is_winning(hand._tiles + [tile_value * N])
+            }
 
     def test_draw(self) -> None:
         round = Round(tiles=test_deck1)

@@ -7,7 +7,7 @@ from ..database.security import change_password
 from ..mahjong.action import action_adapter
 from ..mahjong.game_options import GameOptions
 from ..types.avatar import Avatar
-from ..types.player import Player
+from ..types.player import UserPlayer
 from .game_room import GameRoom
 from .name_sid import get_player, set_player, try_get_player, unset_player
 from .sio import sio, sio_on
@@ -24,15 +24,15 @@ def connect(sid: str, environ: dict[str, Any], auth: object = None) -> None:  # 
 
     Get player information from the Flask ``session`` object.
     Then set the player on the :py:mod:`name_sid` module and send the client their
-    :py:class:`Player` object.
+    :py:class:`UserPlayer` object.
     If they are in an active game, make them rejoin the game.
 
     :param sid: The Socket.IO session id of the connection.
     """
     logger.info(f"Client connecting with sid {sid}")
     if "player" not in session:
-        raise Exception("Player object missing from client session!")
-    player = Player.model_validate_json(session["player"])  # pyright: ignore[reportAny]
+        raise Exception("UserPlayer object missing from client session!")
+    player = UserPlayer.model_validate_json(session["player"])  # pyright: ignore[reportAny]
     set_player(sid, player)
     if player.new_user and session["first"]:
         sio.emit_info("Account successfully created.", to=sid)
@@ -120,6 +120,16 @@ def on_join_room(sid: str, room_name: object) -> None:
     GameRoom.join_room(get_player(sid), room_name)
 
 
+@sio_on("add_bot")
+def on_add_bot(sid: str) -> None:
+    """
+    Add a bot to the game room the player is currently in.
+
+    :param sid: The Socket.IO session id of the connection.
+    """
+    GameRoom.add_bot_to_room(get_player(sid))
+
+
 @sio_on("leave_room")
 def on_leave_room(sid: str) -> None:
     """
@@ -130,18 +140,35 @@ def on_leave_room(sid: str) -> None:
     GameRoom.leave_room(get_player(sid))
 
 
-@sio_on("set_avatar")
-def on_set_avatar(sid: str, avatar_code: object) -> None:
+@sio_on("kick_from_room")
+def on_kick_from_room(sid: str, player_id: object) -> None:
     """
-    Set a player's avatar. The player should be in a game room.
+    Kick a player from the game room they are currently in. The player to be kicked should be in the same room as the player sending the event.
 
     :param sid: The Socket.IO session id of the connection.
+    :param player_id: The player to be kicked out of the room.
+    """
+    if not isinstance(player_id, str):
+        raise Exception("Player id is not a string!")
+    GameRoom.kick_from_room(get_player(sid), player_id)
+
+
+@sio_on("set_avatar")
+def on_set_avatar(sid: str, player_id: object, avatar_code: object) -> None:
+    """
+    Set a specified player's avatar. The player should be in the same game
+    room as the player sending the event.
+
+    :param sid: The Socket.IO session id of the connection.
+    :param player_id: The id of the player to set the avatar of.
     :param avatar_code: The code of the avatar.
     """
+    if not isinstance(player_id, str):
+        raise Exception("Player id is not a string!")
     if not isinstance(avatar_code, int):
         raise Exception("Avatar code is not an integer!")
     avatar = Avatar(avatar_code)
-    GameRoom.set_avatar(get_player(sid), avatar)
+    GameRoom.set_avatar(get_player(sid), player_id, avatar)
 
 
 @sio_on("game_options")

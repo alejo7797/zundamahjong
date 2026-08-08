@@ -136,6 +136,41 @@ action_adapter: TypeAdapter[Action] = TypeAdapter(Action)
 "Adapter used to validate a Python object as an Action."
 
 
+def animation_length(action: Action) -> float:
+    """
+    Returns the length of time the animation for the action takes, in seconds.
+
+    :param action: The action to get the length of.
+    """
+    match action.action_type:
+        case ActionType.PASS:
+            return 0.0
+        case ActionType.CONTINUE:
+            return 0.0
+        case ActionType.DRAW:
+            return 0.250
+        case ActionType.DISCARD:
+            return 0.250
+        case ActionType.RIICHI:
+            return 1.250
+        case ActionType.CHII:
+            return 1.250
+        case ActionType.PON:
+            return 1.250
+        case ActionType.OPEN_KAN:
+            return 1.500
+        case ActionType.ADD_KAN:
+            return 1.500
+        case ActionType.CLOSED_KAN:
+            return 1.500
+        case ActionType.FLOWER:
+            return 1.000
+        case ActionType.RON:
+            return 2.000
+        case ActionType.TSUMO:
+            return 2.000
+
+
 @final
 class ActionList:
     """

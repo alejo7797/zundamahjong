@@ -1,4 +1,7 @@
-import type { TileId } from "../../../types/tile";
+import { useContext } from "preact/hooks";
+import { getTileValue, type TileId } from "../../../types/tile";
+import { TileHighlightContext } from "../tile_highlight_context/tile_highlight_context";
+import { DoraContext, isDora } from "../dora_context/dora_context.tsx";
 
 import { TileImage } from "../tile_image/tile_image";
 
@@ -19,13 +22,19 @@ export function Tile3D({
   is_closed_kan?: boolean;
   isFirstRiichi?: boolean;
 }) {
+  const tileHighlight = useContext(TileHighlightContext);
+  const dora = useContext(DoraContext);
   return (
     <div
       class={`tile_3d tile_id_${tile} ${is_new ? "is_new " : ""}${
         is_called ? "is_called " : ""
       }${is_added_kan ? "is_added_kan " : ""}${
         is_closed_kan ? "is_closed_kan " : ""
-      }${isFirstRiichi ? "is_first_riichi " : ""}`}
+      }${isFirstRiichi ? "is_first_riichi " : ""}${
+        tile && getTileValue(tile) == tileHighlight.hoverTileValue
+          ? "is_hover_highlight "
+          : ""
+      }${isDora(tile, dora) ? "is_dora " : ""}`}
     >
       <div class={`tile_3d_extra_transform`}>
         <span class="tile_face tile_back" />
