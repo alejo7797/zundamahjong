@@ -1,4 +1,9 @@
-import { getTileShortString, getTileString, getTileUrl, type TileId } from "../../../types/tile";
+import {
+  getTileShortString,
+  getTileString,
+  getTileUrl,
+  type TileId,
+} from "../../../types/tile";
 
 import "./tile_image.css";
 

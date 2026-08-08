@@ -86,15 +86,11 @@ export function GameScreen({
   useLayoutEffect(() => {
     // calculate this inside to avoid triggering this effect every time
     // this component is rerendered
-    const avatarIds = players.map(
-      (player) => playerAvatarIds[player.id],
-    );
+    const avatarIds = players.map((player) => playerAvatarIds[player.id]);
     setAnimations(historyUpdates, avatarIds);
   }, [players, historyUpdates, playerAvatarIds]);
 
-  const avatarIds = players.map(
-    (player) => playerAvatarIds[player.id],
-  );
+  const avatarIds = players.map((player) => playerAvatarIds[player.id]);
   const voiceCollections = [...new Set(Object.values(playerAvatarIds))].map(
     (avatarId) => <VoiceCollection key={avatarId} avatarId={avatarId} />,
   );
@@ -164,72 +160,71 @@ export function GameScreen({
   const max_dora_count = Math.max(
     Math.min(
       options.game_options.max_dora_count,
-      options.game_options.max_kan_count + options.game_options.start_dora_count,
+      options.game_options.max_kan_count +
+        options.game_options.start_dora_count,
     ),
     options.game_options.start_dora_count,
   );
 
-
   return (
     <EmitAction.Provider value={emit_action}>
-      <DoraContext value={getDoraValues(info.round_info.dora, info.player_count == 3)}>
-      <TileHighlightContext value={tileHighlight}>
-        <div
-          class={`screen game_screen me_player_${info.player_index} status_${info.round_info.status} show_tile_names_${options.client_options.show_tile_numbers ? "true" : "false"}`}
-        >
-          {voiceCollections}
-          <CutinCollection
-            historyUpdates={historyUpdates}
-            avatarIds={avatarIds}
-          />
-          <PlayerIcons
-            players={players}
-            playerAvatarIds={playerAvatarIds}
-          />
-          <Hand
-            handActionType={handActionType}
-            tiles={info.player_info.hand}
-            didDrawTile={didDrawTile(info)}
-            actions={info.player_info.actions}
-            actionSubmitted={actionSubmitted}
-            isFuriten={info.player_info.is_furiten}
-            setHoverTile={setHoverTile}
-          />
-          <DoraDisplay
-            dora={info.round_info.dora}
-            max_dora_count={max_dora_count}
-          />
-          {actionSubmitted ? (
-            <></>
-          ) : (
-            <ActionMenu
-              actions={info.player_info.actions}
+      <DoraContext
+        value={getDoraValues(info.round_info.dora, info.player_count == 3)}
+      >
+        <TileHighlightContext value={tileHighlight}>
+          <div
+            class={`screen game_screen me_player_${info.player_index} status_${info.round_info.status} show_tile_names_${options.client_options.show_tile_numbers ? "true" : "false"}`}
+          >
+            {voiceCollections}
+            <CutinCollection
+              historyUpdates={historyUpdates}
+              avatarIds={avatarIds}
+            />
+            <PlayerIcons players={players} playerAvatarIds={playerAvatarIds} />
+            <Hand
               handActionType={handActionType}
-              setHandActionType={setHandActionType}
+              tiles={info.player_info.hand}
+              didDrawTile={didDrawTile(info)}
+              actions={info.player_info.actions}
+              actionSubmitted={actionSubmitted}
+              isFuriten={info.player_info.is_furiten}
+              setHoverTile={setHoverTile}
             />
-          )}
-          {info.player_info.shanten_info ? (
-            <ShantenDisplayButton
-              shantenInfo={info.player_info.shanten_info}
-              remainingTileCounts={info.player_info.remaining_tile_counts}
+            <DoraDisplay
+              dora={info.round_info.dora}
+              max_dora_count={max_dora_count}
             />
-          ) : (
-            <></>
-          )}
-          {discard_shanten_info ? (
-            <ShantenDisplay
-              shantenInfo={discard_shanten_info}
-              remainingTileCounts={info.player_info.remaining_tile_counts}
-              visible
-            />
-          ) : (
-            <></>
-          )}
-          <Table info={info} />
-          {winOverlay}
-          <OptionsBar />
-        </div>
-      </TileHighlightContext>
+            {actionSubmitted ? (
+              <></>
+            ) : (
+              <ActionMenu
+                actions={info.player_info.actions}
+                handActionType={handActionType}
+                setHandActionType={setHandActionType}
+              />
+            )}
+            {info.player_info.shanten_info ? (
+              <ShantenDisplayButton
+                shantenInfo={info.player_info.shanten_info}
+                remainingTileCounts={info.player_info.remaining_tile_counts}
+              />
+            ) : (
+              <></>
+            )}
+            {discard_shanten_info ? (
+              <ShantenDisplay
+                shantenInfo={discard_shanten_info}
+                remainingTileCounts={info.player_info.remaining_tile_counts}
+                visible
+              />
+            ) : (
+              <></>
+            )}
+            <Table info={info} />
+            {winOverlay}
+            <OptionsBar />
+          </div>
+        </TileHighlightContext>
       </DoraContext>
     </EmitAction.Provider>
   );

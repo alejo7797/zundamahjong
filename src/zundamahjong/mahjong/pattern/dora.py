@@ -30,8 +30,7 @@ def count_dora_matches(self: PatternCalculator, dora_tiles: list[TileId]) -> int
             total += sum(
                 1
                 for tile_value in self.flowers
-                if tile_value
-                in get_dora_flower_values(dora_tile)
+                if tile_value in get_dora_flower_values(dora_tile)
             )
         else:
             total += sum(

@@ -1,7 +1,4 @@
-import {
-  type PatternDataDict,
-  patterns,
-} from "../../../../types/pattern";
+import { type PatternDataDict, patterns } from "../../../../types/pattern";
 import { GameOptionsPatternInput } from "./pattern_input";
 
 import "./pattern_form.css";

@@ -2,21 +2,26 @@ import type { GameOptions } from "./game_options";
 import { patterns, type PatternDataDict } from "./pattern.ts";
 
 const typeSafeObjectFromEntries = <
-  const T extends ReadonlyArray<readonly [PropertyKey, unknown]>
+  const T extends ReadonlyArray<readonly [PropertyKey, unknown]>,
 >(
-  entries: T
+  entries: T,
 ): { [K in T[number] as K[0]]: K[1] } => {
   return Object.fromEntries(entries) as { [K in T[number] as K[0]]: K[1] };
 };
 
-function fill_in(data: {[key: string] : { yaku?: number, dora?: number, fu?: number }}): PatternDataDict {
+function fill_in(data: {
+  [key: string]: { yaku?: number; dora?: number; fu?: number };
+}): PatternDataDict {
   return typeSafeObjectFromEntries(
-    patterns.map((key) => [key, {
-      yaku: 0,
-      dora: 0,
-      fu: 0,
-      ...data[key]
-      }])
+    patterns.map((key) => [
+      key,
+      {
+        yaku: 0,
+        dora: 0,
+        fu: 0,
+        ...data[key],
+      },
+    ]),
   );
 }
 
@@ -123,7 +128,10 @@ const default_preset = {
   seven_pairs_fixed_fu: 25,
   round_up_fu: false,
   round_up_points: false,
-  base_score_limits: [{ han: 6, score: 6400 }, { han: 10, score: 12800 }],
+  base_score_limits: [
+    { han: 6, score: 6400 },
+    { han: 10, score: 12800 },
+  ],
   pattern_data: fill_in(default_pattern_data),
 };
 

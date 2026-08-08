@@ -94,14 +94,14 @@ export type EnhancedGameInfo = AllGameInfo & {
     };
     remaining_tile_counts: number[];
   };
-}
+};
 
 export type AllServerInfo = {
   all_game_info: AllGameInfo;
   players: Player[];
   history_updates: HistoryItem[];
-}
+};
 
 export type EnhancedInfo = AllServerInfo & {
   all_game_info: EnhancedGameInfo;
-}
+};

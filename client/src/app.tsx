@@ -4,7 +4,11 @@ import { io, Socket } from "socket.io-client";
 import type { ServerMessage, Severity } from "./types/server_message";
 import type { UserPlayer } from "./types/player";
 import type { DetailedRoom, BasicRoom } from "./types/room";
-import { RoundStatus, type AllServerInfo, type EnhancedInfo } from "./types/game";
+import {
+  RoundStatus,
+  type AllServerInfo,
+  type EnhancedInfo,
+} from "./types/game";
 import { processInfo } from "./process_info";
 import type { EmitFunc } from "./types/emit_func";
 
@@ -168,7 +172,8 @@ function getScreen(
   }
   if (!info) {
     const isCaptain =
-      myRoom.joined_players.filter((player) => !player.id.startsWith("bot:"))[0].id == myPlayer.id;
+      myRoom.joined_players.filter((player) => !player.id.startsWith("bot:"))[0]
+        .id == myPlayer.id;
     return (
       <div id="room_screen" class="screen">
         <RoomInfo room={myRoom} />

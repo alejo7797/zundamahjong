@@ -209,7 +209,8 @@ export const inputPropsList: OptionsInputProps<GameOptions>[] = [
       {
         name: "max_dora_count",
         labelText: "Maximum dora count",
-        description: "The maximum number of dora indicators to reveal in a round.",
+        description:
+          "The maximum number of dora indicators to reveal in a round.",
         type: "number",
         min: 0,
         max: 20,
@@ -217,7 +218,8 @@ export const inputPropsList: OptionsInputProps<GameOptions>[] = [
       {
         name: "start_dora_count",
         labelText: "Starting dora count",
-        description: "The number of dora indicators revealed at the start of a round.",
+        description:
+          "The number of dora indicators revealed at the start of a round.",
         type: "number",
         min: 0,
         max: 20,
@@ -225,7 +227,8 @@ export const inputPropsList: OptionsInputProps<GameOptions>[] = [
       {
         name: "dead_wall_additional_tiles",
         labelText: "Number of extra tiles in dead wall",
-        description: "The number of extra tiles in the dead wall, in addition to the dora indicators and tiles needed for kan/flowers.",
+        description:
+          "The number of extra tiles in the dead wall, in addition to the dora indicators and tiles needed for kan/flowers.",
         type: "number",
         min: 0,
         max: 20,

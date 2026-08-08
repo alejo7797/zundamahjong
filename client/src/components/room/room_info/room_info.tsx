@@ -15,7 +15,7 @@ export function RoomInfo({ room }: { room: BasicRoom }) {
     emit("leave_room");
     emit("get_rooms");
   };
-  const canAddBot = (room.joined_players.length < room.player_count);
+  const canAddBot = room.joined_players.length < room.player_count;
   const addBot = (e: MouseEvent) => {
     e.preventDefault();
     emit("add_bot");

@@ -172,7 +172,9 @@ class Scorer:
             patterns_dict = dict(
                 (pattern, pattern_data)
                 for (pattern, pattern_data) in patterns
-                if pattern_data.yaku != 0 or pattern_data.dora != 0 or pattern_data.fu != 0
+                if pattern_data.yaku != 0
+                or pattern_data.dora != 0
+                or pattern_data.fu != 0
             )
         else:
             patterns_dict = dict(
@@ -215,7 +217,11 @@ class Scorer:
                 scoring.fu,
             )
 
-        return max((scoring for scoring in scorings if scoring.yaku >= min_yaku), default=None, key=key)
+        return max(
+            (scoring for scoring in scorings if scoring.yaku >= min_yaku),
+            default=None,
+            key=key,
+        )
 
     @classmethod
     def score(cls, win: Win, options: GameOptions) -> Scoring | None:

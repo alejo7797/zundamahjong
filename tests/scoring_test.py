@@ -8,9 +8,7 @@ from zundamahjong.mahjong.win import Win
 
 class ScoringTest(unittest.TestCase):
     def get_player_scores(self, win: Win) -> list[float]:
-        scoring = Scorer.score(
-            win, GameOptions(player_count=win.player_count)
-        )
+        scoring = Scorer.score(win, GameOptions(player_count=win.player_count))
         assert scoring is not None
         return scoring.player_scores
 
@@ -202,10 +200,7 @@ class ScoringTest(unittest.TestCase):
         )
         scoring = Scorer.score(win, GameOptions(calculate_fu=True, base_fu=20))
         assert scoring is not None
-        self.assertSetEqual(
-            set(scoring.patterns.keys()),
-            { "ORPHAN_CLOSED_TRIPLET" }
-        )
+        self.assertSetEqual(set(scoring.patterns.keys()), {"ORPHAN_CLOSED_TRIPLET"})
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].yaku, 0)
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].dora, 0)
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].fu, 8)
@@ -235,10 +230,7 @@ class ScoringTest(unittest.TestCase):
             ),
         )
         assert scoring is not None
-        self.assertSetEqual(
-            set(scoring.patterns.keys()),
-            { "SEVEN_PAIRS" }
-        )
+        self.assertSetEqual(set(scoring.patterns.keys()), {"SEVEN_PAIRS"})
         self.assertEqual(scoring.patterns["SEVEN_PAIRS"].yaku, 3)
         self.assertEqual(scoring.patterns["SEVEN_PAIRS"].dora, 0)
         self.assertEqual(scoring.patterns["SEVEN_PAIRS"].fu, 0)
@@ -269,10 +261,7 @@ class ScoringTest(unittest.TestCase):
             win, GameOptions(calculate_fu=True, base_fu=20, round_up_fu=True)
         )
         assert scoring is not None
-        self.assertSetEqual(
-            set(scoring.patterns.keys()),
-            { "ORPHAN_CLOSED_TRIPLET" }
-        )
+        self.assertSetEqual(set(scoring.patterns.keys()), {"ORPHAN_CLOSED_TRIPLET"})
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].yaku, 0)
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].dora, 0)
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].fu, 8)
@@ -303,10 +292,7 @@ class ScoringTest(unittest.TestCase):
             win, GameOptions(calculate_fu=True, base_fu=20, round_up_points=True)
         )
         assert scoring is not None
-        self.assertSetEqual(
-            set(scoring.patterns.keys()),
-            { "ORPHAN_CLOSED_TRIPLET" }
-        )
+        self.assertSetEqual(set(scoring.patterns.keys()), {"ORPHAN_CLOSED_TRIPLET"})
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].yaku, 0)
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].dora, 0)
         self.assertEqual(scoring.patterns["ORPHAN_CLOSED_TRIPLET"].fu, 8)

@@ -1,8 +1,18 @@
 import type { JSX } from "preact/jsx-runtime";
-import { patternDescs, type Pattern, type PatternData } from "../../../types/pattern";
+import {
+  patternDescs,
+  type Pattern,
+  type PatternData,
+} from "../../../types/pattern";
 import "./pattern_info.css";
 
-export function PatternInfo({ pattern, data }: { pattern: Pattern, data: PatternData }) {
+export function PatternInfo({
+  pattern,
+  data,
+}: {
+  pattern: Pattern;
+  data: PatternData;
+}) {
   const children: JSX.Element[] = [];
   const han = data.yaku + data.dora;
   if (han != 0) {

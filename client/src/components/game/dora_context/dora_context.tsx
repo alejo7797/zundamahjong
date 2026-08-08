@@ -19,7 +19,10 @@ function getDoraFlowerValues(tile: TileId): TileValue[] {
   return [45, 46, 47, 48];
 }
 
-export function getDoraValues(dora_ids: TileId[], is_3player: boolean): TileValue[] {
+export function getDoraValues(
+  dora_ids: TileId[],
+  is_3player: boolean,
+): TileValue[] {
   const dora: TileValue[] = [];
   for (const tile of dora_ids) {
     if (getTileValue(tile) < 40) {

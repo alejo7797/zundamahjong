@@ -29,6 +29,7 @@ class PatternData(BaseModel):
     fu: int
     "The fu value of the pattern."
 
+
 class PatternDesc(BaseModel):
     """
     Represents a pattern's display information.

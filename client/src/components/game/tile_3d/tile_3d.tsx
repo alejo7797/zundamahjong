@@ -34,8 +34,7 @@ export function Tile3D({
         tile && getTileValue(tile) == tileHighlight.hoverTileValue
           ? "is_hover_highlight "
           : ""
-      }${isDora(tile, dora) ? "is_dora " : ""
-      }`}
+      }${isDora(tile, dora) ? "is_dora " : ""}`}
     >
       <div class={`tile_3d_extra_transform`}>
         <span class="tile_face tile_back" />

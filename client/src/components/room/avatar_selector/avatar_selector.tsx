@@ -30,7 +30,11 @@ export function AvatarSelector({
   };
   const decreaseAvatarId = (e: Event) => {
     e.preventDefault();
-    emit("set_avatar", player.id, (avatarId + avatars.length - 1) % avatars.length);
+    emit(
+      "set_avatar",
+      player.id,
+      (avatarId + avatars.length - 1) % avatars.length,
+    );
   };
   return (
     <div class="avatar_selector">
@@ -41,16 +45,12 @@ export function AvatarSelector({
           alt={avatar.name}
         />
         {canKick ? (
-          <button
-            type="button"
-            class="kick_from_room"
-            onClick={kickFromRoom}
-          >
+          <button type="button" class="kick_from_room" onClick={kickFromRoom}>
             &times;
           </button>
-          ) : (
-            <></>
-          )}
+        ) : (
+          <></>
+        )}
       </div>
       <div class="avatar_selector_player_name">{player.display_name}</div>
       {canEdit ? (
@@ -87,14 +87,18 @@ export function AvatarDisplay({
   avatars: AvatarIdDict;
 }) {
   const isCaptain =
-    players.filter((player) => !player.id.startsWith("bot:"))[0].id == myPlayer.id;
+    players.filter((player) => !player.id.startsWith("bot:"))[0].id ==
+    myPlayer.id;
   return (
     <div class="avatar_display">
       {players.map((player) => (
         <AvatarSelector
           key={player.id}
           player={player}
-          canEdit={player.id == myPlayer.id || (player.id.startsWith("bot:") && isCaptain)}
+          canEdit={
+            player.id == myPlayer.id ||
+            (player.id.startsWith("bot:") && isCaptain)
+          }
           canKick={player.id != myPlayer.id && isCaptain}
           avatarId={avatars[player.id]}
         />

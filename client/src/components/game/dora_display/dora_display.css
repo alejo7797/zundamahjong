@@ -9,13 +9,13 @@
   background-color: rgba(160, 153, 235, 0.897);
 
   .dora_title {
-      margin-bottom: 0.5cqw;
-      text-align: center;
-      font-family: "Chiron GoRound TC", sans-serif;
-      font-optical-sizing: auto;
-      font-weight: 600;
-      font-style: normal;
-      font-size: 1.5cqw;
+    margin-bottom: 0.5cqw;
+    text-align: center;
+    font-family: "Chiron GoRound TC", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    font-size: 1.5cqw;
   }
 
   .tiles {

@@ -10,7 +10,9 @@ import "./tile_2d.css";
 export function Tile2D({ tile }: { tile: TileId }) {
   const dora = useContext(DoraContext);
   return (
-    <span class={`tile_div tile_2d tile_2d_front ${isDora(tile, dora) ? "is_dora ": ""}`}>
+    <span
+      class={`tile_div tile_2d tile_2d_front ${isDora(tile, dora) ? "is_dora " : ""}`}
+    >
       <div class="tile_back_layer" />
       <div class="tile_middle_layer" />
       <TileImage tile={tile} />
