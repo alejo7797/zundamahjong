@@ -246,3 +246,22 @@ def start_next_round(sid: str) -> None:
         game_room.game_controller.start_next_round(player)
     else:
         game_room.end_game()
+
+
+@sio_on("end_game")
+def on_end_game(sid: str) -> None:
+    """
+    End the game of the game room the player is in.
+
+    Check the player is in a game room with an active game.
+    If so, end the game room's game.
+
+    :param sid: The Socket.IO session id of the connection.
+    """
+    player = get_player(sid)
+    game_room = GameRoom.get_player_room(player)
+    if game_room is None:
+        raise Exception("Player is not in a game room!")
+    if game_room.game_controller is None:
+        raise Exception("Game room has no active game!")
+    game_room.end_game()

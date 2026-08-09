@@ -1,6 +1,6 @@
 import { avatars, type AvatarIdDict } from "../../../types/avatars";
 import type { Player } from "../../../types/player";
-import type { Pattern } from "../../../types/pattern";
+import type { Pattern, PatternData } from "../../../types/pattern";
 import type { AllGameInfo } from "../../../types/game";
 
 import { Tile2D, Tile2DBack } from "../tile_2d/tile_2d";
@@ -32,6 +32,14 @@ export function WinInfo({
       (tile, index) =>
         tile ? <Tile2D tile={tile} key={tile} /> : <Tile2DBack key={-index} />,
     );
+    function is_fu_only(pair: [string, PatternData]): boolean {
+      return pair[1].yaku + pair[1].dora === 0;
+    }
+    const sorted_patterns = Object.entries(info.scoring_info.patterns).sort(
+      (a, b) => {
+        return Number(is_fu_only(a)) - Number(is_fu_only(b));
+      },
+    );
     winInfoInner = (
       <>
         <img
@@ -54,7 +62,7 @@ export function WinInfo({
           <></>
         )}
         <div id="patterns">
-          {Object.entries(info.scoring_info.patterns).map(([pattern, data]) => (
+          {sorted_patterns.map(([pattern, data]) => (
             <PatternInfo
               key={pattern}
               pattern={pattern as Pattern}
