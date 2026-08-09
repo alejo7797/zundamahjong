@@ -62,6 +62,12 @@ class GameOptions(BaseModel):
     were discarded by themselves earlier.
     """
 
+    end_last_round_if_dealer_ahead: bool = False
+    """
+    Whether to end the game if it is the last round and the
+    dealer has the highest score (even if it should be a dealer repeat).
+    """
+
     show_waits: bool = True
     "Whether to show waits in the client UI."
     show_shanten_info: bool = False

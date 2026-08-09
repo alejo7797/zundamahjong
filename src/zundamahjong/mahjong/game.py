@@ -120,9 +120,18 @@ class Game:
         round, which holds if the number of the next round would exceed
         the total game length.
         """
+        dealer_score = self._player_scores[self._sub_round]
         return (
             self._round.status == RoundStatus.END
             and self._next_round() >= self._options.game_length
+        ) or (
+            self._options.end_last_round_if_dealer_ahead
+            and self._round.status == RoundStatus.END
+            and self._increment_round() >= self._options.game_length
+            and all(
+                score < dealer_score or index == self._sub_round
+                for index, score in enumerate(self._player_scores)
+            )
         )
 
     def info(self, player_index: int) -> AllGameInfo:
@@ -236,15 +245,18 @@ class Game:
             is_furiten=is_furiten,
         )
 
-    def _next_round(self) -> tuple[int, int]:
-        if self.is_dealer_repeat:
-            return self._wind_round, self._sub_round
+    def _increment_round(self) -> tuple[int, int]:
         next_wind_round = self._wind_round
         next_sub_round = self._sub_round + 1
         if next_sub_round >= self._player_count:
             next_wind_round += 1
             next_sub_round = 0
         return next_wind_round, next_sub_round
+
+    def _next_round(self) -> tuple[int, int]:
+        if self.is_dealer_repeat:
+            return self._wind_round, self._sub_round
+        return self._increment_round()
 
     def _create_round(self, deck_tiles: list[TileId] | None) -> None:
         def on_round_end() -> None:

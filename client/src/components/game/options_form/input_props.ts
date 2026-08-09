@@ -161,6 +161,12 @@ export const inputPropsList: OptionsInputProps<GameOptions>[] = [
           winning hand from any of their own discards.`,
         type: "checkbox",
       },
+      {
+        name: "end_last_round_if_dealer_ahead",
+        labelText: "End game if dealer ahead on last round",
+        description: `Ends the game if it is the last round and the dealer has the highest score, even if it should be a dealer repeat.`,
+        type: "checkbox",
+      },
     ],
   },
   {

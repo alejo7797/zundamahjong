@@ -18,6 +18,8 @@ export type GameOptions = {
   use_riichi_furiten: boolean;
   use_own_discard_furiten: boolean;
 
+  end_last_round_if_dealer_ahead: boolean;
+
   show_waits: boolean;
   show_shanten_info: boolean;
 
