@@ -24,6 +24,7 @@ function HandTile({
   const emit_action = useContext(EmitAction);
   const submitAction = (e: Event) => {
     e.preventDefault();
+    setHoverTile(null);
     emit_action(action);
   };
   const startHoverAction = (e: Event) => {
